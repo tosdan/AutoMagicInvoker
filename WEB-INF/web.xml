@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns="http://java.sun.com/xml/ns/javaee" 
+	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
+	id="WebApp_ID" 
+	version="2.5">  
+
+	<servlet>
+		<description></description>
+		<servlet-name>AutoMagicInvoker</servlet-name>
+		<servlet-class>com.github.tosdan.autominvk.AutoMagicInvokerServlet</servlet-class>
+		<init-param>
+			<param-name>CLASS_PATH</param-name>
+			<param-value>com.github.tosdan.autominvk.apps</param-value>
+		</init-param>
+	</servlet>
+	<servlet-mapping>
+        <servlet-name>AutoMagicInvoker</servlet-name>
+        <url-pattern>/apps/mk/*</url-pattern>
+    </servlet-mapping>
+	
+    
+<welcome-file-list>
+	<welcome-file>
+		test.jsp
+	</welcome-file>
+</welcome-file-list>
+	
+	
+</web-app>
