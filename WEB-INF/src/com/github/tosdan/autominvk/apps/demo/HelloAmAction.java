@@ -8,28 +8,33 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import com.github.tosdan.autominvk.AutoMagicInvokable;
-import com.github.tosdan.autominvk.AutoMagicInvokableAction;
+import com.github.tosdan.autominvk.IamInvokable;
+import com.github.tosdan.autominvk.IamInvokableAction;
 
 /**
  * @author tosdan
  *
  */
-@AutoMagicInvokable
-public class HelloAutoMaricInvoker {
+@IamInvokable(value = "")
+public class HelloAmAction {
 
 	/**
 	 * 
 	 */
-	public HelloAutoMaricInvoker() {
+	public HelloAmAction() {
 		// TODO Auto-generated constructor stub
 	}
 
 	private HttpServletRequest req;
 	private ServletContext ctx;
 	private HttpSession session;
+	
+	class Retval {
+		private String ciao = "oaic";
+		private String test = "tset";
+	}
 
-	@AutoMagicInvokableAction
+	@IamInvokableAction()
 	public Object get() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.get()");
 		System.out.println("Attributo prova = "+ req.getAttribute("prova"));
@@ -43,29 +48,30 @@ public class HelloAutoMaricInvoker {
 		if (session != null) {
 			System.out.println("HttpSession non NULL = " + (session != null));
 		}
-		return "dmeo/HelloAutoMaricInvoker.txt";
+//		return "demo/HelloAutoMaricInvoker.txt";
+		return new Retval();
 	}
 
-	@AutoMagicInvokableAction
+	@IamInvokableAction
 	public Object execute() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.execute()");
 		return "demo";
 	}
 	
 
-	@AutoMagicInvokableAction(method = "POST")
+	@IamInvokableAction(method = "POST")
 	public void noreturn() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.noreturn()");
 	}
 	
-	@AutoMagicInvokableAction
+	@IamInvokableAction
 	public RequestDispatcher spacher() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.spacher()");
 		req.setAttribute("prova", "test");
-		return req.getRequestDispatcher("/apps/mk/demo/HelloAutoMaricInvoker.get");
+		return req.getRequestDispatcher("/apps/mk/demo/hello.get");
 	}
 	
-	@AutoMagicInvokableAction
+	@IamInvokableAction
 	public void conparam() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.conparam()");
 	}

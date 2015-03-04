@@ -6,10 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.METHOD)
-public @interface AutoMagicInvokableAction {
-
-	String method() default "";
+@Target(ElementType.TYPE)
+public @interface IamInvokable {
 	
-	String alias() default "";
+	String value() default "";
 }

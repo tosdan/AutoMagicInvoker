@@ -14,7 +14,7 @@ public class AutoMagicClassCrawler implements Serializable {
 	/**
 	 * 
 	 */
-	private static final String ANNOTATION_NAME = AutoMagicInvokable.class.getSimpleName();
+	private static final String ANNOTATION_NAME = IamInvokable.class.getSimpleName();
 
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicClassCrawler.class);
 
@@ -30,7 +30,7 @@ public class AutoMagicClassCrawler implements Serializable {
 	
 	/**
 	 * Cerca le sottoclassi di [superClass] nel classpath specificato
-	 * Tali sottoclassi devono però implementare l'annotation {@link AutoMagicInvokable}
+	 * Tali sottoclassi devono però implementare l'annotation {@link IamInvokable}
 	 */
 	public AutoMagicClassCrawler(String rootPath) {
 		this.rootPath = rootPath;
@@ -46,7 +46,7 @@ public class AutoMagicClassCrawler implements Serializable {
 		Reflections reflections = new Reflections(rootPath);
 		
 		logger.trace("Ricerca classi annotate con [{}] nel classpath [{}]", ANNOTATION_NAME, rootPath);
-		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(AutoMagicInvokable.class);
+		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(IamInvokable.class);
 		logger.trace("Classi trovate: {}", classes.toString());
 		
 		for (Class<?> clazz : classes) {
@@ -79,12 +79,55 @@ public class AutoMagicClassCrawler implements Serializable {
 	 * @param rootPath
 	 */
 	public void register(Class<?> clazz, String rootPath) {
-		String 	className = clazz.getSimpleName(),
+		IamInvokable ann = clazz.getAnnotation(IamInvokable.class);
+		
+		String 	alias = ann.value(),
 				classFullName = clazz.getName(),
-				actionName = getRelativePackage(rootPath, clazz) +"/"+ className;
+				className = getClassName(clazz),
+				path = getRelativePackage(rootPath, clazz);
+		
+		className = getClassAlias(alias, className);
+		path = getActionPath(alias, path);
+		
+		String actionName = path + className;
 		
 		logger.debug("Register 'actionName' = [{}], resolving to  = [{}]", actionName, classFullName);
 		annotatedClassesMap.put(actionName, classFullName);
+	}
+
+	/**
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private String getClassName( Class< ? > clazz ) {
+		String className = clazz.getSimpleName().replaceAll("AmAction", "");
+		className = className.substring(0,1).toLowerCase() + className.substring(1);
+		return className;
+	}
+
+	/**
+	 * 
+	 * @param alias
+	 * @param path
+	 * @return
+	 */
+	private String getActionPath(String alias, String path) {
+		return alias.startsWith("/") // Percorso assoluto (anche se ancora relativo rispetto al path della servelet principale)
+				? "" 
+				: path + "/";
+	}
+
+	/**
+	 * 
+	 * @param alias
+	 * @param className
+	 * @return
+	 */
+	private String getClassAlias(String alias, String className) {
+		return alias != null && ! alias.isEmpty()
+				? alias.replace("/", "") // Lo slash può essere presente o meno. Nel caso, va tolto.
+				: className;
 	}
 
 	/**

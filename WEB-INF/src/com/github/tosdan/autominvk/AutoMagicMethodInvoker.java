@@ -3,6 +3,7 @@ package com.github.tosdan.autominvk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -58,6 +59,7 @@ public class AutoMagicMethodInvoker {
 			Method method = getMethod(methodName, httpMethod, instance.getClass());
 			Object[] args = null;
 			retval = method.invoke(instance, args);
+			retval = postProcess(retval, method, actionName);
 			
 		} catch (NoSuchMethodException e) {
 			String msg = "Il metodo ["+methodName+"] non è stato trovato nell'azione ["+actionName+"].";
@@ -75,7 +77,33 @@ public class AutoMagicMethodInvoker {
 		}
 		return retval;
 	}
-	
+
+	private Object postProcess(Object input, Method method, String actionName) {
+		Object retval = input;
+		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
+		String[] mapify = ann.mapify();
+		logger.debug("Campi da utilizzare per Mappificazione = {}", Arrays.asList(mapify));
+		if (hasValue(mapify)) {
+			try {
+				retval = MapMaker.getMap(retval, mapify);
+			} catch (IllegalArgumentException e) {
+				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionName+"].";
+				logger.error(msg, e);
+				throw new AutoMagicInvokerException(msg, e.getCause());
+				
+			} catch (IllegalAccessException e) {
+				String msg = "Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionName+"].";
+				logger.error(msg, e);
+				throw new AutoMagicInvokerException(msg, e.getCause());
+			}
+		}
+		return retval;
+	}
+
+	private boolean hasValue( String[] mapify ) {
+		return mapify.length > 0 && !mapify[0].isEmpty();
+	}
+
 	/**
 	 * 
 	 * @param methodName
@@ -86,7 +114,7 @@ public class AutoMagicMethodInvoker {
 	 */
 	private Method getMethod(String methodName, String httpMethod, Class<?> clazz) throws NoSuchMethodException {
 		Method retval = null;
-		AutoMagicInvokableAction ann;
+		IamInvokableAction ann;
 		String errMsg = null;
 		
 		Method[] methods = clazz.getDeclaredMethods();
@@ -101,7 +129,7 @@ public class AutoMagicMethodInvoker {
 					errMsg = "Metodo ["+methodName+"] trovato. I metodi non possono avere parametri.";
 					
 				} else {
-					ann = m.getAnnotation(AutoMagicInvokableAction.class);
+					ann = m.getAnnotation(IamInvokableAction.class);
 					boolean annotationFound = ann != null;
 					
 					if (annotationFound) {
@@ -130,7 +158,7 @@ public class AutoMagicMethodInvoker {
 
 		if (errMsg != null) {
 			logger.error(errMsg);
-			throw new AutoMagicInvokerException(errMsg);
+			throw new NoSuchMethodException(errMsg);
 		}
 		
 		return retval;
@@ -188,7 +216,7 @@ public class AutoMagicMethodInvoker {
 		
 		Object instance = null;
 		try {
-			logger.debug("Creazione istanza di {}...", clazz);
+			logger.debug("Creazione istanza di [{}]...", clazz);
 			instance = Class.forName(clazz).newInstance();
 			
 		} catch (InstantiationException e) {
@@ -204,7 +232,7 @@ public class AutoMagicMethodInvoker {
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		}
-		logger.trace("Istanza di {} creata.", amActionName);
+		logger.trace("Istanza per [{}] creata.", amActionName);
 		return instance;
 	}
 }

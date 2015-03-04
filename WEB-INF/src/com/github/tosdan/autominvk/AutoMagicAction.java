@@ -9,16 +9,16 @@ public class AutoMagicAction {
 	
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicAction.class);
 
-	private String azioneName;
+	private String actionName;
 	private String rootPath;
-	private String resolvedClass;
 	private String methodName;
-	private String fullAzioneName;
+	private String fullPathActionName;
+	private String render;
 	
-	public AutoMagicAction(String fullAzioneName, String rootPath) {
-		this.fullAzioneName = fullAzioneName;
+	public AutoMagicAction(String fullPathActionName, String rootPath) {
+		this.fullPathActionName = fullPathActionName;
 		this.rootPath = rootPath;
-		extractData(fullAzioneName, rootPath);
+		init(fullPathActionName, rootPath);
 	}
 
 	@Override
@@ -26,8 +26,8 @@ public class AutoMagicAction {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 	
-	private void extractData( String fullAzioneName, String rootPath ) {
-		String withoutRootPath = fullAzioneName.replace(rootPath, "");
+	private void init( String fullPathActionName, String rootPath ) {
+		String withoutRootPath = fullPathActionName.replace(rootPath, "");
 		withoutRootPath = withoutRootPath.replaceFirst("/", "");
 		logger.trace("Percorso Azione meno Root Path e senza primo '/' = [{}]", withoutRootPath);
 
@@ -45,35 +45,45 @@ public class AutoMagicAction {
 			// Indice dell'ultimo carattere del nome della classe
 			int classNameIdxEnd = withoutRootPath.indexOf(classeName) + classeName.length();
 			
-			azioneName = withoutRootPath.substring(0, classNameIdxEnd);
+			actionName = withoutRootPath.substring(0, classNameIdxEnd);
 			methodName = classAndMethod.substring(methodNameSeparatorIdx + 1);
 			
+			int renderIdx;
+			if ((renderIdx = methodName.indexOf(".")) > -1) {
+				render = methodName.substring(renderIdx + 1);
+				methodName = methodName.substring(0, renderIdx);
+			} else {
+				render = "";
+			}
+			
 		} else {
-			azioneName = withoutRootPath;
+			actionName = withoutRootPath;
 			methodName = "";
+			render = "";
 		}
 
+		logger.trace("azioneName = [{}]", actionName);
 		logger.trace("methodName = [{}]", methodName);
-		logger.trace("azioneName = [{}]", azioneName);
+		logger.trace("Render = [{}]", render);
 	}
 
 	public String getActionName() {
-		return azioneName;
+		return actionName;
 	}
 	
 	public String getMethodName() {
 		return methodName;
 	}
 	
-	public String getResolvedClass() {
-		return resolvedClass;
-	}
-	
 	public String getRootPath() {
 		return rootPath;
 	}
 	
-	public String getFullAzioneName() {
-		return fullAzioneName;
+	public String getFullPathActionName() {
+		return fullPathActionName;
+	}
+	
+	public String getRender() {
+		return render;
 	}
 }
