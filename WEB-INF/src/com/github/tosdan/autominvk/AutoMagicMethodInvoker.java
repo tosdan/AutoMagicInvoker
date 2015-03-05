@@ -23,7 +23,7 @@ public class AutoMagicMethodInvoker {
 	}
 
 	/**
-	 * 
+	 * @deprecated Solo per test
 	 * @param amAction
 	 * @return
 	 */
@@ -40,8 +40,8 @@ public class AutoMagicMethodInvoker {
 	 */
 	public Object invoke(AutoMagicAction amAction, HttpServletRequest req, ServletContext ctx) {
 		Object retval = null;
-		String 	methodName = amAction.getMethodName(),
-				actionName = amAction.getActionName(),
+		String 	methodId = amAction.getMethodId(),
+				actionId = amAction.getActionId(),
 				httpMethod = null;
 		
 		if (req != null) {
@@ -49,28 +49,28 @@ public class AutoMagicMethodInvoker {
 		}
 		
 		try {
-			Object instance = getInstance(actionName);
+			Object instance = getInstance(actionId);
 			injectParams(instance, req, ctx);
 			
-			if (methodName == null || methodName.isEmpty()) {
-				methodName = "execute";
+			if (methodId == null || methodId.isEmpty()) {
+				methodId = "execute";
 			}
 			
-			Method method = getMethod(methodName, httpMethod, instance.getClass());
+			Method method = getMethod(methodId, httpMethod, instance.getClass());
 			Object[] args = null;
 			retval = method.invoke(instance, args);
-			retval = postProcess(retval, method, actionName);
+			retval = postProcess(retval, method, actionId);
 			
 		} catch (NoSuchMethodException e) {
-			String msg = "Il metodo ["+methodName+"] non è stato trovato nell'azione ["+actionName+"].";
+			String msg = "Il metodo ["+methodId+"] non è stato trovato nell'azione ["+actionId+"].";
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (IllegalAccessException e) {
-			String msg = "Impossibile accedere al metodo ["+methodName+"] dell'azione ["+actionName+"].";
+			String msg = "Impossibile accedere al metodo ["+methodId+"] dell'azione ["+actionId+"].";
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (InvocationTargetException e) {
-			String msg = "Impossibile eseguire il metodo ["+methodName+"] dell'azione ["+actionName+"].";
+			String msg = "Impossibile eseguire il metodo ["+methodId+"] dell'azione ["+actionId+"].";
 			logger.error("{}", e);
 			logger.error(msg, e.getCause());
 			throw new AutoMagicInvokerException(msg, e.getCause());
@@ -78,7 +78,7 @@ public class AutoMagicMethodInvoker {
 		return retval;
 	}
 
-	private Object postProcess(Object input, Method method, String actionName) {
+	private Object postProcess(Object input, Method method, String actionId) {
 		Object retval = input;
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		String[] mapify = ann.mapify();
@@ -87,12 +87,12 @@ public class AutoMagicMethodInvoker {
 			try {
 				retval = MapMaker.getMap(retval, mapify);
 			} catch (IllegalArgumentException e) {
-				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionName+"].";
+				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
 				logger.error(msg, e);
 				throw new AutoMagicInvokerException(msg, e.getCause());
 				
 			} catch (IllegalAccessException e) {
-				String msg = "Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionName+"].";
+				String msg = "Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
 				logger.error(msg, e);
 				throw new AutoMagicInvokerException(msg, e.getCause());
 			}
@@ -106,13 +106,13 @@ public class AutoMagicMethodInvoker {
 
 	/**
 	 * 
-	 * @param methodName
+	 * @param methodId
 	 * @param httpMethod
 	 * @param clazz
 	 * @return
 	 * @throws NoSuchMethodException
 	 */
-	private Method getMethod(String methodName, String httpMethod, Class<?> clazz) throws NoSuchMethodException {
+	private Method getMethod(String methodId, String httpMethod, Class<?> clazz) throws NoSuchMethodException {
 		Method retval = null;
 		IamInvokableAction ann;
 		String errMsg = null;
@@ -120,39 +120,44 @@ public class AutoMagicMethodInvoker {
 		Method[] methods = clazz.getDeclaredMethods();
 		
 		for(Method m : methods) {
-			boolean mwthodFound = m.getName().equals(methodName);
+			ann = m.getAnnotation(IamInvokableAction.class);
+			boolean hasAnnotation = (ann != null);
+			
+			String methodAlias = hasAnnotation && !ann.alias().isEmpty() 
+					? ann.alias() 
+					: m.getName();
+			
+			boolean mwthodFound = methodAlias.equals(methodId);
 			
 			if (mwthodFound) {
 				int parametersLentgh = m.getParameterTypes().length;
 				
 				if (parametersLentgh > 0) {
-					errMsg = "Metodo ["+methodName+"] trovato. I metodi non possono avere parametri.";
+					errMsg = "Metodo ["+methodId+"] trovato. I metodi non possono avere parametri."; // non al momento almeno
 					
 				} else {
-					ann = m.getAnnotation(IamInvokableAction.class);
-					boolean annotationFound = ann != null;
 					
-					if (annotationFound) {
-						String annMethod = ann.method();
-						boolean noHttpMethodOrEquals = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
+					if (hasAnnotation) {
+						String annMethod = ann.reqMethod();
+						boolean isHttpMethodCorrect = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
 						
-						if (noHttpMethodOrEquals) {
+						if (isHttpMethodCorrect) {
 							retval = m;
 							errMsg = null;
 							break;
 							
 						} else {
-							errMsg = "Metodo ["+methodName+"] trovato. Il metodo è configurato per chiamate HTTP ["+annMethod+"]" +
+							errMsg = "Metodo ["+methodId+"] trovato. Il metodo è configurato per chiamate HTTP ["+annMethod+"]" +
 									", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
 						}
 						
 					} else {
-						errMsg = "Metodo ["+methodName+"] trovato, ma senza l'appropriata annotation.";
+						errMsg = "Metodo ["+methodId+"] trovato, ma senza l'appropriata annotation.";
 						
 					}
 				}
 			} else {
-				errMsg = "Metodo ["+methodName+"] NON trovato.";
+				errMsg = "Metodo ["+methodId+"] NON trovato.";
 			}
 		}
 
@@ -210,9 +215,9 @@ public class AutoMagicMethodInvoker {
 		}
 	}
 
-	public Object getInstance(String amActionName) {
-		logger.debug("Recupero istanza per [{}]", amActionName);
-		String clazz = crawler.resolve(amActionName);
+	public Object getInstance(String actionId) {
+		logger.debug("Recupero istanza per [{}]", actionId);
+		String clazz = crawler.resolve(actionId);
 		
 		Object instance = null;
 		try {
@@ -232,7 +237,7 @@ public class AutoMagicMethodInvoker {
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		}
-		logger.trace("Istanza per [{}] creata.", amActionName);
+		logger.trace("Istanza per [{}] creata.", actionId);
 		return instance;
 	}
 }

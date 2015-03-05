@@ -4,16 +4,20 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+/**
+ * Rappresenta una azione che è costituita da una classe, un metodo e un render.
+ * @author Daniele
+ *
+ */
 public class AutoMagicAction {
 	
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicAction.class);
 
-	private String actionName;
+	private String actionId;
 	private String rootPath;
-	private String methodName;
+	private String methodId;
 	private String fullPathActionName;
-	private String render;
+	private String renderId;
 	
 	public AutoMagicAction(String fullPathActionName, String rootPath) {
 		this.fullPathActionName = fullPathActionName;
@@ -31,48 +35,62 @@ public class AutoMagicAction {
 		withoutRootPath = withoutRootPath.replaceFirst("/", "");
 		logger.trace("Percorso Azione meno Root Path e senza primo '/' = [{}]", withoutRootPath);
 
-		int classAndMethodIdx = withoutRootPath.lastIndexOf("/") + 1; // +1 per escludere il carattere '/'
-		String classAndMethod = withoutRootPath.substring(classAndMethodIdx); 
-		logger.trace("Sottostringa Classe + Metodo = [{}]", classAndMethod);
+		int classAndMethodNdx = withoutRootPath.lastIndexOf("/") + 1; // +1 per escludere il carattere '/'
+		String classAndMethodId = withoutRootPath.substring(classAndMethodNdx); 
+		logger.trace("Sottostringa Classe + Metodo = [{}]", classAndMethodId);
 		
 		// Indice del punto di separazione tra nome classe e nome metodo
-		int methodNameSeparatorIdx = classAndMethod.indexOf(".");
+		int methodIdSeparatorNdx = classAndMethodId.indexOf(".");
 		
-		if (methodNameSeparatorIdx > -1) {
+		if (methodIdSeparatorNdx > -1) {
 			// Prozione dell'URI relativo al nome della classe
-			String classeName = classAndMethod.substring(0, methodNameSeparatorIdx);
-			logger.trace("classeName = [{}]", classeName);
+			String classId = classAndMethodId.substring(0, methodIdSeparatorNdx);
+			logger.trace("classId = [{}]", classId);
 			// Indice dell'ultimo carattere del nome della classe
-			int classNameIdxEnd = withoutRootPath.indexOf(classeName) + classeName.length();
+			int classNameNdxEnd = withoutRootPath.indexOf(classId) + classId.length();
 			
-			actionName = withoutRootPath.substring(0, classNameIdxEnd);
-			methodName = classAndMethod.substring(methodNameSeparatorIdx + 1);
+			actionId = withoutRootPath.substring(0, classNameNdxEnd);
+			methodId = classAndMethodId.substring(methodIdSeparatorNdx + 1);
 			
-			int renderIdx;
-			if ((renderIdx = methodName.indexOf(".")) > -1) {
-				render = methodName.substring(renderIdx + 1);
-				methodName = methodName.substring(0, renderIdx);
+			int renderNdx;
+			if ((renderNdx = methodId.indexOf(".")) > -1) {
+				renderId = methodId.substring(renderNdx + 1);
+				methodId = methodId.substring(0, renderNdx);
 			} else {
-				render = "";
+				renderId = "";
 			}
 			
 		} else {
-			actionName = withoutRootPath;
-			methodName = "";
-			render = "";
+			logger.debug("classId = [{}]", classAndMethodId);
+			actionId = withoutRootPath;
+			methodId = "";
+			renderId = "";
 		}
 
-		logger.trace("azioneName = [{}]", actionName);
-		logger.trace("methodName = [{}]", methodName);
-		logger.trace("Render = [{}]", render);
+		logger.debug("actionId = [{}]", actionId);
+		logger.debug("methodId = [{}]", methodId);
+		logger.debug("Render   = [{}]", renderId);
 	}
 
-	public String getActionName() {
-		return actionName;
+	public String getActionId() {
+		return actionId;
+	}
+	public void setActionId( String actionId ) {
+		this.actionId = actionId;
 	}
 	
-	public String getMethodName() {
-		return methodName;
+	public String getMethodId() {
+		return methodId;
+	}
+	public void setMethodId( String methodId ) {
+		this.methodId = methodId;
+	}
+	
+	public String getRenderId() {
+		return renderId;
+	}
+	public void setRenderId( String renderId ) {
+		this.renderId = renderId;
 	}
 	
 	public String getRootPath() {
@@ -81,9 +99,5 @@ public class AutoMagicAction {
 	
 	public String getFullPathActionName() {
 		return fullPathActionName;
-	}
-	
-	public String getRender() {
-		return render;
 	}
 }

@@ -18,7 +18,7 @@
 	</servlet>
 	<servlet-mapping>
         <servlet-name>AutoMagicInvoker</servlet-name>
-        <url-pattern>/apps/mk/*</url-pattern>
+        <url-pattern>/apps/invk/*</url-pattern>
     </servlet-mapping>
 	
     

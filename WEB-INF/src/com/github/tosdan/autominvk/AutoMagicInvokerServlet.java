@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.activation.MimeType;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -17,15 +16,11 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import sun.awt.CharsetString;
-
-import com.google.common.base.Charsets;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
 	private static final String TEXT_HTML = "text/html";
-	private static final String APPLICATION_OCTECT_STRAM = "application/octect-stram";
 	private static final String TEXT_PLAIN = "text/plain";
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
 	private ServletContext ctx;
@@ -64,7 +59,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 
 
 	private void sendResponse(Object result, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String render = action.getRender();
+		String render = action.getRenderId();
 		
 		if (result instanceof RequestDispatcher) {
 			((RequestDispatcher) result).forward(req, resp);
@@ -78,13 +73,20 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			respond(json, TEXT_PLAIN, resp);
 			
 		} else if ("raw".equals(render)) {
-			respond(result, APPLICATION_OCTECT_STRAM, resp);
+			forwardToDownload(result, req, resp);
 			
-		} else {
+		} else { // text
 			respond(result, TEXT_HTML, resp);
 			
 		} 
 	}
+
+	private void forwardToDownload( Object result, HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
+		req.setAttribute("File", result);
+		ctx.getNamedDispatcher("DownloadServlet").forward(req, resp);
+		
+	}
+
 
 	private void respond(Object respVal, String mime, HttpServletResponse resp) throws IOException {
 		resp.setContentType(mime);

@@ -25,7 +25,7 @@ public class AutoMagicClassCrawler implements Serializable {
 	/**
 	 * Mappa delle sotto classi recuperate nel classpath specificato.
 	 */
-	private Map<String, String> annotatedClassesMap;
+	private Map<String, String> actionToClassesMap;
 	private String rootPath;
 	
 	/**
@@ -34,7 +34,7 @@ public class AutoMagicClassCrawler implements Serializable {
 	 */
 	public AutoMagicClassCrawler(String rootPath) {
 		this.rootPath = rootPath;
-		this.annotatedClassesMap = new HashMap<String, String>();
+		this.actionToClassesMap = new HashMap<String, String>();
 		refreshClasses();
 	}
 	
@@ -52,7 +52,7 @@ public class AutoMagicClassCrawler implements Serializable {
 		for (Class<?> clazz : classes) {
 			register(clazz, rootPath);
 		}
-		return annotatedClassesMap;
+		return actionToClassesMap;
 	}
 
 	/**
@@ -81,18 +81,18 @@ public class AutoMagicClassCrawler implements Serializable {
 	public void register(Class<?> clazz, String rootPath) {
 		IamInvokable ann = clazz.getAnnotation(IamInvokable.class);
 		
-		String 	alias = ann.value(),
+		String 	id = ann.value(),
 				classFullName = clazz.getName(),
-				className = getClassName(clazz),
+				classId = getClassId(clazz),
 				path = getRelativePackage(rootPath, clazz);
 		
-		className = getClassAlias(alias, className);
-		path = getActionPath(alias, path);
+		classId = getAnnotatedClassId(id, classId);
+		path = getActionPath(id, path);
 		
-		String actionName = path + className;
+		String actionId = path + classId;
 		
-		logger.debug("Register 'actionName' = [{}], resolving to  = [{}]", actionName, classFullName);
-		annotatedClassesMap.put(actionName, classFullName);
+		logger.debug("Register 'actionId' = [{}], resolving to  = [{}]", actionId, classFullName);
+		actionToClassesMap.put(actionId, classFullName);
 	}
 
 	/**
@@ -100,52 +100,52 @@ public class AutoMagicClassCrawler implements Serializable {
 	 * @param clazz
 	 * @return
 	 */
-	private String getClassName( Class< ? > clazz ) {
-		String className = clazz.getSimpleName().replaceAll("AmAction", "");
-		className = className.substring(0,1).toLowerCase() + className.substring(1);
-		return className;
+	private String getClassId( Class< ? > clazz ) {
+		String classId = clazz.getSimpleName().replaceAll("AmAction", "");
+		classId = classId.substring(0,1).toLowerCase() + classId.substring(1);
+		return classId;
 	}
 
 	/**
 	 * 
-	 * @param alias
+	 * @param id
 	 * @param path
 	 * @return
 	 */
-	private String getActionPath(String alias, String path) {
-		return alias.startsWith("/") // Percorso assoluto (anche se ancora relativo rispetto al path della servelet principale)
+	private String getActionPath(String id, String path) {
+		return id.startsWith("/") // Percorso assoluto (anche se ancora relativo rispetto al path della servelet principale)
 				? "" 
 				: path + "/";
 	}
 
 	/**
 	 * 
-	 * @param alias
-	 * @param className
+	 * @param id
+	 * @param classId
 	 * @return
 	 */
-	private String getClassAlias(String alias, String className) {
-		return alias != null && ! alias.isEmpty()
-				? alias.replace("/", "") // Lo slash può essere presente o meno. Nel caso, va tolto.
-				: className;
+	private String getAnnotatedClassId(String id, String classId) {
+		return id != null && ! id.isEmpty()
+				? id.replace("/", "") // Lo slash può essere presente o meno. Nel caso, va tolto.
+				: classId;
 	}
 
 	/**
 	 * 
-	 * @param actionName
+	 * @param actionId
 	 * @return
 	 */
-	public String resolve(String actionName) {
-		logger.trace("Resolving [{}]", actionName);
-		if (actionName == null) {
-			throw new AutoMagicInvokerException("actionName NULL.");
+	public String resolve(String actionId) {
+		logger.trace("Resolving [{}]", actionId);
+		if (actionId == null) {
+			throw new AutoMagicInvokerException("actionId NULL.");
 		}
 		
-		String classFullName = annotatedClassesMap.get(actionName);
+		String classFullName = actionToClassesMap.get(actionId);
 		logger.trace("Resolved to [{}]", classFullName != null );
 		
 		if (classFullName == null) {
-			String msg = String.format("Nessuna classe registrata con actionName[%s]", actionName);
+			String msg = String.format("Nessuna classe registrata con actionId[%s]", actionId);
 			logger.error(msg);
 			throw new AutoMagicInvokerException(msg);
 		}

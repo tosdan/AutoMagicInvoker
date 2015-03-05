@@ -7,7 +7,8 @@
 </head>
 <body>
 
-<p><a href="apps/mk/demo/HelloAutoMaricInvoker.spacher?cippa=lippa">Test</a></p>
+<p><a href="apps/invk/demo/hello.spatcher.json?cippa=lippa">spatcher</a></p>
+<p><a href="apps/invk/demo/hello.get.json?cippa=lippa">get</a></p>
 
 </body>
 </html>

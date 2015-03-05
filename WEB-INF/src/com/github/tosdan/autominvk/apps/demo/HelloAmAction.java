@@ -59,16 +59,16 @@ public class HelloAmAction {
 	}
 	
 
-	@IamInvokableAction(method = "POST")
+	@IamInvokableAction(reqMethod = "POST")
 	public void noreturn() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.noreturn()");
 	}
 	
-	@IamInvokableAction
-	public RequestDispatcher spacher() throws Exception {
-		System.out.println("HelloAutoMaricInvoker.spacher()");
+	@IamInvokableAction(alias = "")
+	public RequestDispatcher spatcher() throws Exception {
+		System.out.println("HelloAutoMaricInvoker.spatcher()");
 		req.setAttribute("prova", "test");
-		return req.getRequestDispatcher("/apps/mk/demo/hello.get");
+		return req.getRequestDispatcher("hello.get.json");
 	}
 	
 	@IamInvokableAction
