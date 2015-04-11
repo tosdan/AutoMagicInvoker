@@ -22,6 +22,7 @@ import com.google.gson.GsonBuilder;
 public class AutoMagicInvokerServlet extends HttpServlet {
 	private static final String TEXT_HTML = "text/html";
 	private static final String TEXT_PLAIN = "text/plain";
+	private static final String TEXT_JAVASCRIPT = "text/javascript";
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
 	private ServletContext ctx;
 	private AutoMagicMethodInvoker invoker;
@@ -75,19 +76,38 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		if (result instanceof RequestDispatcher) {
 			((RequestDispatcher) result).forward(req, resp);
 			
+			
+		} else if ("jsonp".equals(render)) {
+			String callback = req.getParameter("callback");
+			if (result instanceof Exception)  {
+				result = getExcptionMap((Exception) result);
+				
+			} else if (callback == null) {
+				result = getExcptionMap(new IllegalArgumentException("Parametro callback mancante nella request."));
+				
+			}
+			String jsonP = callback +"(" + getGson().toJson(result) + ")";
+			
+			respond(jsonP, TEXT_JAVASCRIPT, resp);
+			
+			
+			
 		} else if ("json".equals(render)) {
 			if (result instanceof Exception)  {
-				result = getErrMap((Exception) result);
+				result = getExcptionMap((Exception) result);
 			}
-			String json = getInstance().toJson(result);
+			String json = getGson().toJson(result);
 			
 			respond(json, TEXT_PLAIN, resp);
+			
 			
 		} else if ("raw".equals(render)) {
 			forwardToDownloadServlet(result, req, resp);
 			
+			
 		} else { // text
 			respond(result, TEXT_HTML, resp);
+
 			
 		} 
 	}
@@ -128,14 +148,14 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 * @param e
 	 * @return
 	 */
-	private Map<String, Object> getErrMap(Exception e) {
+	private Map<String, Object> getExcptionMap(Exception e) {
 		Map<String, Object> errMap = new HashMap<String, Object>();
 		errMap.put("error", e.getMessage());
 		errMap.put("stacktrace", ExceptionUtils.getStackTrace(e));
 		return errMap;
 	}
 	
-	private Gson getInstance() {
+	private Gson getGson() {
 		return new GsonBuilder().setPrettyPrinting().create();
 	}	
 	
