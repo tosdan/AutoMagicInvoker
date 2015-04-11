@@ -5,7 +5,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * Rappresenta una azione che è costituita da una classe, un metodo e un render.
+ * Rappresenta un'azione che è costituita da una classe, un metodo e un render.
  * @author Daniele
  *
  */
@@ -14,15 +14,15 @@ public class AutoMagicAction {
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicAction.class);
 
 	private String actionId;
-	private String rootPath;
+	private String invokerRootPath;
 	private String methodId;
-	private String fullPathActionName;
+	private String webAppRelativeRequestedURI;
 	private String renderId;
 	
-	public AutoMagicAction(String fullPathActionName, String rootPath) {
-		this.fullPathActionName = fullPathActionName;
-		this.rootPath = rootPath;
-		init(fullPathActionName, rootPath);
+	public AutoMagicAction(String webAppRelativeRequestedURI, String invokerRootPath) {
+		this.webAppRelativeRequestedURI = webAppRelativeRequestedURI;
+		this.invokerRootPath = invokerRootPath;
+		init(webAppRelativeRequestedURI, invokerRootPath);
 	}
 
 	@Override
@@ -30,39 +30,48 @@ public class AutoMagicAction {
 		return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
 	}
 	
-	private void init( String fullPathActionName, String rootPath ) {
-		String withoutRootPath = fullPathActionName.replace(rootPath, "");
-		withoutRootPath = withoutRootPath.replaceFirst("/", "");
-		logger.trace("Percorso Azione meno Root Path e senza primo '/' = [{}]", withoutRootPath);
+	/**
+	 * 
+	 * @param webAppRelativeRequestedURI indirizzo chiamato relativo alla webApp
+	 * @param rootPath path in cui è mappata la servlet invoker
+	 */
+	private void init(String webAppRelativeRequestedURI, String invokerRootPath) {
+		// URI relativo alla servlet invoker
+		String relativeActionURI = webAppRelativeRequestedURI.replace(invokerRootPath, "");				
+		relativeActionURI = relativeActionURI.replaceFirst("/", ""); // un percorso relativo che si rispetti non inizia con "/"
+		logger.trace("Percorso Azione relativo = [{}]", relativeActionURI);
 
-		int classAndMethodNdx = withoutRootPath.lastIndexOf("/") + 1; // +1 per escludere il carattere '/'
-		String classAndMethodId = withoutRootPath.substring(classAndMethodNdx); 
-		logger.trace("Sottostringa Classe + Metodo = [{}]", classAndMethodId);
+		// indice della string Classe + Metodo + Render
+		int classAndMethodNdx = relativeActionURI.lastIndexOf("/") + 1; // +1 per escludere il carattere '/'
+		String classAndMethodId = relativeActionURI.substring(classAndMethodNdx); 
+		logger.trace("Sottostringa Classe + Metodo + Render = [{}]", classAndMethodId);
 		
 		// Indice del punto di separazione tra nome classe e nome metodo
-		int methodIdSeparatorNdx = classAndMethodId.indexOf(".");
+		int methodIdSeparatorStartNdx = classAndMethodId.indexOf(".");
 		
-		if (methodIdSeparatorNdx > -1) {
+		if (methodIdSeparatorStartNdx > -1) { // Se esiste un nome metodo
 			// Prozione dell'URI relativo al nome della classe
-			String classId = classAndMethodId.substring(0, methodIdSeparatorNdx);
+			String classId = classAndMethodId.substring(0, methodIdSeparatorStartNdx);
 			logger.trace("classId = [{}]", classId);
 			// Indice dell'ultimo carattere del nome della classe
-			int classNameNdxEnd = withoutRootPath.indexOf(classId) + classId.length();
+			int classNameEndNdx = classAndMethodNdx + classId.length();
 			
-			actionId = withoutRootPath.substring(0, classNameNdxEnd);
-			methodId = classAndMethodId.substring(methodIdSeparatorNdx + 1);
+			// l'actionId è il package + il nome della classe
+			actionId = relativeActionURI.substring(0, classNameEndNdx);
+			String methodIdTmp = classAndMethodId.substring(methodIdSeparatorStartNdx + 1);
 			
-			int renderNdx;
-			if ((renderNdx = methodId.indexOf(".")) > -1) {
-				renderId = methodId.substring(renderNdx + 1);
-				methodId = methodId.substring(0, renderNdx);
+			int renderStartNdx;
+			if ((renderStartNdx = methodIdTmp.indexOf(".")) > -1) {
+				renderId = methodIdTmp.substring(renderStartNdx + 1);
+				methodId = methodIdTmp.substring(0, renderStartNdx);
 			} else {
+				methodId = methodIdTmp;
 				renderId = "";
 			}
 			
 		} else {
 			logger.debug("classId = [{}]", classAndMethodId);
-			actionId = withoutRootPath;
+			actionId = relativeActionURI;
 			methodId = "";
 			renderId = "";
 		}
@@ -93,11 +102,11 @@ public class AutoMagicAction {
 		this.renderId = renderId;
 	}
 	
-	public String getRootPath() {
-		return rootPath;
+	public String getInvokerRootPath() {
+		return invokerRootPath;
 	}
 	
-	public String getFullPathActionName() {
-		return fullPathActionName;
+	public String getWebAppRelativeRequestedURI() {
+		return webAppRelativeRequestedURI;
 	}
 }

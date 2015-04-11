@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
 public class AutoMagicMethodInvoker {
 
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicMethodInvoker.class);
-	private AutoMagicClassCrawler crawler;
+	private IamIvokableClassCrawler crawler;
 
-	public AutoMagicMethodInvoker(AutoMagicClassCrawler crawler) {
+	public AutoMagicMethodInvoker(IamIvokableClassCrawler crawler) {
 		this.crawler = crawler;
 	}
 
@@ -49,6 +49,7 @@ public class AutoMagicMethodInvoker {
 		}
 		
 		try {
+			
 			Object instance = getInstance(actionId);
 			injectParams(instance, req, ctx);
 			
@@ -59,7 +60,9 @@ public class AutoMagicMethodInvoker {
 			Method method = getMethod(methodId, httpMethod, instance.getClass());
 			Object[] args = null;
 			retval = method.invoke(instance, args);
+			
 			retval = postProcess(retval, method, actionId);
+			
 			
 		} catch (NoSuchMethodException e) {
 			String msg = "Il metodo ["+methodId+"] non è stato trovato nell'azione ["+actionId+"].";
@@ -75,6 +78,7 @@ public class AutoMagicMethodInvoker {
 			logger.error(msg, e.getCause());
 			throw new AutoMagicInvokerException(msg, e.getCause());
 		}
+		
 		return retval;
 	}
 
@@ -83,9 +87,13 @@ public class AutoMagicMethodInvoker {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		String[] mapify = ann.mapify();
 		logger.debug("Campi da utilizzare per Mappificazione = {}", Arrays.asList(mapify));
+		
 		if (hasValue(mapify)) {
 			try {
+				
 				retval = MapMaker.getMap(retval, mapify);
+				
+				
 			} catch (IllegalArgumentException e) {
 				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
 				logger.error(msg, e);
@@ -135,9 +143,12 @@ public class AutoMagicMethodInvoker {
 				if (parametersLentgh > 0) {
 					errMsg = "Metodo ["+methodId+"] trovato. I metodi non possono avere parametri."; // non al momento almeno
 					
+					
 				} else {
 					
 					if (hasAnnotation) {
+						
+						
 						String annMethod = ann.reqMethod();
 						boolean isHttpMethodCorrect = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
 						
@@ -145,6 +156,8 @@ public class AutoMagicMethodInvoker {
 							retval = m;
 							errMsg = null;
 							break;
+							
+							
 							
 						} else {
 							errMsg = "Metodo ["+methodId+"] trovato. Il metodo è configurato per chiamate HTTP ["+annMethod+"]" +
@@ -220,9 +233,12 @@ public class AutoMagicMethodInvoker {
 		String clazz = crawler.resolve(actionId);
 		
 		Object instance = null;
+		
 		try {
+			
 			logger.debug("Creazione istanza di [{}]...", clazz);
 			instance = Class.forName(clazz).newInstance();
+			
 			
 		} catch (InstantiationException e) {
 			String msg = "Errore durante la creazione di una nuova istanza di: "+ clazz;
@@ -237,6 +253,8 @@ public class AutoMagicMethodInvoker {
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		}
+		
+		
 		logger.trace("Istanza per [{}] creata.", actionId);
 		return instance;
 	}

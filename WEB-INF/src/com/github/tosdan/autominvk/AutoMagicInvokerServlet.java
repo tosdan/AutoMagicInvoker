@@ -37,7 +37,8 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void doServ(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	private void doServ(HttpServletRequest req, HttpServletResponse resp) 
+			throws ServletException, IOException {
 		String httpMethod = req.getMethod();
 		logger.trace("Metodo HTTP = [{}]", httpMethod);
 		
@@ -58,7 +59,17 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	}
 
 
-	private void sendResponse(Object result, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+	/**
+	 * 
+	 * @param result
+	 * @param action
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void sendResponse(Object result, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) 
+			throws ServletException, IOException {
 		String render = action.getRenderId();
 		
 		if (result instanceof RequestDispatcher) {
@@ -73,7 +84,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			respond(json, TEXT_PLAIN, resp);
 			
 		} else if ("raw".equals(render)) {
-			forwardToDownload(result, req, resp);
+			forwardToDownloadServlet(result, req, resp);
 			
 		} else { // text
 			respond(result, TEXT_HTML, resp);
@@ -81,14 +92,31 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		} 
 	}
 
-	private void forwardToDownload( Object result, HttpServletRequest req, HttpServletResponse resp ) throws ServletException, IOException {
+	/**
+	 * 
+	 * @param result
+	 * @param req
+	 * @param resp
+	 * @throws ServletException
+	 * @throws IOException
+	 */
+	private void forwardToDownloadServlet( Object result, HttpServletRequest req, HttpServletResponse resp ) 
+			throws ServletException, IOException {
 		req.setAttribute("File", result);
 		ctx.getNamedDispatcher("DownloadServlet").forward(req, resp);
 		
 	}
 
 
-	private void respond(Object respVal, String mime, HttpServletResponse resp) throws IOException {
+	/**
+	 * 
+	 * @param respVal
+	 * @param mime
+	 * @param resp
+	 * @throws IOException
+	 */
+	private void respond(Object respVal, String mime, HttpServletResponse resp) 
+			throws IOException {
 		resp.setContentType(mime);
 		resp.setCharacterEncoding("UTF-8");
 		resp.getWriter().print(respVal);
@@ -123,11 +151,12 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 //		logger.trace("Context Path = [{}]", ctxPath);
 		String requestURI = req.getRequestURI().toString();
 		logger.trace("RequestedURI = [{}]", requestURI);
-		String servletRelativeURI = requestURI.replace(ctxPath, "");
-		logger.trace("Requested Servlet URI = [{}]", servletRelativeURI);
-		String servletPath = req.getServletPath();
-		logger.trace("Servlet Mapping = [{}]", servletPath);
-		return new AutoMagicAction(servletRelativeURI, servletPath);
+		String webAppRelativeRequestedURI = requestURI.replace(ctxPath, "");
+		logger.trace("Requested Servlet URI = [{}]", webAppRelativeRequestedURI);
+		String invokerServletPath = req.getServletPath();
+		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
+		
+		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath);
 	}
 	
 	@Override
@@ -135,9 +164,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		super.init(config);
 		ctx = config.getServletContext();
 		String classpath = config.getInitParameter("CLASS_PATH");
-		logger.debug("Class Path = [{}]", classpath);
-		// Raccoglie tutte le classi da CLASS_PATH che siano annotate con AutoMagicInvokable
-		AutoMagicClassCrawler crawler = new AutoMagicClassCrawler(classpath);
+		logger.debug("ClassPath in cui verranno cercate le classi che implementano IamInvokable = [{}]", classpath);
+		// Raccoglie tutte le classi da CLASS_PATH che siano annotate con IamInvokable
+		IamIvokableClassCrawler crawler = new IamIvokableClassCrawler(classpath);
 		// Configura un nuovo invoker che attingerà alle classi raccolte dal crawler
 		this.invoker = new AutoMagicMethodInvoker(crawler);
 	}
