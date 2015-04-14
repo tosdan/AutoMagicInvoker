@@ -65,7 +65,7 @@ public class AutoMagicMethodInvoker {
 			
 			
 		} catch (AutoMagicInvokerException e) {
-			String msg = e.getMessage() + " Eseguendo l'azione ["+actionId+"].";
+			String msg = "Errore eseguendo l'azione ["+actionId+"]. " + e.getMessage();
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (NoSuchMethodException e) {
@@ -169,7 +169,7 @@ public class AutoMagicMethodInvoker {
 						}
 						
 					} else {
-						errMsg = "Metodo ["+methodId+"] trovato, ma senza l'appropriata annotation.";
+						errMsg = "Non è stato trovato il metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getSimpleName() + "].";
 						
 					}
 				}
