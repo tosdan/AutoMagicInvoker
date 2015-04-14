@@ -164,12 +164,12 @@ public class AutoMagicMethodInvoker {
 							
 							
 						} else {
-							errMsg = "Metodo ["+methodId+"] trovato. Il metodo è configurato per chiamate HTTP ["+annMethod+"]" +
+							errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annMethod+"]" +
 									", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
 						}
 						
 					} else {
-						errMsg = "Non è stato trovato il metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getSimpleName() + "].";
+						errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getSimpleName() + "].";
 						
 					}
 				}
