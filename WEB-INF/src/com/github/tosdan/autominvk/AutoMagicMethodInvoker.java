@@ -64,6 +64,10 @@ public class AutoMagicMethodInvoker {
 			retval = postProcess(retval, method, actionId);
 			
 			
+		} catch (AutoMagicInvokerException e) {
+			String msg = e.getMessage() + " Eseguendo l'azione ["+actionId+"].";
+			logger.error(msg, e);
+			throw new AutoMagicInvokerException(msg, e);
 		} catch (NoSuchMethodException e) {
 			String msg = "Il metodo ["+methodId+"] non è stato trovato nell'azione ["+actionId+"].";
 			logger.error(msg, e);
@@ -176,7 +180,7 @@ public class AutoMagicMethodInvoker {
 
 		if (errMsg != null) {
 			logger.error(errMsg);
-			throw new NoSuchMethodException(errMsg);
+			throw new AutoMagicInvokerException(errMsg);
 		}
 		
 		return retval;
