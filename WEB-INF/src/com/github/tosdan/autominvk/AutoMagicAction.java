@@ -61,7 +61,7 @@ public class AutoMagicAction {
 			String methodIdTmp = classAndMethodId.substring(methodIdSeparatorStartNdx + 1);
 			
 			int renderStartNdx;
-			if ((renderStartNdx = methodIdTmp.indexOf(".")) > -1) {
+			if ((renderStartNdx = methodIdTmp.indexOf("~")) > -1) {
 				renderId = methodIdTmp.substring(renderStartNdx + 1);
 				methodId = methodIdTmp.substring(0, renderStartNdx);
 			} else {

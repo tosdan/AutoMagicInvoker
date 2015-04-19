@@ -46,6 +46,8 @@ public class AutoMagicMethodInvoker {
 		
 		if (req != null) {
 			httpMethod = req.getMethod();
+		} else {
+			httpMethod = "get"; // default
 		}
 		
 		try {
@@ -54,7 +56,7 @@ public class AutoMagicMethodInvoker {
 			injectParams(instance, req, ctx);
 			
 			if (methodId == null || methodId.isEmpty()) {
-				methodId = "execute";
+				methodId = httpMethod.toLowerCase();
 			}
 			
 			Method method = getMethod(methodId, httpMethod, instance.getClass());

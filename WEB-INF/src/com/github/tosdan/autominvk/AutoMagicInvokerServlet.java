@@ -1,6 +1,8 @@
 package com.github.tosdan.autominvk;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -169,7 +171,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	private AutoMagicAction getAction(HttpServletRequest req) {
 		String ctxPath = ctx.getContextPath();
 //		logger.trace("Context Path = [{}]", ctxPath);
-		String requestURI = req.getRequestURI().toString();
+		String requestURI = getRequestURI(req);
 		logger.trace("RequestedURI = [{}]", requestURI);
 		String webAppRelativeRequestedURI = requestURI.replace(ctxPath, "");
 		logger.trace("Requested Servlet URI = [{}]", webAppRelativeRequestedURI);
@@ -177,6 +179,15 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
 		
 		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath);
+	}
+
+
+	private String getRequestURI( HttpServletRequest req ) {
+		String requestURI = req.getRequestURI();
+		try {
+			requestURI = URLDecoder.decode(requestURI, "UTF-8");
+		} catch ( UnsupportedEncodingException e ) { e.printStackTrace(); }
+		return requestURI;
 	}
 	
 	@Override
