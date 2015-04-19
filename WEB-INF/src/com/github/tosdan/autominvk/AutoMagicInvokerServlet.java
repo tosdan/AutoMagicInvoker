@@ -178,7 +178,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		String invokerServletPath = req.getServletPath();
 		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
 		
-		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath);
+		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath, req.getMethod());
 	}
 
 

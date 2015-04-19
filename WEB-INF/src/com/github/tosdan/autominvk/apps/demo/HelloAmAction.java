@@ -68,7 +68,7 @@ public class HelloAmAction {
 	public RequestDispatcher spatcher() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.spatcher()");
 		req.setAttribute("prova", "test");
-		return req.getRequestDispatcher("hello.get%7Ejson");
+		return req.getRequestDispatcher("hello%7Ejson");
 	}
 	
 	@IamInvokableAction

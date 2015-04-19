@@ -23,7 +23,7 @@ public class ProveVarie {
 	public static void main( String[] args ) throws Exception {
 		IamIvokableClassCrawler crawler = new IamIvokableClassCrawler("it.blutec.apps");
 		AutoMagicMethodInvoker invoker = new AutoMagicMethodInvoker(crawler);
-		AutoMagicAction amAction = new AutoMagicAction("/demo/HelloAutoMaricInvoker.get", "");
+		AutoMagicAction amAction = new AutoMagicAction("/demo/HelloAutoMaricInvoker.get", "", "get");
 		Object intance = invoker.invoke(amAction);
 		System.out.println("get:"+intance);
 	}

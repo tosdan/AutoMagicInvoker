@@ -42,22 +42,12 @@ public class AutoMagicMethodInvoker {
 		Object retval = null;
 		String 	methodId = amAction.getMethodId(),
 				actionId = amAction.getActionId(),
-				httpMethod = null;
-		
-		if (req != null) {
-			httpMethod = req.getMethod();
-		} else {
-			httpMethod = "get"; // default
-		}
+				httpMethod = amAction.getHttpMethod();
 		
 		try {
 			
 			Object instance = getInstance(actionId);
 			injectParams(instance, req, ctx);
-			
-			if (methodId == null || methodId.isEmpty()) {
-				methodId = httpMethod.toLowerCase();
-			}
 			
 			Method method = getMethod(methodId, httpMethod, instance.getClass());
 			Object[] args = null;
