@@ -24,6 +24,7 @@ public class AutoMagicAction {
 		this.webAppRelativeRequestedURI = webAppRelativeRequestedURI;
 		this.invokerRootPath = invokerRootPath;
 		this.httpMethod = httpMethod;
+		this.renderId = "";
 		init(webAppRelativeRequestedURI, invokerRootPath, httpMethod);
 	}
 	
