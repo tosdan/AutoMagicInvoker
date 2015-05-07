@@ -50,6 +50,8 @@ public class AutoMagicMethodInvoker {
 			injectParams(instance, req, ctx);
 			
 			Method method = getMethod(methodId, httpMethod, instance.getClass());
+			forceRenderByAnnotation(amAction, method);
+			
 			Object[] args = null;
 			retval = method.invoke(instance, args);
 			
@@ -76,6 +78,14 @@ public class AutoMagicMethodInvoker {
 		}
 		
 		return retval;
+	}
+
+	private void forceRenderByAnnotation( AutoMagicAction amAction, Method method ) {
+		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
+		String render = ann.render();
+		if (render != null && !render.isEmpty()) {
+			amAction.setRenderId(render);
+		}
 	}
 
 	private Object postProcess(Object input, Method method, String actionId) {

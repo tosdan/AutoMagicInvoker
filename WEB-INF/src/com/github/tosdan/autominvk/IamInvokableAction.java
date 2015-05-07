@@ -14,6 +14,8 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface IamInvokableAction {
 
+	String render() default "";
+	
 	String reqMethod() default "";
 	
 	String alias() default "";

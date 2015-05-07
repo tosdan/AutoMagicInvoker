@@ -21,9 +21,9 @@ public class ProveVarie {
 	}
 
 	public static void main( String[] args ) throws Exception {
-		IamIvokableClassCrawler crawler = new IamIvokableClassCrawler("it.blutec.apps");
+		IamIvokableClassCrawler crawler = new IamIvokableClassCrawler("com.github.tosdan.autominvk.apps");
 		AutoMagicMethodInvoker invoker = new AutoMagicMethodInvoker(crawler);
-		AutoMagicAction amAction = new AutoMagicAction("/demo/HelloAutoMaricInvoker.get", "", "get");
+		AutoMagicAction amAction = new AutoMagicAction("/demo/hello.get", "", "get");
 		Object intance = invoker.invoke(amAction);
 		System.out.println("get:"+intance);
 	}

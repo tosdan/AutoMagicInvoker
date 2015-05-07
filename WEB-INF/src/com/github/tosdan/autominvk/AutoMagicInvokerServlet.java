@@ -79,6 +79,11 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			((RequestDispatcher) result).forward(req, resp);
 			
 			
+		} else if (result instanceof AutoMagicHttpError) {
+			AutoMagicHttpError error = (AutoMagicHttpError) result;
+			resp.sendError(error.getStatusCode(), error.getMessage());
+			
+			
 		} else if ("jsonp".equals(render)) {
 			String callback = req.getParameter("callback");
 			if (result instanceof Exception)  {
@@ -124,8 +129,10 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 */
 	private void forwardToDownloadServlet( Object result, HttpServletRequest req, HttpServletResponse resp ) 
 			throws ServletException, IOException {
-		req.setAttribute("File", result);
-		ctx.getNamedDispatcher("DownloadServlet").forward(req, resp);
+//		String downloadServletFileParam = this.getInitParameter("DownloadServletFileParam");
+//		req.setAttribute(downloadServletFileParam, result);
+		String downloadServletName = this.getInitParameter("DownloadServletName");
+		ctx.getNamedDispatcher(downloadServletName).forward(req, resp);
 		
 	}
 

@@ -116,7 +116,9 @@ public class IamIvokableClassCrawler implements Serializable {
 	private String getActionPath(String classIdAlias, String path) {
 		return classIdAlias.startsWith("/") // Percorso assoluto (ma comunque relativo rispetto al path della servelet principale)
 				? "" 
-				: path + "/";
+				: path.isEmpty() 
+						? "" 
+						: path + "/";
 	}
 
 	/**

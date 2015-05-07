@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.github.tosdan.autominvk.apps.demo;
+package com.github.tosdan.autominvk.apps;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -16,12 +16,12 @@ import com.github.tosdan.autominvk.IamInvokableAction;
  *
  */
 @IamInvokable(value = "")
-public class HelloAmAction {
+public class CopyOfHelloAmAction {
 
 	/**
 	 * 
 	 */
-	public HelloAmAction() {
+	public CopyOfHelloAmAction() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -37,6 +37,7 @@ public class HelloAmAction {
 	@IamInvokableAction()
 	public Object get() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.get()");
+		System.out.println("Attributo prova = "+ req.getAttribute("prova"));
 		if (req != null) {
 			System.out.println("Request params = " + req.getParameterMap());
 			System.out.println("Attributo prova = "+ req.getAttribute("prova"));

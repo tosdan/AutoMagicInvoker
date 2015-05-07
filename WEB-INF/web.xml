@@ -5,7 +5,7 @@
 	xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
 	id="WebApp_ID" 
-	version="2.5">  
+	version="2.5">
 
 	<servlet>
 		<description>Servlet da chiamare per l'invocazione automatica delle azioni che implementano IamInvokable</description>
@@ -18,6 +18,16 @@
 			<param-name>CLASS_PATH</param-name>
 			<param-value>com.github.tosdan.autominvk.apps</param-value>
 		</init-param>
+		<init-param>
+			<description>Il nome della servlet di download a cui fare forward in caso di download</description>
+			<param-name>DownloadServletName</param-name>
+			<param-value>DownloadServlet</param-value>
+		</init-param>
+<!-- 		<init-param> -->
+<!-- 			<description>Nome del parametro che la servlet di download legge per sapere quale file scaricare</description> -->
+<!-- 			<param-name>DownloadServletFileParam</param-name> -->
+<!-- 			<param-value>Filename</param-value> -->
+<!-- 		</init-param> -->
 	</servlet>
 	<servlet-mapping>
         <servlet-name>AutoMagicInvoker</servlet-name>
