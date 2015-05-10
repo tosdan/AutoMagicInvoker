@@ -81,7 +81,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			
 		} else if (result instanceof AutoMagicHttpError) {
 			AutoMagicHttpError error = (AutoMagicHttpError) result;
-			resp.sendError(error.getStatusCode(), error.getMessage());
+			resp.setStatus(error.getStatusCode());
+			resp.setHeader("XX-ErrorMessage", error.getMessage());
+			respond(error.getMessage(), TEXT_PLAIN, resp);
 			
 			
 		} else if ("jsonp".equals(render)) {
