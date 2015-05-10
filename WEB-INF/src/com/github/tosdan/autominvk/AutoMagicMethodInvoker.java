@@ -59,9 +59,8 @@ public class AutoMagicMethodInvoker {
 			
 			
 		} catch (AutoMagicInvokerException e) {
-			String msg = "Errore eseguendo l'azione ["+actionId+"]. " + e.getMessage();
-			logger.error(msg, e);
-			throw new AutoMagicInvokerException(msg, e);
+			logger.error("Errore eseguendo l'azione ["+actionId+"]. ", e);
+			throw e;
 		} catch (NoSuchMethodException e) {
 			String msg = "Il metodo ["+methodId+"] non è stato trovato nell'azione ["+actionId+"].";
 			logger.error(msg, e);
@@ -71,10 +70,9 @@ public class AutoMagicMethodInvoker {
 			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (InvocationTargetException e) {
-			String msg = "Impossibile eseguire il metodo ["+methodId+"] dell'azione ["+actionId+"].";
-			logger.error("{}", e);
+			String msg = "Errore in esecuzione del metodo ["+methodId+"] dell'azione ["+actionId+"].";
 			logger.error(msg, e.getCause());
-			throw new AutoMagicInvokerException(msg, e.getCause());
+			throw new AutoMagicInvokerException(e);
 		}
 		
 		return retval;
@@ -102,12 +100,10 @@ public class AutoMagicMethodInvoker {
 				
 			} catch (IllegalArgumentException e) {
 				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
-				logger.error(msg, e);
 				throw new AutoMagicInvokerException(msg, e.getCause());
 				
 			} catch (IllegalAccessException e) {
 				String msg = "Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
-				logger.error(msg, e);
 				throw new AutoMagicInvokerException(msg, e.getCause());
 			}
 		}
@@ -181,7 +177,6 @@ public class AutoMagicMethodInvoker {
 		}
 
 		if (errMsg != null) {
-			logger.error(errMsg);
 			throw new AutoMagicInvokerException(errMsg);
 		}
 		
@@ -203,30 +198,28 @@ public class AutoMagicMethodInvoker {
 				type = f.getType();
 				
 				String errMsg = "Errore di accesso al campo ["+f.getName()+"]. ";
+				String typeName = type.getSimpleName();
 				
-				if (type.getSimpleName().equals(HttpServletRequest.class.getSimpleName())) {
+				if (typeName.equals(HttpServletRequest.class.getSimpleName())) {
 					try {
 						FieldUtils.writeField(f, instance, req, true);
 					} catch (IllegalAccessException e) {
-						logger.error(errMsg, e);
 						throw new AutoMagicInvokerException(errMsg, e);
 					}
 				}
 				
-				if (type.getSimpleName().equals(ServletContext.class.getSimpleName())) {
+				if (typeName.equals(ServletContext.class.getSimpleName())) {
 					try {
 						FieldUtils.writeField(f, instance, ctx, true);
 					} catch (IllegalAccessException e) {
-						logger.error(errMsg, e);
 						throw new AutoMagicInvokerException(errMsg, e);
 					}
 				}
 				
-				if (type.getSimpleName().equals(HttpSession.class.getSimpleName())) {
+				if (typeName.equals(HttpSession.class.getSimpleName())) {
 					try {
 						FieldUtils.writeField(f, instance, req.getSession(), true);
 					} catch (IllegalAccessException e) {
-						logger.error(errMsg, e);
 						throw new AutoMagicInvokerException(e);
 					}
 				}
@@ -248,15 +241,12 @@ public class AutoMagicMethodInvoker {
 			
 		} catch (InstantiationException e) {
 			String msg = "Errore durante la creazione di una nuova istanza di: "+ clazz;
-			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (IllegalAccessException e) {
 			String msg = "Errore di accesso nella creazione dell'istanza di: "+ clazz;
-			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		} catch (ClassNotFoundException e) {
 			String msg = "Errore classe ["+clazz+"] non trovata. ";
-			logger.error(msg, e);
 			throw new AutoMagicInvokerException(msg, e);
 		}
 		
