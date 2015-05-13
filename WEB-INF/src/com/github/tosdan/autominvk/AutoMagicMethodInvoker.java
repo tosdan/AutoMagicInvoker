@@ -72,7 +72,7 @@ public class AutoMagicMethodInvoker {
 		} catch (InvocationTargetException e) {
 			String msg = "Errore in esecuzione del metodo ["+methodId+"] dell'azione ["+actionId+"].";
 			logger.error(msg, e.getCause());
-			throw new AutoMagicInvokerException(e);
+			throw new AutoMagicInvokerException(msg, e);
 		}
 		
 		return retval;
