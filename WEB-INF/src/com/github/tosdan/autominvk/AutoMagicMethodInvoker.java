@@ -21,15 +21,6 @@ public class AutoMagicMethodInvoker {
 	public AutoMagicMethodInvoker(IamIvokableClassCrawler crawler) {
 		this.crawler = crawler;
 	}
-
-	/**
-	 * @deprecated Solo per test
-	 * @param amAction
-	 * @return
-	 */
-	public Object invoke(AutoMagicAction amAction) {
-		return invoke(amAction, null, null);
-	}
 	
 	/**
 	 * 
@@ -44,36 +35,26 @@ public class AutoMagicMethodInvoker {
 				actionId = amAction.getActionId(),
 				httpMethod = amAction.getHttpMethod();
 		
+		Object instance = getInstance(actionId);
+		injectParams(instance, req, ctx);
+		
+		Method method = getMethod(methodId, httpMethod, instance.getClass());
+		
+		forceRenderByAnnotation(amAction, method);
+		
 		try {
-			
-			Object instance = getInstance(actionId);
-			injectParams(instance, req, ctx);
-			
-			Method method = getMethod(methodId, httpMethod, instance.getClass());
-			forceRenderByAnnotation(amAction, method);
-			
+
 			Object[] args = null;
 			retval = method.invoke(instance, args);
-			
-			retval = postProcess(retval, method, actionId);
-			
-			
-		} catch (AutoMagicInvokerException e) {
-			logger.error("Errore eseguendo l'azione ["+actionId+"]. ", e);
-			throw e;
-		} catch (NoSuchMethodException e) {
-			String msg = "Il metodo ["+methodId+"] non è stato trovato nell'azione ["+actionId+"].";
-			logger.error(msg, e);
-			throw new AutoMagicInvokerException(msg, e);
-		} catch (IllegalAccessException e) {
-			String msg = "Impossibile accedere al metodo ["+methodId+"] dell'azione ["+actionId+"].";
-			logger.error(msg, e);
-			throw new AutoMagicInvokerException(msg, e);
-		} catch (InvocationTargetException e) {
-			String msg = "Errore in esecuzione del metodo ["+methodId+"] dell'azione ["+actionId+"].";
-			logger.error(msg, e.getCause());
-			throw new AutoMagicInvokerException(msg, e);
+		
+		} catch ( IllegalAccessException e ) {
+			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e);
+		} catch ( InvocationTargetException e ) {
+			throw new AutoMagicInvokerException("Errore in esecuzione del metodo [" + methodId + "] dell'azione [" + actionId + "].", e);
 		}
+		
+		retval = postProcess(retval, method, actionId);
+		
 		
 		return retval;
 	}
@@ -99,12 +80,10 @@ public class AutoMagicMethodInvoker {
 				
 				
 			} catch (IllegalArgumentException e) {
-				String msg = "Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
-				throw new AutoMagicInvokerException(msg, e.getCause());
+				throw new AutoMagicInvokerException("Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].", e.getCause());
 				
 			} catch (IllegalAccessException e) {
-				String msg = "Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].";
-				throw new AutoMagicInvokerException(msg, e.getCause());
+				throw new AutoMagicInvokerException("Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].", e.getCause());
 			}
 		}
 		return retval;
@@ -120,9 +99,8 @@ public class AutoMagicMethodInvoker {
 	 * @param httpMethod
 	 * @param clazz
 	 * @return
-	 * @throws NoSuchMethodException
 	 */
-	private Method getMethod(String methodId, String httpMethod, Class<?> clazz) throws NoSuchMethodException {
+	private Method getMethod(String methodId, String httpMethod, Class<?> clazz) {
 		Method retval = null;
 		IamInvokableAction ann;
 		String errMsg = null;
@@ -220,7 +198,7 @@ public class AutoMagicMethodInvoker {
 					try {
 						FieldUtils.writeField(f, instance, req.getSession(), true);
 					} catch (IllegalAccessException e) {
-						throw new AutoMagicInvokerException(e);
+						throw new AutoMagicInvokerException(errMsg, e);
 					}
 				}
 			}
@@ -240,18 +218,26 @@ public class AutoMagicMethodInvoker {
 			
 			
 		} catch (InstantiationException e) {
-			String msg = "Errore durante la creazione di una nuova istanza di: "+ clazz;
-			throw new AutoMagicInvokerException(msg, e);
+			throw new AutoMagicInvokerException("Errore durante la creazione di una nuova istanza di: "+ clazz, e);
 		} catch (IllegalAccessException e) {
-			String msg = "Errore di accesso nella creazione dell'istanza di: "+ clazz;
-			throw new AutoMagicInvokerException(msg, e);
+			throw new AutoMagicInvokerException("Errore di accesso nella creazione dell'istanza di: "+ clazz, e);
 		} catch (ClassNotFoundException e) {
-			String msg = "Errore classe ["+clazz+"] non trovata. ";
-			throw new AutoMagicInvokerException(msg, e);
+			throw new AutoMagicInvokerException("Errore classe ["+clazz+"] non trovata.", e);
 		}
 		
 		
 		logger.trace("Istanza per [{}] creata.", actionId);
 		return instance;
+	}
+	
+
+
+	/**
+	 * @deprecated Solo per test
+	 * @param amAction
+	 * @return
+	 */
+	public Object invoke(AutoMagicAction amAction) {
+		return invoke(amAction, null, null);
 	}
 }

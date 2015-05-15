@@ -56,7 +56,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			sendResponse(retval, action, req, resp);
 			
 		} catch (Exception e) {
-			logger.error("{}", e);
+			logger.error(e.getMessage(), e);
 			sendResponse(e, action, req, resp);
 		}
 	}
