@@ -3,12 +3,15 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
+<title>Demo Page</title>
 </head>
 <body>
+<h2>Demo Page</h2>
+<p><a href="action/demo/hello.forward~json?cippa=lippa">Spatcher</a></p>
 
-<p><a href="apps/invk/demo/hello.spatcher.json?cippa=lippa">spatcher</a></p>
-<p><a href="apps/invk/demo/hello.get.json?cippa=lippa">get</a></p>
+<p><a href="action/demo/hello.echo~json?cippa=lippa&amici=miei">Params Echo</a></p>
+
+<p><a href="action/demo/hello.get~json?cippa=lippa">Get</a></p>
 
 </body>
 </html>

@@ -21,6 +21,4 @@ public @interface IamInvokableAction {
 	String reqMethod() default "";
 	
 	String alias() default "";
-	
-	String[] mapify() default "";
 }

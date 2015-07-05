@@ -3,6 +3,10 @@
  */
 package com.github.tosdan.autominvk.apps.demo;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -15,31 +19,37 @@ import com.github.tosdan.autominvk.IamInvokableAction;
  * @author tosdan
  *
  */
-@IamInvokable(value = "")
+@IamInvokable
 public class HelloAmAction {
-
-	/**
-	 * 
-	 */
-	public HelloAmAction() {
-		// TODO Auto-generated constructor stub
-	}
 
 	private HttpServletRequest req;
 	private ServletContext ctx;
 	private HttpSession session;
 	
 	class Retval {
-		private String ciao = "oaic";
-		private String test = "tset";
+		private String test;
+		private String ciao;
+		public Retval(String ciao, String test) {
+			this.ciao = ciao;
+			this.test = test;
+		
+		}
+		public String getCiao() { return ciao; }
+		public String getTest() { return test; }		
 	}
 
-	@IamInvokableAction()
+	@IamInvokableAction(mime="application/json", render="json")
 	public Object get() throws Exception {
-		System.out.println("HelloAutoMaricInvoker.get()");
+		String ciao = "oaic";
+		String test = "tset";
+		System.out.println("HelloAutoMaricInvoker.get()*********************************** BEGIN");
 		if (req != null) {
 			System.out.println("Request params = " + req.getParameterMap());
 			System.out.println("Attributo prova = "+ req.getAttribute("prova"));
+			if (req.getAttribute("echo") != null) {
+				System.out.println(ciao = (String)req.getAttribute("ciao"));
+				System.out.println(test = (String)req.getAttribute("test"));	
+			}
 		}
 		if (ctx != null) {
 			System.out.println("ServletContext non NULL = " + (ctx != null));
@@ -47,8 +57,26 @@ public class HelloAmAction {
 		if (session != null) {
 			System.out.println("HttpSession non NULL = " + (session != null));
 		}
-//		return "demo/HelloAutoMaricInvoker.txt";
-		return new Retval();
+		System.out.println("HelloAutoMaricInvoker.get()*********************************** END");
+		return new Retval(ciao, test);
+	}
+	
+	@IamInvokableAction(mime="application/json", render="json")
+	public Object echo() throws Exception {
+		Map<String, Object> retval = new HashMap<>();
+		
+		System.out.println("HelloAutoMaricInvoker.echo()*********************************** BEGIN");
+		if (req != null) {
+			@SuppressWarnings( "rawtypes" )
+			Enumeration names = req.getParameterNames();
+			while (names.hasMoreElements()) {
+				Object name = names.nextElement();
+				retval.put(name.toString(), req.getParameter(name.toString()));
+			}
+		}
+		System.out.println("HelloAutoMaricInvoker.echo()*********************************** END");
+		
+		return retval;
 	}
 
 	@IamInvokableAction
@@ -63,11 +91,14 @@ public class HelloAmAction {
 		System.out.println("HelloAutoMaricInvoker.noreturn()");
 	}
 	
-	@IamInvokableAction(alias = "")
-	public RequestDispatcher spatcher() throws Exception {
+	@IamInvokableAction(alias = "forward")
+	public RequestDispatcher forwardToMySelf() throws Exception {
 		System.out.println("HelloAutoMaricInvoker.spatcher()");
-		req.setAttribute("prova", "test");
-		return req.getRequestDispatcher("hello%7Ejson");
+		req.setAttribute("ciao", "forward");
+		req.setAttribute("test", "drawrof");
+		req.setAttribute("echo", true);
+		String tilde = "%7E";
+		return req.getRequestDispatcher("hello.get"+tilde+"json");
 	}
 	
 	@IamInvokableAction

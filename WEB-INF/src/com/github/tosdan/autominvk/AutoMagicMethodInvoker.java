@@ -3,7 +3,6 @@ package com.github.tosdan.autominvk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -54,8 +53,6 @@ public class AutoMagicMethodInvoker {
 			throw new AutoMagicInvokerException("Errore in esecuzione del metodo [" + methodId + "] dell'azione [" + actionId + "].", e);
 		}
 		
-		retval = postProcess(retval, method, actionId);
-		
 		
 		return retval;
 	}
@@ -64,6 +61,7 @@ public class AutoMagicMethodInvoker {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		String render = ann.render();
 		if (render != null && !render.isEmpty()) {
+			logger.debug("Render impostato con annotation=[{}]", render);
 			amAction.setRenderId(render);
 		}
 	}
@@ -72,34 +70,9 @@ public class AutoMagicMethodInvoker {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		String mime = ann.mime();
 		if (mime != null && !mime.isEmpty()) {
+			logger.debug("Mime impostato con annotation=[{}]", mime);
 			amAction.setMimeType(mime);
 		}
-	}
-
-	private Object postProcess(Object input, Method method, String actionId) {
-		Object retval = input;
-		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
-		String[] mapify = ann.mapify();
-		logger.debug("Campi da utilizzare per Mappificazione = {}", Arrays.asList(mapify));
-		
-		if (hasValue(mapify)) {
-			try {
-				
-				retval = MapMaker.getMap(retval, mapify);
-				
-				
-			} catch (IllegalArgumentException e) {
-				throw new AutoMagicInvokerException("Errore di accesso ai campi in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].", e.getCause());
-				
-			} catch (IllegalAccessException e) {
-				throw new AutoMagicInvokerException("Errore in fase di Post Process per il metodo ["+method.getName()+"] dell'azione ["+actionId+"].", e.getCause());
-			}
-		}
-		return retval;
-	}
-
-	private boolean hasValue( String[] mapify ) {
-		return mapify.length > 0 && !mapify[0].isEmpty();
 	}
 
 	/**

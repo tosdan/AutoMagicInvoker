@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,20 +76,24 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			throws ServletException, IOException {
 		String render = action.getRenderId();
 		String mime = action.getMimeType();
+		Object responseEntity = null;
 		
 		if (result instanceof RequestDispatcher) {
+			
 			((RequestDispatcher) result).forward(req, resp);
 			
 			
 		} else if (result instanceof AutoMagicHttpError) {
+			
 			AutoMagicHttpError error = (AutoMagicHttpError) result;
 			resp.setStatus(error.getStatusCode());
 			resp.setHeader("XX-ErrorMessage", error.getMessage());
-			mime = (mime == null || mime.isEmpty()) ? TEXT_PLAIN : mime;
-			respond(error.getMessage(), TEXT_PLAIN, resp);
+			mime = StringUtils.defaultIfBlank(mime, TEXT_PLAIN);
+			responseEntity = error.getMessage();
 			
 			
 		} else if ("jsonp".equals(render)) {
+			
 			String callback = req.getParameter("callback");
 			if (result instanceof Exception)  {
 				result = getExcptionMap((Exception) result);
@@ -98,28 +103,31 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				
 			}
 			String jsonP = callback +"(" + getGson().toJson(result) + ")";
-			
-			mime = (mime == null || mime.isEmpty()) ? TEXT_JAVASCRIPT : mime;
-			respond(jsonP, TEXT_JAVASCRIPT, resp);
+
+			mime = StringUtils.defaultIfBlank(mime, TEXT_JAVASCRIPT);
+			responseEntity = jsonP;
 			
 			
 			
 		} else if ("json".equals(render)) {
+			
 			if (result instanceof Exception)  {
 				result = getExcptionMap((Exception) result);
 			}
 			String json = getGson().toJson(result);
 
-			mime = (mime == null || mime.isEmpty()) ? TEXT_PLAIN : mime;
-			respond(json, TEXT_PLAIN, resp);
+			mime = StringUtils.defaultIfBlank(mime, TEXT_PLAIN);
+			responseEntity = json;
 			
 			
-		} else { // text
-			mime = (mime == null || mime.isEmpty()) ? TEXT_HTML : mime;
-			respond(result, TEXT_HTML, resp);
+		} else { // text/html
+			mime = StringUtils.defaultIfBlank(mime, TEXT_HTML);
+			responseEntity = result;
 
 			
-		} 
+		}
+		
+		respond(responseEntity, mime, resp);
 	}
 
 	/**

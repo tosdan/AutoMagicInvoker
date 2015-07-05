@@ -97,8 +97,8 @@ public class IamIvokableClassCrawler implements Serializable {
 	}
 
 	/**
-	 * 
-	 * @param clazz
+	 * Recupera il nome della classe-azione in camelCase (Di norma i nomi delle classi normalmente sono in PascalCase)
+	 * @param clazz Classe dell'azione.
 	 * @return
 	 */
 	private String getClassId( Class< ? > clazz ) {
@@ -108,9 +108,10 @@ public class IamIvokableClassCrawler implements Serializable {
 	}
 
 	/**
-	 * 
-	 * @param classIdAlias
-	 * @param path
+	 * Determina il percorso dell'azione.
+	 * @param classIdAlias stringa assegnata al valore dell'annotazione {@link IamInvokable}
+	 * @param path Percorso dell'azione. Corrisponde al package completo meno il package radice.
+	 * Il package radice è quello da cui parte la ricerca delle classi azione.
 	 * @return
 	 */
 	private String getActionPath(String classIdAlias, String path) {
@@ -122,14 +123,15 @@ public class IamIvokableClassCrawler implements Serializable {
 	}
 
 	/**
-	 * 
-	 * @param classIdAlias
-	 * @param classId
+	 * Recupera il nome dell'azione. Corrisponde al nome della classe in camelCase oppure al valore assegnato
+	 * all'annotazione {@link IamInvokable} <strong>Esempio:</strong> <em>IamInvokable( "valoreAssegnato" )</em>.
+	 * @param classIdAlias stringa assegnata al valore dell'annotazione {@link IamInvokable}
+	 * @param classId Nome della classe senza package.
 	 * @return
 	 */
 	private String getAnnotatedClassId(String classIdAlias, String classId) {
 		return classIdAlias != null && ! classIdAlias.isEmpty()
-				? classIdAlias.replace("/", "") // Lo slash può essere presente o meno. Nel caso, va tolto.
+				? classIdAlias.replace("/", "") // Lo slash può essere presente o meno. Se presente, va tolto (serve per determinare il path non il nome dell'azione).
 				: classId;
 	}
 
