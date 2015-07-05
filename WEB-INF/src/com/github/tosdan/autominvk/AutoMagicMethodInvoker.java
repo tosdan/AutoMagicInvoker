@@ -41,6 +41,7 @@ public class AutoMagicMethodInvoker {
 		Method method = getMethod(methodId, httpMethod, instance.getClass());
 		
 		forceRenderByAnnotation(amAction, method);
+		forceMimeTypeByAnnotation(amAction, method);
 		
 		try {
 
@@ -64,6 +65,14 @@ public class AutoMagicMethodInvoker {
 		String render = ann.render();
 		if (render != null && !render.isEmpty()) {
 			amAction.setRenderId(render);
+		}
+	}
+	
+	private void forceMimeTypeByAnnotation( AutoMagicAction amAction, Method method ) {
+		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
+		String mime = ann.mime();
+		if (mime != null && !mime.isEmpty()) {
+			amAction.setMimeType(mime);
 		}
 	}
 

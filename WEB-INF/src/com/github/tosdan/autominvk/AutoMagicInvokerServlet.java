@@ -74,6 +74,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	private void sendResponse(Object result, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
 		String render = action.getRenderId();
+		String mime = action.getMimeType();
 		
 		if (result instanceof RequestDispatcher) {
 			((RequestDispatcher) result).forward(req, resp);
@@ -83,6 +84,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			AutoMagicHttpError error = (AutoMagicHttpError) result;
 			resp.setStatus(error.getStatusCode());
 			resp.setHeader("XX-ErrorMessage", error.getMessage());
+			mime = (mime == null || mime.isEmpty()) ? TEXT_PLAIN : mime;
 			respond(error.getMessage(), TEXT_PLAIN, resp);
 			
 			
@@ -97,6 +99,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			}
 			String jsonP = callback +"(" + getGson().toJson(result) + ")";
 			
+			mime = (mime == null || mime.isEmpty()) ? TEXT_JAVASCRIPT : mime;
 			respond(jsonP, TEXT_JAVASCRIPT, resp);
 			
 			
@@ -106,11 +109,13 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				result = getExcptionMap((Exception) result);
 			}
 			String json = getGson().toJson(result);
-			
+
+			mime = (mime == null || mime.isEmpty()) ? TEXT_PLAIN : mime;
 			respond(json, TEXT_PLAIN, resp);
 			
 			
 		} else { // text
+			mime = (mime == null || mime.isEmpty()) ? TEXT_HTML : mime;
 			respond(result, TEXT_HTML, resp);
 
 			

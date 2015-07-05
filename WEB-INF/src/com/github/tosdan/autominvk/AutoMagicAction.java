@@ -19,6 +19,7 @@ public class AutoMagicAction {
 	private String webAppRelativeRequestedURI;
 	private String renderId;
 	private String httpMethod;
+	private String mimeType;
 	
 	public AutoMagicAction(String webAppRelativeRequestedURI, String invokerRootPath, String httpMethod) {
 		this.webAppRelativeRequestedURI = webAppRelativeRequestedURI;
@@ -111,6 +112,14 @@ public class AutoMagicAction {
 
 	public void setHttpMethod( String httpMethod ) {
 		this.httpMethod = httpMethod;
+	}
+
+	public String getMimeType() {
+		return mimeType;
+	}
+
+	public void setMimeType( String mimeType ) {
+		this.mimeType = mimeType;
 	}
 
 	@Override

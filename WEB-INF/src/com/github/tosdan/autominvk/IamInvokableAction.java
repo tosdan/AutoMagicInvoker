@@ -16,6 +16,8 @@ public @interface IamInvokableAction {
 
 	String render() default "";
 	
+	String mime() default "";
+	
 	String reqMethod() default "";
 	
 	String alias() default "";
