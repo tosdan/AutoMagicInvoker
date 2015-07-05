@@ -23,11 +23,6 @@
 			<param-name>DownloadServletName</param-name>
 			<param-value>DownloadServlet</param-value>
 		</init-param>
-<!-- 		<init-param> -->
-<!-- 			<description>Nome del parametro che la servlet di download legge per sapere quale file scaricare</description> -->
-<!-- 			<param-name>DownloadServletFileParam</param-name> -->
-<!-- 			<param-value>Filename</param-value> -->
-<!-- 		</init-param> -->
 	</servlet>
 	<servlet-mapping>
         <servlet-name>AutoMagicInvoker</servlet-name>

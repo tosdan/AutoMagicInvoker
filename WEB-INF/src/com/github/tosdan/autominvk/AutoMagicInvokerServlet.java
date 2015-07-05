@@ -110,34 +110,12 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			respond(json, TEXT_PLAIN, resp);
 			
 			
-		} else if ("raw".equals(render)) {
-			forwardToDownloadServlet(result, req, resp);
-			
-			
 		} else { // text
 			respond(result, TEXT_HTML, resp);
 
 			
 		} 
 	}
-
-	/**
-	 * 
-	 * @param result
-	 * @param req
-	 * @param resp
-	 * @throws ServletException
-	 * @throws IOException
-	 */
-	private void forwardToDownloadServlet( Object result, HttpServletRequest req, HttpServletResponse resp ) 
-			throws ServletException, IOException {
-//		String downloadServletFileParam = this.getInitParameter("DownloadServletFileParam");
-//		req.setAttribute(downloadServletFileParam, result);
-		String downloadServletName = this.getInitParameter("DownloadServletName");
-		ctx.getNamedDispatcher(downloadServletName).forward(req, resp);
-		
-	}
-
 
 	/**
 	 * 
