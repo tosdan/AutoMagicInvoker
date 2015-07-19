@@ -127,7 +127,7 @@ public class AutoMagicMethodInvoker {
 						}
 						
 					} else {
-						errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getSimpleName() + "].";
+						errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + "].";
 						
 					}
 				}
@@ -158,9 +158,8 @@ public class AutoMagicMethodInvoker {
 				type = f.getType();
 				
 				String errMsg = "Errore di accesso al campo ["+f.getName()+"]. ";
-				String typeName = type.getSimpleName();
 				
-				if (typeName.equals(HttpServletRequest.class.getSimpleName())) {
+				if (type.isAssignableFrom(HttpServletRequest.class)) {
 					try {
 						FieldUtils.writeField(f, instance, req, true);
 					} catch (IllegalAccessException e) {
@@ -168,7 +167,7 @@ public class AutoMagicMethodInvoker {
 					}
 				}
 				
-				if (typeName.equals(ServletContext.class.getSimpleName())) {
+				if (type.isAssignableFrom(ServletContext.class)) {
 					try {
 						FieldUtils.writeField(f, instance, ctx, true);
 					} catch (IllegalAccessException e) {
@@ -176,7 +175,7 @@ public class AutoMagicMethodInvoker {
 					}
 				}
 				
-				if (typeName.equals(HttpSession.class.getSimpleName())) {
+				if (type.isAssignableFrom(HttpSession.class)) {
 					try {
 						FieldUtils.writeField(f, instance, req.getSession(), true);
 					} catch (IllegalAccessException e) {
