@@ -63,7 +63,7 @@ public class HelloAmAction {
 	
 	@IamInvokableAction(mime="application/json", render="json")
 	public Object echo() throws Exception {
-		Map<String, Object> retval = new HashMap<>();
+		Map<String, Object> retval = new HashMap<String, Object>();
 		
 		System.out.println("HelloAutoMaricInvoker.echo()*********************************** BEGIN");
 		if (req != null) {
