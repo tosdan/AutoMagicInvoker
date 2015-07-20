@@ -14,15 +14,14 @@ public class ReflectUtils {
 
 	private final static Logger logger = LoggerFactory.getLogger(ReflectUtils.class);
 	
-
 	public static Object[] getArgs(HttpServletRequest req, Method method) {
 		Parameter[] params = method.getParameters();
 		Object[] args = new Object[params.length];
 		Parameter p;
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
+			logger.debug("Getting instance of: [{}]", p);
 			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p.getType());
-			System.out.println("ReflectUtils.getArgs()="+ args[i]);
 		}
 		return args;
 	}
