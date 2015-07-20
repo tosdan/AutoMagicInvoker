@@ -4,6 +4,8 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Demo Page</title>
+<script type="text/javascript" src="jquery-2.1.4.js"></script>
+<script type="text/javascript" src="script.js"></script>
 </head>
 <body>
 <h2>Demo Page</h2>
@@ -14,6 +16,9 @@
 <p><a href="action/demo/hello.get~json?cippa=lippa">Get</a></p>
 
 <p><a href="action/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5&hello=circolare">Get HelloWorld</a></p>
+
+<p><button type="button" id="ajaxPost">Ajax POST</button></p>
+<p><button type="button" id="ajaxGet">Ajax GET</button></p>
 
 <fieldset>
 	<form action="action/demo/helloWorld.post" method="post">

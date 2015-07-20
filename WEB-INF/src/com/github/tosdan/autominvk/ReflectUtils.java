@@ -1,41 +1,33 @@
 package com.github.tosdan.autominvk;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.util.Arrays;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.tosdan.utils.varie.HttpReuqestUtils;
 
 public class ReflectUtils {
 
 	private final static Logger logger = LoggerFactory.getLogger(ReflectUtils.class);
-	private HttpServletRequest req;
-	
-	public ReflectUtils(HttpServletRequest req) {
-		this.req = req;
-	}
-	
 	
 
-	private Object[] getArgs(HttpServletRequest req, Method method) {
+	public static Object[] getArgs(HttpServletRequest req, Method method) {
 		Parameter[] params = method.getParameters();
 		Object[] args = new Object[params.length];
 		Parameter p;
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
-			args[i] = getArgInstance(p, req);
+			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p.getType());
+			System.out.println("ReflectUtils.getArgs()="+ args[i]);
 		}
 		return args;
 	}
 
+	/*
 	private Object getArgInstance(Parameter p, HttpServletRequest req) {
 		Object arg = null;
 		try {
@@ -157,4 +149,5 @@ public class ReflectUtils {
 			
 		return retval;
 	}
+	*/
 }

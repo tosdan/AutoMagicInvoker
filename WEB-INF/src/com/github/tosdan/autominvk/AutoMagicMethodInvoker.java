@@ -45,12 +45,16 @@ public class AutoMagicMethodInvoker {
 		try {
 
 			Object[] args = null;
+			if (method.getParameterTypes().length > 0) {
+				args = ReflectUtils.getArgs(req, method);
+				logger.debug("Injecting argumets= [{}]", args);
+			}
 			retval = method.invoke(instance, args);
 		
 		} catch ( IllegalAccessException e ) {
-			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e);
+			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e.getCause());
 		} catch ( InvocationTargetException e ) {
-			throw new AutoMagicInvokerException("Errore in esecuzione del metodo [" + methodId + "] dell'azione [" + actionId + "].", e);
+			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e.getTargetException());
 		}
 		
 		
@@ -100,36 +104,27 @@ public class AutoMagicMethodInvoker {
 			boolean mwthodFound = methodAlias.equals(methodId);
 			
 			if (mwthodFound) {
-				int parametersLentgh = m.getParameterTypes().length;
-				
-				if (parametersLentgh > 0) {
-					errMsg = "Metodo ["+methodId+"] trovato. I metodi non possono avere parametri."; // non al momento almeno
+
+				if (hasAnnotation) {
 					
+					String annMethod = ann.reqMethod();
+					boolean isHttpMethodCorrect = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
 					
-				} else {
-					
-					if (hasAnnotation) {
+					if (isHttpMethodCorrect) {
+						retval = m;
+						errMsg = null;
+						break;
 						
 						
-						String annMethod = ann.reqMethod();
-						boolean isHttpMethodCorrect = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
-						
-						if (isHttpMethodCorrect) {
-							retval = m;
-							errMsg = null;
-							break;
-							
-							
-							
-						} else {
-							errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annMethod+"]" +
-									", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
-						}
 						
 					} else {
-						errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + "].";
-						
+						errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annMethod+"]" +
+								", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
 					}
+					
+				} else {
+					errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + "].";
+					
 				}
 			} else {
 				errMsg = "Metodo ["+methodId+"] NON trovato.";
@@ -199,11 +194,11 @@ public class AutoMagicMethodInvoker {
 			
 			
 		} catch (InstantiationException e) {
-			throw new AutoMagicInvokerException("Errore durante la creazione di una nuova istanza di: "+ clazz, e);
+			throw new AutoMagicInvokerException("Errore durante la creazione di una nuova istanza di: "+ clazz, e.getCause());
 		} catch (IllegalAccessException e) {
-			throw new AutoMagicInvokerException("Errore di accesso nella creazione dell'istanza di: "+ clazz, e);
+			throw new AutoMagicInvokerException("Errore di accesso nella creazione dell'istanza di: "+ clazz, e.getCause());
 		} catch (ClassNotFoundException e) {
-			throw new AutoMagicInvokerException("Errore classe ["+clazz+"] non trovata.", e);
+			throw new AutoMagicInvokerException("Errore classe ["+clazz+"] non trovata.", e.getCause());
 		}
 		
 		
