@@ -33,6 +33,8 @@ $(function() {
 			data: {
 				greet: 'Ciao',
 				name: 'Mondo',
+				"min": 2,
+				"max": 10,
 				year: 2010,
 				hours: "1,5",
 				booleano: true
