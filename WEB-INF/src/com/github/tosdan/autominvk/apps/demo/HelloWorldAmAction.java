@@ -24,6 +24,7 @@ public class HelloWorldAmAction {
 	}
 	
 	public static class HelloObject {
+		private List<Range> ranges;
 		private Range range;
 		private String name;
 		private String greet;
@@ -34,6 +35,8 @@ public class HelloWorldAmAction {
 		private Integer year;
 		private Double hours;
 		public HelloObject() {}
+		public List<Range> getRanges() { return ranges; }
+		public void setRanges( List<Range> ranges ) { this.ranges = ranges; }
 		public String getName() { return name; }
 		public void setName( String name ) { this.name = name; }
 		public String getGreet() { return greet; }
@@ -56,7 +59,7 @@ public class HelloWorldAmAction {
 		@Override
 		public String toString() {
 			return "HelloObject [name=" + name + ", greet=" + greet + ", booleano=" + booleano + ", multiplo=" + multiplo + ", multiplo2=" + Arrays.toString(multiplo2) + ", hello=" + hello + ", year=" + year +
-					", hours=" + hours + ", range="+ range + "]";
+					", hours=" + hours + ", range="+ range + ", ranges="+ ranges + "]";
 		}
 	}
 	

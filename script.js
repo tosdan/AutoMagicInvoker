@@ -13,7 +13,17 @@ $(function() {
 				"range": {
 					"min": 2,
 					"max": 10
-				}
+				},
+				"ranges": [{
+					"min": 2,
+					"max": 10
+				}, {
+					min: 10,
+					max: 18
+				}, {
+					min: 90,
+					max: 100
+				}]
 			}),
 			dataType: 'json',
 			type: 'post',
