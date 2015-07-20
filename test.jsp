@@ -20,7 +20,8 @@
 		Greet: <input type="text" value="Ciao" name="greet"><br>
 		Name: <input type="text" value="Mondo" name="name"><br>
 		Year: <input type="text" value="2015" name="year"><br>
-		Hours: <input type="text" value="2,5" name="hours"><br>
+		Hours: <input type="text" value="2.5" name="hours"><br>
+		Booleano: <input type="text" value="True" name="booleano"><br>
 		<br>
 		Multiplo: <input name="multiplo" type="text" value="ciao">
 		Multiplo: <input name="multiplo" type="text" value="hello">
