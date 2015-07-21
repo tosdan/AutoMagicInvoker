@@ -3,16 +3,14 @@ package com.github.tosdan.autominvk.apps.demo;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
+import com.github.tosdan.autominvk.AutoMagicHttpError;
 import com.github.tosdan.autominvk.IamInvokable;
 import com.github.tosdan.autominvk.IamInvokableAction;
-import com.github.tosdan.utils.varie.HttpReuqestUtils;
 
 @IamInvokable
 public class HelloWorldAmAction {
 	
-	private HttpServletRequest req;
+//	private HttpServletRequest req;
 
 	public static class Range {
 		private Integer min;
@@ -68,18 +66,40 @@ public class HelloWorldAmAction {
 	}
 	
 	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "post")
-	public Object post() {
-		HelloObject retval = null;
-		
-		retval = HttpReuqestUtils.buildBeanFromRequest(req, HelloObject.class);				
-		
-		return retval;
+	public Object post(HelloObject hello) {
+		System.out.println("post");
+		System.out.println(hello);
+		return hello;
 	}
 	
 
-	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", reqMethod = "get")
 	public Object get(HelloObject hello) {
+		System.out.println("get");
 		System.out.println(hello);
 		return hello;
+	}
+	
+	
+	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "get")
+	public Object getJson(HelloObject hello) {
+		System.out.println("getJson");
+		System.out.println(hello);
+		return hello;
+	}
+	
+	
+	@IamInvokableAction(mime = "application/json", render = "jsonp", reqMethod = "get")
+	public Object getJsonP(HelloObject hello) {
+		System.out.println("getJsonP");
+		System.out.println(hello);
+		return hello;
+	}
+	
+	
+	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "get")
+	public Object error() {
+		System.out.println("error");
+		return new AutoMagicHttpError(400, "Errore demo.");
 	}
 }

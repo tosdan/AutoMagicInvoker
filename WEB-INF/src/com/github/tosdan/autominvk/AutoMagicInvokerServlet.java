@@ -1,10 +1,10 @@
 package com.github.tosdan.autominvk;
 
+import static com.github.tosdan.autominvk.render.Mime.TEXT_HTML;
+
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -15,17 +15,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.github.tosdan.autominvk.render.AutoMagicRender;
+import com.github.tosdan.autominvk.render.AutoMagicResponseObject;
+import com.github.tosdan.autominvk.render.Default;
+import com.github.tosdan.autominvk.render.HttpError;
+import com.github.tosdan.autominvk.render.Json;
+import com.github.tosdan.autominvk.render.JsonP;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
-	private static final String TEXT_HTML = "text/html";
-	private static final String TEXT_PLAIN = "text/plain";
-	private static final String TEXT_JAVASCRIPT = "text/javascript";
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
 	private ServletContext ctx;
 	private AutoMagicMethodInvoker invoker;
@@ -65,69 +65,57 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 
 	/**
 	 * 
-	 * @param result
+	 * @param dataToRender
 	 * @param action
 	 * @param req
 	 * @param resp
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	private void sendResponse(Object result, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) 
+	private void sendResponse(Object dataToRender, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
-		String render = action.getRenderId();
+		String renderType = action.getRenderId();
 		String mime = action.getMimeType();
-		Object responseEntity = null;
+		Object response = null;
+		AutoMagicRender render = null;
+		AutoMagicResponseObject amResponseObject = null;
 		
-		if (result instanceof RequestDispatcher) {
+		if (dataToRender instanceof RequestDispatcher) {
 			
-			((RequestDispatcher) result).forward(req, resp);
-			
-			
-		} else if (result instanceof AutoMagicHttpError) {
-			
-			AutoMagicHttpError error = (AutoMagicHttpError) result;
-			resp.setStatus(error.getStatusCode());
-			resp.setHeader("XX-ErrorMessage", error.getMessage());
-			mime = StringUtils.defaultIfBlank(mime, TEXT_PLAIN);
-			responseEntity = error.getMessage();
+			((RequestDispatcher) dataToRender).forward(req, resp);
 			
 			
-		} else if ("jsonp".equals(render)) {
+		} else if (dataToRender instanceof AutoMagicHttpError) {
 			
-			String callback = req.getParameter("callback");
-			if (result instanceof Exception)  {
-				result = getExcptionMap((Exception) result);
-				
-			} else if (callback == null) {
-				result = getExcptionMap(new IllegalArgumentException("Parametro callback mancante nella request."));
-				
-			}
-			String jsonP = callback +"(" + getGson().toJson(result) + ")";
+			render = new HttpError();
+			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
+			
+			
+		} else if ("jsonp".equals(renderType)) {
+			
+			render = new JsonP();
+			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
 
-			mime = StringUtils.defaultIfBlank(mime, TEXT_JAVASCRIPT);
-			responseEntity = jsonP;
 			
-			
-			
-		} else if ("json".equals(render)) {
-			
-			if (result instanceof Exception)  {
-				result = getExcptionMap((Exception) result);
-			}
-			String json = getGson().toJson(result);
+		} else if ("json".equals(renderType)) {
 
-			mime = StringUtils.defaultIfBlank(mime, TEXT_PLAIN);
-			responseEntity = json;
+			render = new Json();
+			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
 			
 			
 		} else { // text/html
-			mime = StringUtils.defaultIfBlank(mime, TEXT_HTML);
-			responseEntity = result;
-
+//			
+			render = new Default();
+			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
 			
 		}
 		
-		respond(responseEntity, mime, resp);
+		if (amResponseObject != null) {
+			mime = amResponseObject.getMimeType();
+			response = amResponseObject.getResponseObject();
+		}
+		
+		respond(response, mime, resp);
 	}
 
 	/**
@@ -143,23 +131,6 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		resp.setCharacterEncoding("UTF-8");
 		resp.getWriter().print(respVal);
 	}
-	
-
-	/**
-	 * 
-	 * @param e
-	 * @return
-	 */
-	private Map<String, Object> getExcptionMap(Exception e) {
-		Map<String, Object> errMap = new HashMap<String, Object>();
-		errMap.put("error", e.getMessage());
-		errMap.put("stacktrace", ExceptionUtils.getStackTrace(e));
-		return errMap;
-	}
-	
-	private Gson getGson() {
-		return new GsonBuilder().setPrettyPrinting().create();
-	}	
 	
 
 	/**
