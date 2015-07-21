@@ -16,6 +16,8 @@
 <!-- <p><a href="action/demo/hello.get~json?cippa=lippa">Get</a></p> -->
 
 <p><a href="action/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get HelloWorld</a></p>
+<p><a href="action/demo/helloWorld.getDefault~Json?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get Default</a></p>
+<p><a href="action/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
 
 <p><button type="button" id="ajaxPost">Ajax POST</button></p>
 <p><button type="button" id="ajaxGet">Ajax GET</button></p>

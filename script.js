@@ -17,12 +17,12 @@ $(function() {
 
 	$('#ajaxGet').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
-		ajax('json', 'action/demo/helloWorld.getJson~json', data, 'get');
+		ajax('json', 'action/demo/helloWorld.getJson~Json', data, 'get');
 	});
 	
 	$('#ajaxJsonP').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
-		ajax('jsonp', 'action/demo/helloWorld.getJsonP~jsonp', data, 'get');
+		ajax('jsonp', 'action/demo/helloWorld.getJsonP~JsonP', data, 'get');
 	});
 	
 	function ajax(type, url, data, method, contentType) {

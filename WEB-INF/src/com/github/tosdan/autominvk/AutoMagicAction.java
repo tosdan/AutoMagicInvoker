@@ -1,9 +1,20 @@
 package com.github.tosdan.autominvk;
 
+import static com.github.tosdan.utils.varie.ExceptionUtilsTD.reThrow;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.github.tosdan.autominvk.rendering.AutoMagicRender;
+import com.github.tosdan.autominvk.rendering.render.Default;
 /**
  * Rappresenta un'azione che è costituita da una classe, un metodo e un render.
  * @author Daniele
@@ -18,6 +29,7 @@ public class AutoMagicAction {
 	private String methodId;
 	private String webAppRelativeRequestedURI;
 	private String renderId;
+	private Class<? extends AutoMagicRender> render;
 	private String httpMethod;
 	private String mimeType;
 	
@@ -53,6 +65,7 @@ public class AutoMagicAction {
 		if (renderStartNdx > -1) {
 			renderId = classMethodRender.substring(renderStartNdx + 1);
 			classMethodRender = classMethodRender.substring(0, renderStartNdx);
+			render = getRenderClass(renderId);
 		}
 		
 		if (methodIdSeparatorStartNdx > -1) {
@@ -77,50 +90,77 @@ public class AutoMagicAction {
 		logger.debug("Render   = [{}]", renderId);
 	}
 
-	public String getActionId() {
-		return actionId;
-	}
-	public void setActionId( String actionId ) {
-		this.actionId = actionId;
-	}
+	@SuppressWarnings( "unchecked" )
+	private Class<AutoMagicRender> getRenderClass(String renderType) {
+		String 	renderPath = Default.class.getPackage().getName() + ".",
+				classFullyQualified = renderPath + renderType;
+		
+		Class<AutoMagicRender> clazz = null;
+		try {
+			
+			clazz = (Class<AutoMagicRender>) Class.forName(classFullyQualified);
+			
+		} catch ( ClassNotFoundException e ) {
+			logger.error("Impossibile trovare la classe: [{}]", renderPath + renderType);
+			reThrow(e);
+		}
+		
+		return clazz;
 	
-	public String getMethodId() {
-		return methodId;
-	}
-	public void setMethodId( String methodId ) {
-		this.methodId = methodId;
-	}
-	
-	public String getRenderId() {
-		return renderId;
-	}
-	public void setRenderId( String renderId ) {
-		this.renderId = renderId;
-	}
-	
-	public String getInvokerRootPath() {
-		return invokerRootPath;
-	}
-	
-	public String getWebAppRelativeRequestedURI() {
-		return webAppRelativeRequestedURI;
 	}
 
-	public String getHttpMethod() {
-		return httpMethod;
+	/**
+	 * 
+	 * @param req
+	 * @param httpMethod 
+	 * @return
+	 */
+	public static AutoMagicAction getInstance(HttpServletRequest req, ServletContext ctx) {
+		String ctxPath = ctx.getContextPath();
+//		logger.trace("Context Path = [{}]", ctxPath);
+		String requestURI = getRequestURI(req);
+		logger.trace("RequestedURI = [{}]", requestURI);
+		String webAppRelativeRequestedURI = requestURI.replace(ctxPath, "");
+		logger.trace("Requested Servlet URI = [{}]", webAppRelativeRequestedURI);
+		String invokerServletPath = req.getServletPath();
+		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
+		
+		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath, req.getMethod());
 	}
+	/**
+	 * 
+	 * @param req
+	 * @return
+	 */
+	private static String getRequestURI( HttpServletRequest req ) {
+		String requestURI = req.getRequestURI();
+		try {
+			requestURI = URLDecoder.decode(requestURI, "UTF-8");
+		} catch ( UnsupportedEncodingException e ) { e.printStackTrace(); }
+		return requestURI;
+	}
+	
+	public String getActionId() { return actionId; }
+	public void setActionId( String actionId ) { this.actionId = actionId; }
+	
+	public String getMethodId() { return methodId; }
+	public void setMethodId( String methodId ) { this.methodId = methodId; }
+	
+	public String getRenderId() { return renderId; }
+	public void setRenderId( String renderId ) { this.renderId = renderId; }
+	
+	public String getHttpMethod() { return httpMethod; }
+	public void setHttpMethod( String httpMethod ) { this.httpMethod = httpMethod; }
 
-	public void setHttpMethod( String httpMethod ) {
-		this.httpMethod = httpMethod;
-	}
+	public String getMimeType() { return mimeType; }
+	public void setMimeType( String mimeType ) { this.mimeType = mimeType; }
 
-	public String getMimeType() {
-		return mimeType;
-	}
-
-	public void setMimeType( String mimeType ) {
-		this.mimeType = mimeType;
-	}
+	public Class<? extends AutoMagicRender> getRender() { return render; }
+	public void setRender( Class<? extends AutoMagicRender> render ) { this.render = render; }
+	
+	public String getInvokerRootPath() { return invokerRootPath; }
+	
+	public String getWebAppRelativeRequestedURI() { return webAppRelativeRequestedURI; }
 
 	@Override
 	public String toString() {

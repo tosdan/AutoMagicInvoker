@@ -1,10 +1,8 @@
 package com.github.tosdan.autominvk;
 
-import static com.github.tosdan.autominvk.render.Mime.TEXT_HTML;
+import static com.github.tosdan.utils.varie.ExceptionUtilsTD.reThrow;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
@@ -18,12 +16,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.github.tosdan.autominvk.render.AutoMagicRender;
-import com.github.tosdan.autominvk.render.AutoMagicResponseObject;
-import com.github.tosdan.autominvk.render.Default;
-import com.github.tosdan.autominvk.render.HttpError;
-import com.github.tosdan.autominvk.render.Json;
-import com.github.tosdan.autominvk.render.JsonP;
+import com.github.tosdan.autominvk.rendering.AutoMagicRender;
+import com.github.tosdan.autominvk.rendering.AutoMagicResponseObject;
+import com.github.tosdan.autominvk.rendering.render.Default;
+import com.github.tosdan.autominvk.rendering.render.HttpError;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
@@ -46,10 +42,12 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		String httpMethod = req.getMethod();
 		logger.trace("Metodo HTTP = [{}]", httpMethod);
 		
-		AutoMagicAction action = getAction(req);
+		AutoMagicAction action = null;
 		
 		Object retval = null;
 		try {
+			action = AutoMagicAction.getInstance(req, ctx);
+			
 			logger.trace("{}", action);
 			
 			retval = invoker.invoke(action, req, ctx);
@@ -74,93 +72,92 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 */
 	private void sendResponse(Object dataToRender, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp) 
 			throws ServletException, IOException {
-		String renderType = action.getRenderId();
-		String mime = action.getMimeType();
+		Class<? extends AutoMagicRender> renderClass = action.getRender();
 		Object response = null;
-		AutoMagicRender render = null;
-		AutoMagicResponseObject amResponseObject = null;
+		String charset = "UTF-8";
 		
-		if (dataToRender instanceof RequestDispatcher) {
-			
+		AutoMagicRender render = null;
+		AutoMagicResponseObject amRespObj = null;
+		
+		logger.debug("Dati da renderizzare: [{}]", dataToRender);
+		logger.debug("Render Instance: [{}]", render);
+		
+		if (dataToRender instanceof RequestDispatcher) {			
 			((RequestDispatcher) dataToRender).forward(req, resp);
 			
 			
 		} else if (dataToRender instanceof AutoMagicHttpError) {
-			
 			render = new HttpError();
-			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
-			
-			
-		} else if ("jsonp".equals(renderType)) {
-			
-			render = new JsonP();
-			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
 
 			
-		} else if ("json".equals(renderType)) {
-
-			render = new Json();
-			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
+		} else if (renderClass != null) {
+			render = getRenderInstance(renderClass);
 			
 			
-		} else { // text/html
-//			
+		} else {
 			render = new Default();
-			amResponseObject = render.getResponseObject(dataToRender, action, req, resp);
 			
 		}
 		
-		if (amResponseObject != null) {
-			mime = amResponseObject.getMimeType();
-			response = amResponseObject.getResponseObject();
+		
+		 // Per esempio un caso lecito in cui renderInstance è null capita quando venga restituito un dispatcher.
+		if (render != null) { 
+			amRespObj = render.getResponseObject(dataToRender, action, req, resp);
+
+			String mime = action.getMimeType();
+			
+			if (amRespObj != null) {
+				mime = amRespObj.getMimeType();
+				response = amRespObj.getResponseObject();
+				charset = StringUtils.defaultIfBlank(amRespObj.getCharset(), charset);
+
+			}
+			respond(response, mime, charset, resp);
 		}
 		
-		respond(response, mime, resp);
 	}
+
+	/**
+	 * 
+	 * @param render
+	 * @return
+	 */
+	private AutoMagicRender getRenderInstance(Class<? extends AutoMagicRender> render) {
+		
+		AutoMagicRender instance = null;
+		try {
+			
+			instance = render.newInstance();
+			
+		} catch ( InstantiationException e ) {
+			logger.error("Impossibile creare un'istanza della classe: [{}]", render.getName());
+			reThrow(e);
+		} catch ( IllegalAccessException e ) {
+			logger.error("Impossibile inizializzare l'istanza della classe: [{}]", render.getName());
+			reThrow(e);
+		}
+		
+		return instance;
+	}
+
 
 	/**
 	 * 
 	 * @param respVal
 	 * @param mime
+	 * @param charset 
 	 * @param resp
 	 * @throws IOException
 	 */
-	private void respond(Object respVal, String mime, HttpServletResponse resp) 
+	private void respond(Object respVal, String mime, String charset, HttpServletResponse resp) 
 			throws IOException {
 		resp.setContentType(mime);
-		resp.setCharacterEncoding("UTF-8");
-		resp.getWriter().print(respVal);
+		resp.setCharacterEncoding(charset);
+		resp.getWriter()
+			.print(respVal);
 	}
 	
 
-	/**
-	 * 
-	 * @param req
-	 * @param httpMethod 
-	 * @return
-	 */
-	private AutoMagicAction getAction(HttpServletRequest req) {
-		String ctxPath = ctx.getContextPath();
-//		logger.trace("Context Path = [{}]", ctxPath);
-		String requestURI = getRequestURI(req);
-		logger.trace("RequestedURI = [{}]", requestURI);
-		String webAppRelativeRequestedURI = requestURI.replace(ctxPath, "");
-		logger.trace("Requested Servlet URI = [{}]", webAppRelativeRequestedURI);
-		String invokerServletPath = req.getServletPath();
-		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
-		
-		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath, req.getMethod());
-	}
-
-
-	private String getRequestURI( HttpServletRequest req ) {
-		String requestURI = req.getRequestURI();
-		try {
-			requestURI = URLDecoder.decode(requestURI, "UTF-8");
-		} catch ( UnsupportedEncodingException e ) { e.printStackTrace(); }
-		return requestURI;
-	}
-	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -175,9 +172,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	
 	@Override
 	public void destroy() {	
-		super.destroy();
 		this.invoker = null;
 		this.ctx = null;
+		super.destroy();
 	}
 
 	@Override protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException { doServ(req, resp); }

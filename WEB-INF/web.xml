@@ -8,6 +8,16 @@
 	version="2.5">
 
 	<servlet>
+		<description>Dummy Servlet</description>
+		<servlet-name>ForwardToMe</servlet-name>
+		<servlet-class>com.github.tosdan.autominvk.apps.demo.ForwardToMe</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>ForwardToMe</servlet-name>
+		<url-pattern>/forwardToMe/*</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
 		<description>Servlet da chiamare per l'invocazione automatica delle azioni che implementano IamInvokable</description>
 		<servlet-name>AutoMagicInvoker</servlet-name>
 		<servlet-class>com.github.tosdan.autominvk.AutoMagicInvokerServlet</servlet-class>

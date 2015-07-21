@@ -12,6 +12,9 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tosdan.autominvk.rendering.AutoMagicRender;
+import com.github.tosdan.autominvk.rendering.render.DefaultNull;
+
 public class AutoMagicMethodInvoker {
 
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicMethodInvoker.class);
@@ -45,10 +48,12 @@ public class AutoMagicMethodInvoker {
 		try {
 
 			Object[] args = null;
+			
 			if (method.getParameterTypes().length > 0) {
 				args = ReflectUtils.getArgs(req, method);
 				logger.debug("Injecting argumets= [{}]", args);
 			}
+			
 			retval = method.invoke(instance, args);
 		
 		} catch ( IllegalAccessException e ) {
@@ -63,10 +68,13 @@ public class AutoMagicMethodInvoker {
 
 	private void forceRenderByAnnotation( AutoMagicAction amAction, Method method ) {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
-		String render = ann.render();
-		if (render != null && !render.isEmpty()) {
-			logger.debug("Render impostato con annotation=[{}]", render);
-			amAction.setRenderId(render);
+		
+		Class<? extends AutoMagicRender> clazz = ann.render();
+		boolean isDefault = clazz.equals(DefaultNull.class);
+		
+		if (!isDefault || amAction.getRender() == null) { // defaultNull solo quando via request non hanno specificato il ~render
+			amAction.setRender(clazz);
+			logger.debug("Render forzato tramite annotation=[{}]", clazz.getName());
 		}
 	}
 	
@@ -74,7 +82,7 @@ public class AutoMagicMethodInvoker {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		String mime = ann.mime();
 		if (mime != null && !mime.isEmpty()) {
-			logger.debug("Mime impostato con annotation=[{}]", mime);
+			logger.debug("Mime forzato tramite annotation=[{}]", mime);
 			amAction.setMimeType(mime);
 		}
 	}
@@ -113,10 +121,7 @@ public class AutoMagicMethodInvoker {
 					if (isHttpMethodCorrect) {
 						retval = m;
 						errMsg = null;
-						break;
-						
-						
-						
+						break;						
 					} else {
 						errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annMethod+"]" +
 								", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";

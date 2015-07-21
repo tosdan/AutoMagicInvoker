@@ -3,15 +3,23 @@ package com.github.tosdan.autominvk.apps.demo;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+
 import com.github.tosdan.autominvk.AutoMagicHttpError;
 import com.github.tosdan.autominvk.IamInvokable;
 import com.github.tosdan.autominvk.IamInvokableAction;
+import com.github.tosdan.autominvk.rendering.render.Default;
+import com.github.tosdan.autominvk.rendering.render.Json;
+import com.github.tosdan.autominvk.rendering.render.JsonP;
 
 @IamInvokable
 public class HelloWorldAmAction {
 	
 //	private HttpServletRequest req;
 
+	private ServletContext ctx;
+	
 	public static class Range {
 		private Integer min;
 		private Integer max;
@@ -65,9 +73,9 @@ public class HelloWorldAmAction {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "post")
+	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "post")
 	public Object post(HelloObject hello) {
-		System.out.println("post");
+		System.out.println("HelloWorldAmAction.post()");
 		System.out.println(hello);
 		return hello;
 	}
@@ -75,31 +83,47 @@ public class HelloWorldAmAction {
 
 	@IamInvokableAction(mime = "application/json", reqMethod = "get")
 	public Object get(HelloObject hello) {
-		System.out.println("get");
+		System.out.println("HelloWorldAmAction.get()");
 		System.out.println(hello);
 		return hello;
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = Default.class, reqMethod = "get")
+	public Object getDefault(HelloObject hello) {
+		System.out.println("HelloWorldAmAction.getDefault()");
+		System.out.println(hello);
+		return hello;
+	}
+	
+	
+	@IamInvokableAction(mime = "application/json", render = Json.class , reqMethod = "get")
 	public Object getJson(HelloObject hello) {
-		System.out.println("getJson");
+		System.out.println("HelloWorldAmAction.getJson()");
 		System.out.println(hello);
 		return hello;
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = "jsonp", reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = JsonP.class, reqMethod = "get")
 	public Object getJsonP(HelloObject hello) {
-		System.out.println("getJsonP");
+		System.out.println("HelloWorldAmAction.getJsonP()");
 		System.out.println(hello);
 		return hello;
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = "json", reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "get")
 	public Object error() {
-		System.out.println("error");
+		System.out.println("HelloWorldAmAction.error()");
 		return new AutoMagicHttpError(400, "Errore demo.");
+	}
+
+	
+	@IamInvokableAction(reqMethod = "get")
+	public Object forward() {
+		System.out.println("HelloWorldAmAction.forward()");
+		RequestDispatcher dispatcher = ctx.getNamedDispatcher("ForwardToMe");
+		return dispatcher;
 	}
 }
