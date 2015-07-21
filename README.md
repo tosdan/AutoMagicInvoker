@@ -1,0 +1,2 @@
+# AutoMagicInvoker
+Micro mvc framework
