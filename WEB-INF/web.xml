@@ -18,11 +18,6 @@
 			<param-name>CLASS_PATH</param-name>
 			<param-value>com.github.tosdan.autominvk.apps</param-value>
 		</init-param>
-		<init-param>
-			<description>Il nome della servlet di download a cui fare forward in caso di download</description>
-			<param-name>DownloadServletName</param-name>
-			<param-value>DownloadServlet</param-value>
-		</init-param>
 	</servlet>
 	<servlet-mapping>
         <servlet-name>AutoMagicInvoker</servlet-name>
