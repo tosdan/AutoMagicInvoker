@@ -55,7 +55,11 @@ Per eseguire l'azione associata al metodo *get* della classe *DemoAmAction*, ipo
 ~~~
 http://host.it/webapp
 ~~~
-e che la classe sia nel package indicato dal init-param CLASS_PATH *com.github.tosdan.autominvk.apps* (e non in un sottopackage), basta effettuare una chiamata HTTP all'url
+e che la classe sia nel package indicato dal init-param CLASS_PATH 
+~~~
+com.github.tosdan.autominvk.apps
+~~~
+(e non in un sottopackage), basta effettuare una chiamata HTTP all'url
 ~~~
 http://host.it/webapp/demo.get
 ~~~
@@ -70,7 +74,8 @@ com.github.tosdan.autominvk.apps.demoApp
  l'url da chiamare diventerebbe 
 ~~~
 http://host.it/webapp/demoApp/demo.get
-~~~.
+~~~
+
 
 ## Usage
 
