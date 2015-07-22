@@ -51,7 +51,7 @@ public class DemoAmAction {
 }
 ~~~
 
-Per eseguire l'azione associata al metodo *get* della classe *__DemoAmAction__*, ipotizzando che l'url di base della webapp sia 
+Per eseguire l'azione associata al metodo *__get__* della classe *__DemoAmAction__*, ipotizzando che l'url di base della webapp sia 
 ~~~
 http://host.it/webapp
 ~~~
@@ -61,10 +61,10 @@ com.github.tosdan.autominvk.apps
 ~~~
 (e non in un sottopackage), basta effettuare una chiamata HTTP all'url
 ~~~
-http://host.it/webapp/demo.get
+http://host.it/webapp/__demo__.*get*
 ~~~
 
-Nella chiamata il nome della classe va scritto in __camelCase__, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *AmAction* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
+Nella chiamata il nome della classe va scritto in __camelCase__, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *__AmAction__* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
 
 A partire dal package principale (CLASS_PATH) è possibile creare una gerarchia di sotto package. Nell'url da chiamare ogni sotto package si traduce in un sotto path da interporre prima del nome della classe.
 Nel caso la classe fosse posizionata in un sottopackage per esempio 
@@ -73,7 +73,7 @@ com.github.tosdan.autominvk.apps.demoApp
 ~~~
  l'url da chiamare diventerebbe 
 ~~~
-http://host.it/webapp/demoApp/demo.get
+http://host.it/webapp/_demoApp_/__demo__.*get*
 ~~~
 
 
