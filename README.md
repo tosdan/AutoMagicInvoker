@@ -1,12 +1,12 @@
 # AutoMagicInvoker
 Micro mvc framework
 
-## Install
+## Installazione
 
-Grab the zip fie from the last release and unpack into your project.
+Scaricare lo zip dell'ultima release e copiare i jar nel proprio progetto (nella cartella lib sono contenuti jar con le dipendenze). 
 
 
-Add the following lines in the prject's `web.xml`
+Nel `web.xml` aggiungere la seguente servlet:
 ~~~xml
 	<servlet>
 		<description>Servlet da chiamare per l'invocazione automatica delle azioni che implementano IamInvokable</description>
@@ -26,7 +26,27 @@ Add the following lines in the prject's `web.xml`
     </servlet-mapping>
 ~~~
 
-Set the *CLASS_PATH* param to the folder you want to put your *AmAction* classes. Set the *url-pattern* to a desired url.
+L'`url-pattern` proposto è puramente indicativo, non c'è alcun vincolo da rispettare. L'*ini-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
+Conviene specificare un package particolare semplicemente per questioni di performance, nulla di vieta di impostare un package più generico.
+Solo le classi con *Annotation* `IamInvokable` vengono censite. Queste classi costituiscono i *Controller*.
+~~~java
+@IamInvokable
+public class Demo {
+	...
+}
+~~~
+All'interno di queste classi *Controller* solo i metodi con *Annotation* `IamInvokableAction` costituiscono una azione richiamabile tramite chiamata HTTP.
+~~~java
+@IamInvokable
+public class Demo {	
+
+	@IamInvokableAction
+	public Object get() {
+		...
+	}
+}
+~~~
+
 
 ## Usage
 
