@@ -1,9 +1,12 @@
 # AutoMagicInvoker
 Micro mvc framework
 
-## Instal
+## Install
 
-Copy the following line into `web.xml`
+Grab the zip fie from the last release and unpack into your project.
+
+
+Add the following lines in the prject's `web.xml`
 ~~~xml
 	<servlet>
 		<description>Servlet da chiamare per l'invocazione automatica delle azioni che implementano IamInvokable</description>
@@ -22,3 +25,8 @@ Copy the following line into `web.xml`
         <url-pattern>/action/*</url-pattern>
     </servlet-mapping>
 ~~~
+
+Set the *CLASS_PATH* param to the folder you want to put your *Action*. Set the *url-pattern* to a desired url.
+
+## Usage
+
