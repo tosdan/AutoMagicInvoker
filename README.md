@@ -26,19 +26,20 @@ Nel `web.xml` aggiungere la seguente servlet:
     </servlet-mapping>
 ~~~
 
-L'`url-pattern` proposto è puramente indicativo, non c'è alcun vincolo da rispettare. L'*ini-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
+L'`url-pattern` proposto è puramente indicativo, non c'è alcun vincolo da rispettare. L'*init-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
 Conviene specificare un package particolare semplicemente per questioni di performance, nulla di vieta di impostare un package più generico.
-Solo le classi con *Annotation* `IamInvokable` vengono censite. Queste classi costituiscono i *Controller*.
+Solo le classi con *Annotation* `IamInvokable` vengono censite. Queste classi costituiscono i *Controller* dell'applicazione.
 ~~~java
 @IamInvokable
-public class Demo {
+public class DemoAmAction {
 	...
 }
 ~~~
+
 All'interno di queste classi *Controller* solo i metodi con *Annotation* `IamInvokableAction` costituiscono una azione richiamabile tramite chiamata HTTP.
 ~~~java
 @IamInvokable
-public class Demo {	
+public class DemoAmAction {	
 
 	@IamInvokableAction
 	public Object get() {
@@ -47,6 +48,8 @@ public class Demo {
 }
 ~~~
 
+Per eseguire l'azione associata al metodo *get* della classe *DemoAmAction*, ipotizzando che l'url di base della webapp sia *http://host.it/webapp*, basta effettuare una chiamata HTTP all'url *http://host.it/webapp/demo.get*
 
+Nella chiamata il nome della classe va scritto in camelCase, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *AmAction* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
 ## Usage
 
