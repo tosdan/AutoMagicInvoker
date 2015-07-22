@@ -37,7 +37,7 @@
     
 <welcome-file-list>
 	<welcome-file>
-		test.jsp
+		demo/test.jsp
 	</welcome-file>
 </welcome-file-list>
 	
