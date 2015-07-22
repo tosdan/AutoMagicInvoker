@@ -48,8 +48,11 @@ public class DemoAmAction {
 }
 ~~~
 
-Per eseguire l'azione associata al metodo *get* della classe *DemoAmAction*, ipotizzando che l'url di base della webapp sia *http://host.it/webapp*, basta effettuare una chiamata HTTP all'url *http://host.it/webapp/demo.get*
+Per eseguire l'azione associata al metodo *get* della classe *DemoAmAction*, ipotizzando che l'url di base della webapp sia *http://host.it/webapp* e che la classe sia nel package indicato dal init-param CLASS_PATH *com.github.tosdan.autominvk.apps* (e non in un sottopackage), basta effettuare una chiamata HTTP all'url *http://host.it/webapp/demo.get*
 
 Nella chiamata il nome della classe va scritto in camelCase, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *AmAction* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
+
+Nel caso la classe fosse posizionata in un sottopackage per esempio *com.github.tosdan.autominvk.apps.demoApp* l'url da chiamare diventerebbe *http://host.it/webapp/demoApp/demo.get*.
+
 ## Usage
 
