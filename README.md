@@ -61,7 +61,7 @@ com.github.tosdan.autominvk.apps
 ~~~
 (e non in un sottopackage), basta effettuare una chiamata HTTP all'url
 ~~~
-http://host.it/webapp/__demo__.*get*
+http://host.it/webapp/demo.get
 ~~~
 
 Nella chiamata il nome della classe va scritto in __camelCase__, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *__AmAction__* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
@@ -73,7 +73,7 @@ com.github.tosdan.autominvk.apps.demoApp
 ~~~
  l'url da chiamare diventerebbe 
 ~~~
-http://host.it/webapp/_demoApp_/__demo__.*get*
+http://host.it/webapp/demoApp/demo.get
 ~~~
 
 
