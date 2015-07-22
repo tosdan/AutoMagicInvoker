@@ -7,22 +7,22 @@ $(function() {
 			           { min: 10, max: 18 }, 
 			           { min: 90, max: 100 }]
 		});
-		ajax('json', 'action/demo/helloWorld.post', data, 'post', 'application/json');
+		ajax('json', '../action/demo/helloWorld.post', data, 'post', 'application/json');
 	});
 	
 	$('#ajaxError').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
-		ajax('json', 'action/demo/helloWorld.error', data, 'get');
+		ajax('json', '../action/demo/helloWorld.error', data, 'get');
 	});
 
 	$('#ajaxGet').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
-		ajax('json', 'action/demo/helloWorld.getJson~Json', data, 'get');
+		ajax('json', '../action/demo/helloWorld.getJson~Json', data, 'get');
 	});
 	
 	$('#ajaxJsonP').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
-		ajax('jsonp', 'action/demo/helloWorld.getJsonP~JsonP', data, 'get');
+		ajax('jsonp', '../action/demo/helloWorld.getJsonP~JsonP', data, 'get');
 	});
 	
 	function ajax(type, url, data, method, contentType) {

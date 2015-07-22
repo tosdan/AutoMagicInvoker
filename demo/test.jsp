@@ -9,15 +9,15 @@
 </head>
 <body>
 <h2>Demo Page</h2>
-<!-- <p><a href="action/demo/hello.forward~json?cippa=lippa">Spatcher</a></p> -->
+<!-- <p><a href="../action/demo/hello.forward~json?cippa=lippa">Spatcher</a></p> -->
 
-<!-- <p><a href="action/demo/hello.echo~json?cippa=lippa&amici=miei">Params Echo</a></p> -->
+<!-- <p><a href="../action/demo/hello.echo~json?cippa=lippa&amici=miei">Params Echo</a></p> -->
 
-<!-- <p><a href="action/demo/hello.get~json?cippa=lippa">Get</a></p> -->
+<!-- <p><a href="../action/demo/hello.get~json?cippa=lippa">Get</a></p> -->
 
-<p><a href="action/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get HelloWorld</a></p>
-<p><a href="action/demo/helloWorld.getDefault~Json?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get Default</a></p>
-<p><a href="action/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
+<p><a href="../action/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get HelloWorld</a></p>
+<p><a href="../action/demo/helloWorld.getDefault~Json?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get Default</a></p>
+<p><a href="../action/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
 
 <p><button type="button" id="ajaxPost">Ajax POST</button></p>
 <p><button type="button" id="ajaxGet">Ajax GET</button></p>
@@ -25,7 +25,7 @@
 <p><button type="button" id="ajaxError">Ajax ERROR</button></p>
 
 <fieldset>
-	<form action="action/demo/helloWorld.post" method="post">
+	<form action="../action/demo/helloWorld.post" method="post">
 		Greet: <input type="text" value="Ciao" name="greet"><br>
 		Name: <input type="text" value="Mondo" name="name"><br>
 		Year: <input type="text" value="2015" name="year"><br>
