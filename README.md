@@ -26,7 +26,7 @@ Add the following lines in the prject's `web.xml`
     </servlet-mapping>
 ~~~
 
-Set the *CLASS_PATH* param to the folder you want to put your *Action*. Set the *url-pattern* to a desired url.
+Set the *CLASS_PATH* param to the folder you want to put your *AmAction* classes. Set the *url-pattern* to a desired url.
 
 ## Usage
 
