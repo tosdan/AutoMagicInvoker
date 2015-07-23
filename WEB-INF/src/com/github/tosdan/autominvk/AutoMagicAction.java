@@ -1,7 +1,5 @@
 package com.github.tosdan.autominvk;
 
-import static com.github.tosdan.utils.varie.ExceptionUtilsTD.reThrow;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 
@@ -15,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.render.Default;
+import com.google.common.base.Throwables;
 /**
  * Rappresenta un'azione che è costituita da una classe, un metodo e un render.
  * @author Daniele
@@ -100,9 +99,9 @@ public class AutoMagicAction {
 			
 			clazz = (Class<AutoMagicRender>) Class.forName(classFullyQualified);
 			
-		} catch ( ClassNotFoundException e ) {
+		} catch (ClassNotFoundException e) {
 			logger.error("Impossibile trovare la classe: [{}]", renderPath + renderType);
-			reThrow(e);
+			Throwables.propagate(e);
 		}
 		
 		return clazz;

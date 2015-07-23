@@ -1,7 +1,5 @@
 package com.github.tosdan.autominvk;
 
-import static com.github.tosdan.utils.varie.ExceptionUtilsTD.reThrow;
-
 import java.io.IOException;
 
 import javax.servlet.RequestDispatcher;
@@ -20,6 +18,7 @@ import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.AutoMagicResponseObject;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.HttpError;
+import com.google.common.base.Throwables;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
@@ -131,10 +130,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			
 		} catch ( InstantiationException e ) {
 			logger.error("Impossibile creare un'istanza della classe: [{}]", render.getName());
-			reThrow(e);
 		} catch ( IllegalAccessException e ) {
 			logger.error("Impossibile inizializzare l'istanza della classe: [{}]", render.getName());
-			reThrow(e);
+			Throwables.propagate(e);
 		}
 		
 		return instance;
