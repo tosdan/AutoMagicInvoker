@@ -3,6 +3,7 @@ package com.github.tosdan.autominvk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
+import com.github.tosdan.utils.varie.HttpReuqestUtils;
 
 public class AutoMagicMethodInvoker {
 
@@ -50,7 +52,7 @@ public class AutoMagicMethodInvoker {
 			Object[] args = null;
 			
 			if (method.getParameterTypes().length > 0) {
-				args = ReflectUtils.getArgs(req, method);
+				args = getArgs(req, method);
 				logger.debug("Injecting argumets= [{}]", args);
 			}
 			
@@ -66,6 +68,18 @@ public class AutoMagicMethodInvoker {
 		return retval;
 	}
 
+	private Object[] getArgs(HttpServletRequest req, Method method) {
+		Parameter[] params = method.getParameters();
+		Object[] args = new Object[params.length];
+		Parameter p;
+		for (int i = 0 ; i < params.length ; i++) {
+			p = params[i];
+			logger.debug("Getting instance of: [{}]", p);
+			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p.getType());
+		}
+		return args;
+	}
+	
 	private void forceRenderByAnnotation( AutoMagicAction amAction, Method method ) {
 		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
 		
