@@ -27,7 +27,6 @@ public class AutoMagicAction {
 	private String invokerRootPath;
 	private String methodId;
 	private String webAppRelativeRequestedURI;
-	private String renderId;
 	private Class<? extends AutoMagicRender> render;
 	private String httpMethod;
 	private String mimeType;
@@ -36,7 +35,6 @@ public class AutoMagicAction {
 		this.webAppRelativeRequestedURI = webAppRelativeRequestedURI;
 		this.invokerRootPath = invokerRootPath;
 		this.httpMethod = httpMethod;
-		this.renderId = "";
 		init(webAppRelativeRequestedURI, invokerRootPath, httpMethod);
 	}
 	
@@ -62,9 +60,9 @@ public class AutoMagicAction {
 		int renderStartNdx = classMethodRender.indexOf("~");
 		
 		if (renderStartNdx > -1) {
-			renderId = classMethodRender.substring(renderStartNdx + 1);
+			String renderClassSimpleName = classMethodRender.substring(renderStartNdx + 1);
 			classMethodRender = classMethodRender.substring(0, renderStartNdx);
-			render = getRenderClass(renderId);
+			render = getRenderClass(renderClassSimpleName);
 		}
 		
 		if (methodIdSeparatorStartNdx > -1) {
@@ -86,13 +84,13 @@ public class AutoMagicAction {
 		logger.debug("actionId = [{}]", actionId);
 		logger.debug("classId = [{}]", classMethodRender);
 		logger.debug("methodId = [{}]", methodId);
-		logger.debug("Render   = [{}]", renderId);
+		logger.debug("Render   = [{}]", render.getName());
 	}
 
 	@SuppressWarnings( "unchecked" )
-	private Class<AutoMagicRender> getRenderClass(String renderType) {
+	private Class<AutoMagicRender> getRenderClass(String renderClassSimpleName) {
 		String 	renderPath = Default.class.getPackage().getName() + ".",
-				classFullyQualified = renderPath + renderType;
+				classFullyQualified = renderPath + renderClassSimpleName;
 		
 		Class<AutoMagicRender> clazz = null;
 		try {
@@ -100,7 +98,7 @@ public class AutoMagicAction {
 			clazz = (Class<AutoMagicRender>) Class.forName(classFullyQualified);
 			
 		} catch (ClassNotFoundException e) {
-			logger.error("Impossibile trovare la classe: [{}]", renderPath + renderType);
+			logger.error("Impossibile trovare la classe: [{}]", renderPath + renderClassSimpleName);
 			Throwables.propagate(e);
 		}
 		
@@ -144,9 +142,6 @@ public class AutoMagicAction {
 	
 	public String getMethodId() { return methodId; }
 	public void setMethodId( String methodId ) { this.methodId = methodId; }
-	
-	public String getRenderId() { return renderId; }
-	public void setRenderId( String renderId ) { this.renderId = renderId; }
 	
 	public String getHttpMethod() { return httpMethod; }
 	public void setHttpMethod( String httpMethod ) { this.httpMethod = httpMethod; }
