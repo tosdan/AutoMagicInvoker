@@ -3,7 +3,6 @@ package com.github.tosdan.autominvk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -69,13 +68,13 @@ public class AutoMagicMethodInvoker {
 	}
 
 	private Object[] getArgs(HttpServletRequest req, Method method) {
-		Parameter[] params = method.getParameters();
+		Class<?>[] params = method.getParameterTypes();
 		Object[] args = new Object[params.length];
-		Parameter p;
+		Class<?> p;
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
 			logger.debug("Getting instance of: [{}]", p);
-			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p.getType());
+			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p);
 		}
 		return args;
 	}
