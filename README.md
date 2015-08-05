@@ -26,10 +26,14 @@ Nel `web.xml` aggiungere la seguente servlet:
     </servlet-mapping>
 ~~~
 
-L'`url-pattern` proposto è puramente indicativo, non c'è alcun vincolo da rispettare. L'*init-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
-Conviene specificare un package particolare semplicemente per questioni di performance, nulla di vieta di impostare un package più generico.
+L'`url-pattern` proposto per la servlet è puramente di esempio, non c'è alcun vincolo da rispettare. 
+
+L'*init-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
+Conviene specificare un package ben specifico, semplicemente per questioni di performance, più classi sono contenute nel package specificato e nei suoi sottopackage più tempo richiede la scansione (normalmente nell'ordine dei ms). Nulla di vieta di impostare un package più generico.
 
 ## Panoramica
+
+### Controller
 
 Solo le classi con *Annotation* `IamInvokable` vengono censite. Queste classi costituiscono i *Controller* dell'applicazione.
 ~~~java
