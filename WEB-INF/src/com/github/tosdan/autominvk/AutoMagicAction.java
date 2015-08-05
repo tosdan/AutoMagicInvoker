@@ -84,7 +84,7 @@ public class AutoMagicAction {
 		logger.debug("actionId = [{}]", actionId);
 		logger.debug("classId = [{}]", classMethodRender);
 		logger.debug("methodId = [{}]", methodId);
-		logger.debug("Render   = [{}]", render.getName());
+		logger.debug("Render   = [{}]", render != null ? render.getName() : null);
 	}
 
 	@SuppressWarnings( "unchecked" )
