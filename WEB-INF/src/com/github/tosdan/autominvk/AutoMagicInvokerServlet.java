@@ -81,24 +81,25 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		logger.debug("Dati da renderizzare: [{}]", dataToRender);
 		
 		if (dataToRender instanceof RequestDispatcher) {
+			logger.debug("Forwarding...");
 			((RequestDispatcher) dataToRender).forward(req, resp);
 			
 			
-		} else if (dataToRender instanceof AutoMagicHttpError) {
-			render = new HttpError();
-
-			
-		} else if (renderClass != null) {
-			render = getRenderInstance(renderClass);
-			
-			
 		} else {
-			render = new Default();
+			logger.debug("Rendering...");
+			if (dataToRender instanceof AutoMagicHttpError) {
+				render = new HttpError();
+
+				
+			} else if (renderClass != null) {
+				render = getRenderInstance(renderClass);
+				
+				
+			} else {
+				render = new Default();
+				
+			}
 			
-		}
-		
-		 // Per esempio, un caso lecito in cui renderInstance è null, capita quando venga restituito un dispatcher.
-		if (render != null) {
 			logger.debug("Render Instance: [{}]", render.getClass().getName());
 			amRespObj = render.getResponseObject(dataToRender, action, req, resp);
 
