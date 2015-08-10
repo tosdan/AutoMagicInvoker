@@ -40,9 +40,16 @@ public class Json implements AutoMagicRender {
 		}
 		
 		String respData = getResponseData(dataToRender, req);
-		LOGGER.debug("Dati renderizzati:\n{}", respData);
+		LOGGER.debug("Dati renderizzati:\n{}", cutRespData(respData));
+		LOGGER.trace("Dati renderizzati:\n{}", respData);
 
 		return new AutoMagicResponseObject(mime, respData);
+	}
+
+	private String cutRespData( String respData ) {
+		return (respData != null && respData.length() > 60) 
+				? respData.substring(0, 60)+"...\nFor full content check TRACE log." 
+				: respData;
 	}
 
 	protected String getRenderDefaultMime() {
