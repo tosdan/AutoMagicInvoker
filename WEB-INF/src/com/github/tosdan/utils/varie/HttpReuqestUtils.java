@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import com.google.gson.stream.JsonWriter;
 public class HttpReuqestUtils {
 	
 	private final static Logger logger = LoggerFactory.getLogger(HttpReuqestUtils.class);
+	public final static String GSON_DATE_FORMAT = "HttpReuqestUtils.gsonDateFormat";
 	
 	public final static String[] sources = 
 		{"X-Forwarded-For", "X-FORWARDED-FOR", "x-forwarded-for", "Proxy-Client-IP" , "X-Forwarded-Server", "X-Forwarded-Host", "X-Pounded-For", "Proxy-Client-IP" , "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
@@ -123,9 +125,12 @@ public class HttpReuqestUtils {
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
+		String gsonDateFormat = getGsonDateFormat(req);
+		
 		Gson gson = new GsonBuilder()
 						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
 						.registerTypeAdapter(Float.class, new FloatTypeAdapter())
+						.setDateFormat(gsonDateFormat)
 						.create();
 		
 		String requestBody = HttpReuqestUtils.parseRequestBody(req);
@@ -137,20 +142,20 @@ public class HttpReuqestUtils {
 		String json = null;
 		
 		if ("GET".equalsIgnoreCase(req.getMethod())) {
-			logger.debug("Parseing QueryString parameters...");
+			logger.debug("Parsing QueryString parameters...");
 
 			Map<String, Object> requestParamsMap = QueryStringUtils.parse(req.getQueryString());
 //			logger.debug("Parametri della request: {}", requestParamsMap);
 			json = gson.toJson(requestParamsMap);
 			
-		} else if (APPLICATION_X_WWW_FORM_URLENCODED.equalsIgnoreCase(contentType)) {
-			logger.debug("Parseing Form POST parameters...");
+		} else if (StringUtils.containsIgnoreCase(contentType, APPLICATION_X_WWW_FORM_URLENCODED)) {
+			logger.debug("Parsing Form POST parameters...");
 			
 			Map<String, Object> requestParamsMap = QueryStringUtils.parse(requestBody);
-//			logger.debug("Parametri della request: {}", requestParamsMap);
+			logger.debug("Parametri della request: {}", requestParamsMap);
 			json = gson.toJson(requestParamsMap);
 			
-		} else if (APPLICATION_JSON.equalsIgnoreCase(contentType)) {
+		} else if (StringUtils.containsIgnoreCase(contentType, APPLICATION_JSON)) {
 
 			json = requestBody;
 		}
@@ -161,6 +166,17 @@ public class HttpReuqestUtils {
 		retval = gson.fromJson(json, clazz);
 		
 		return retval;
+	}
+
+	private static String getGsonDateFormat (HttpServletRequest req) {
+		String gsonDateFormat = req.getParameter(GSON_DATE_FORMAT);
+		if (gsonDateFormat == null) {
+			gsonDateFormat = (String) req.getAttribute(GSON_DATE_FORMAT);
+			if (gsonDateFormat == null) {
+				gsonDateFormat = "dd/MM/yyyy";
+			}
+		}
+		return gsonDateFormat;
 	}
 	
 	/**
