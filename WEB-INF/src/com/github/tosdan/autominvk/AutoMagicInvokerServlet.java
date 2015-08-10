@@ -79,9 +79,8 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		AutoMagicResponseObject amRespObj = null;
 		
 		logger.debug("Dati da renderizzare: [{}]", dataToRender);
-		logger.debug("Render Instance: [{}]", render);
 		
-		if (dataToRender instanceof RequestDispatcher) {			
+		if (dataToRender instanceof RequestDispatcher) {
 			((RequestDispatcher) dataToRender).forward(req, resp);
 			
 			
@@ -98,9 +97,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			
 		}
 		
-		
-		 // Per esempio un caso lecito in cui renderInstance è null capita quando venga restituito un dispatcher.
-		if (render != null) { 
+		 // Per esempio, un caso lecito in cui renderInstance è null, capita quando venga restituito un dispatcher.
+		if (render != null) {
+			logger.debug("Render Instance: [{}]", render.getClass().getName());
 			amRespObj = render.getResponseObject(dataToRender, action, req, resp);
 
 			String mime = action.getMimeType();
