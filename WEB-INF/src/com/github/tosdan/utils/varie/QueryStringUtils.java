@@ -13,33 +13,34 @@ public class QueryStringUtils {
 		Map<String, Object> retval = new HashMap<String, Object>();		
 		List<String> temp;
 		Object prevVal;
-	    for (String pair : queryString.split("&")) {
-	    	
-	        int eq = pair.indexOf("=");
-	        if (eq > 0) { 
-			    String key = decode(pair.substring(0, eq));
-			    String value = decode(pair.substring(eq + 1));
-			    
-			    if (!key.isEmpty() && !value.isEmpty()) {
-			    	
-					prevVal = retval.get(key);
-					if ( prevVal != null ) {
-						if ( prevVal instanceof List ) {
-							((List<String>) prevVal).add(value);
+	    if (queryString != null) {
+			for( String pair : queryString.split("&") ) {
+
+				int eq = pair.indexOf("=");
+				if ( eq > 0 ) {
+					String key = decode(pair.substring(0, eq));
+					String value = decode(pair.substring(eq + 1));
+
+					if ( !key.isEmpty() && !value.isEmpty() ) {
+
+						prevVal = retval.get(key);
+						if ( prevVal != null ) {
+							if ( prevVal instanceof List ) {
+								((List<String>) prevVal).add(value);
+							} else {
+								temp = new ArrayList<String>();
+								temp.add(prevVal.toString());
+								temp.add(value);
+								retval.put(key, temp);
+							}
 						} else {
-							temp = new ArrayList<String>();
-							temp.add(prevVal.toString());
-							temp.add(value);
-							retval.put(key, temp);
+							retval.put(key, value);
 						}
-					} else {
-						retval.put(key, value);
-					} 
+					}
 				}
-			}
-	    }
-	    
-	    return retval;
+			} 
+		}
+		return retval;
 	}
 
 	public static String decode(String string) {
