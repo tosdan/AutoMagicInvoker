@@ -12,6 +12,10 @@ public class AutoMagicInvokerException extends RuntimeException {
 	 */
 	private static final long serialVersionUID = 9094397037015898340L;
 
+	public AutoMagicInvokerException() {
+		super();
+	}
+	
 	public AutoMagicInvokerException( String message ) {
 		super(message);
 	}
@@ -24,8 +28,5 @@ public class AutoMagicInvokerException extends RuntimeException {
 		super(message, cause);
 	}
 
-	public AutoMagicInvokerException( String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace ) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
 
 }
