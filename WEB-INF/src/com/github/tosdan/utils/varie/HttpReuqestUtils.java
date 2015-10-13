@@ -120,12 +120,25 @@ public class HttpReuqestUtils {
 	 * @return
 	 */
 	public static <T> T buildBeanFromRequest(HttpServletRequest req, Class<T> clazz) {
+		return buildBeanFromRequest(req, clazz, null);
+	}
+	
+	/**
+	 * 
+	 * Processa il contenuto di una {@link HttpServletRequest} e, con i parametri contenuti, genera un oggetto.
+	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
+	 * @param req
+	 * @param clazz
+	 * @param gsonDateFormat
+	 * @return
+	 */
+	public static <T> T buildBeanFromRequest(HttpServletRequest req, Class<T> clazz, String gsonDateFormat) {
 		
 		T retval = null;
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
-		String gsonDateFormat = getGsonDateFormat(req);
+		gsonDateFormat = getGsonDateFormat(req, gsonDateFormat);
 		
 		Gson gson = new GsonBuilder()
 						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
@@ -141,7 +154,7 @@ public class HttpReuqestUtils {
 		
 		String json = null;
 		
-		if ("GET".equalsIgnoreCase(req.getMethod())) {
+		if ("GET".equalsIgnoreCase(req.getMethod()) || "DELETE".equalsIgnoreCase(req.getMethod())) {
 			logger.debug("Parsing QueryString parameters...");
 
 			Map<String, Object> requestParamsMap = QueryStringUtils.parse(req.getQueryString());
@@ -158,6 +171,9 @@ public class HttpReuqestUtils {
 		} else if (StringUtils.containsIgnoreCase(contentType, APPLICATION_JSON)) {
 
 			json = requestBody;
+			
+		} else {
+			logger.warn("Impossibile interpretare i parametri della request!");
 		}
 		
 		logger.debug("Json intermedio: {}", json);
@@ -168,13 +184,15 @@ public class HttpReuqestUtils {
 		return retval;
 	}
 
-	private static String getGsonDateFormat (HttpServletRequest req) {
-		String gsonDateFormat = req.getParameter(GSON_DATE_FORMAT);
+	private static String getGsonDateFormat(HttpServletRequest req, String gsonDateFormat) {
 		if (gsonDateFormat == null) {
-			gsonDateFormat = (String) req.getAttribute(GSON_DATE_FORMAT);
-			if (gsonDateFormat == null) {
-				gsonDateFormat = "dd/MM/yyyy";
-			}
+			gsonDateFormat = req.getParameter(GSON_DATE_FORMAT);
+			if ( gsonDateFormat == null ) {
+				gsonDateFormat = (String) req.getAttribute(GSON_DATE_FORMAT);
+				if ( gsonDateFormat == null ) {
+					gsonDateFormat = "dd/MM/yyyy";
+				}
+			} 
 		}
 		return gsonDateFormat;
 	}
