@@ -1,3 +1,6 @@
+*.class
+/work/
 /bin/
-WEB-INF/classes/*
-WEB-INF/classes/.gitignore
+
+WEB-INF/classes/
+work/org/apache/jsp/demo/test_jsp.class
