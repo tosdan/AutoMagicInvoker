@@ -98,6 +98,17 @@ public class HelloWorldAmAction {
 		return retval;
 	}
 	
+	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "post", gsonDateFormat="yyyy-MM-dd")
+	public Object post2(Date data) {
+		Map<String, Object> retval = new HashMap<String, Object>();
+//		retval.put("name", name);	
+		retval.put("data", data);	
+//		retval.put("checkbox", checkbox);
+		System.out.println("HelloWorldAmAction.post2()");
+		System.out.println("Retval: " + retval);
+		return retval;
+	}
+	
 
 	@IamInvokableAction(mime = "application/json", reqMethod = "get")
 	public Object get(HelloObjectExt hello) {

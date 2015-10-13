@@ -1,7 +1,17 @@
 $(function() {
 	
 	$('#ajaxPost').on('click', function(evt) {
-		var data = JSON.stringify({ 
+		var data = getFormParams();
+		ajax('json', '../api/demo/helloWorld.post', data, 'post', 'application/json');
+	});
+	
+	$('#ajaxPost2').on('click', function(evt) {
+		var data = getFormParams();
+		ajax('json', '../api/demo/helloWorld.post2', data, 'post', 'application/json');
+	});
+	
+	function getFormParams() {
+		return JSON.stringify({ 
 			"greet": 'Ciao',
 			"name": 'Mondo',
 			"year": "2010",
@@ -14,8 +24,7 @@ $(function() {
 			           { min: 10, max: 18 }, 
 			           { min: 90, max: 100 }]
 		});
-		ajax('json', '../api/demo/helloWorld.post', data, 'post', 'application/json');
-	});
+	}
 	
 	function getCampoData() { return $("#data").val(); }
 	function getCampoCheckbox() { return $("#checkbox").prop('checked'); }
