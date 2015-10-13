@@ -47,11 +47,7 @@ public class HttpRequestBeanBuilder {
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
-		Gson gson = new GsonBuilder()
-						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
-						.registerTypeAdapter(Float.class, new FloatTypeAdapter())
-						.setDateFormat( this.getGsonDateFormat(req) )
-						.create();
+		Gson gson = getGson(req);
 		
 		String requestBody = HttpReuqestUtils.parseRequestBody(req);
 		logger.debug("Corpo della request: [{}]", requestBody);
@@ -89,6 +85,15 @@ public class HttpRequestBeanBuilder {
 		retval = gson.fromJson(json, clazz);
 		
 		return retval;
+	}
+
+	private Gson getGson( HttpServletRequest req ) {
+		Gson gson = new GsonBuilder()
+						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
+						.registerTypeAdapter(Float.class, new FloatTypeAdapter())
+						.setDateFormat( this.getGsonDateFormat(req) )
+						.create();
+		return gson;
 	}
 
 	private String getGsonDateFormat(HttpServletRequest req) {		
