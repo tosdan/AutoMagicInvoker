@@ -79,19 +79,19 @@ public class HttpReuqestUtils {
 	 * @return
 	 */
 	public static String parseRequestBody(HttpServletRequest req) {
-		StringBuilder json = new StringBuilder();
+		StringBuilder body = new StringBuilder();
 		String line;
 		try {
 			
 			BufferedReader reqReader = req.getReader();
 			while ( (line = reqReader.readLine()) != null ) {
-				json.append(line);
+				body.append(line);
 			}
 			reqReader.close();
 			
 		} catch ( IOException e ) {
 			throw (RuntimeException) e.getCause();
 		}
-		return json.toString();
+		return body.toString();
 	}
 }
