@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
-import com.github.tosdan.utils.varie.HttpReuqestUtils;
+import com.github.tosdan.utils.varie.HttpRequestBeanBuilder;
 
 public class AutoMagicMethodInvoker {
 
@@ -75,7 +75,8 @@ public class AutoMagicMethodInvoker {
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
 			logger.debug("Getting instance of: [{}]", p);
-			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p, this.gsonDateFormat);
+			HttpRequestBeanBuilder beanBuilder = new HttpRequestBeanBuilder().setGsonDateFormat(this.gsonDateFormat);
+			args[i] = beanBuilder.buildBeanFromRequest(req, p);
 		}
 		return args;
 	}
