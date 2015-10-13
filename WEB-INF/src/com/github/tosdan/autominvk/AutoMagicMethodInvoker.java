@@ -20,6 +20,7 @@ public class AutoMagicMethodInvoker {
 
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicMethodInvoker.class);
 	private IamIvokableClassCrawler crawler;
+	private String gsonDateFormat;
 
 	public AutoMagicMethodInvoker(IamIvokableClassCrawler crawler) {
 		this.crawler = crawler;
@@ -74,7 +75,7 @@ public class AutoMagicMethodInvoker {
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
 			logger.debug("Getting instance of: [{}]", p);
-			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p);
+			args[i] = HttpReuqestUtils.buildBeanFromRequest(req, p, this.gsonDateFormat);
 		}
 		return args;
 	}
@@ -128,15 +129,16 @@ public class AutoMagicMethodInvoker {
 
 				if (hasAnnotation) {
 					
-					String annMethod = ann.reqMethod();
-					boolean isHttpMethodCorrect = annMethod.isEmpty() || httpMethod.equalsIgnoreCase(annMethod);
+					String annReqMethod = ann.reqMethod();
+					this.gsonDateFormat = ann.gsonDateFormat().isEmpty() ? null : ann.gsonDateFormat();
+					boolean isHttpMethodCorrect = annReqMethod.isEmpty() || httpMethod.equalsIgnoreCase(annReqMethod);
 					
 					if (isHttpMethodCorrect) {
 						retval = m;
 						errMsg = null;
 						break;						
 					} else {
-						errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annMethod+"]" +
+						errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annReqMethod+"]" +
 								", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
 					}
 					
