@@ -32,7 +32,7 @@ public class HttpRequestBeanBuilder {
 		this.gsonDateFormat = gsonDateFormat;
 		return this;
 	}
-	
+
 	/**
 	 * 
 	 * Processa il contenuto di una {@link HttpServletRequest} e, con i parametri contenuti, genera un oggetto.
@@ -41,26 +41,39 @@ public class HttpRequestBeanBuilder {
 	 * @param clazz
 	 * @return
 	 */
-	public <T> T buildBeanFromRequest(HttpServletRequest req, Class<T> clazz) {
+	public <T> T buildBeanFromRequest(Class<T> clazz, HttpServletRequest req, String requestBody) {
+		return this.buildBeanFromRequest(clazz, req.getContentType(), requestBody, req.getQueryString(), req.getMethod());
+	}
+	
+	/**
+	 * Processa i parametri della request (dal body o dalla querystring) e genera un oggetto.
+	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
+	 * @param clazz
+	 * @param contentType
+	 * @param requestBody
+	 * @param queryString
+	 * @param reqMethod
+	 * @param gsonDateFormat
+	 * @return
+	 */
+	public <T> T buildBeanFromRequest(Class<T> clazz, String contentType, String requestBody, String queryString, String reqMethod) {
 		
 		T retval = null;
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
-		Gson gson = getGson(req);
+		Gson gson = getGson(this.gsonDateFormat);
 		
-		String requestBody = HttpReuqestUtils.parseRequestBody(req);
 		logger.debug("Corpo della request: [{}]", requestBody);
 		
-		String contentType = req.getContentType();
 		logger.debug("ContentType: [{}]", contentType);
 		
 		String json = null;
 		
-		if ("GET".equalsIgnoreCase(req.getMethod()) || "DELETE".equalsIgnoreCase(req.getMethod())) {
+		if ("GET".equalsIgnoreCase(reqMethod) || "DELETE".equalsIgnoreCase(reqMethod)) {
 			logger.debug("Parsing QueryString parameters...");
 
-			Map<String, Object> requestParamsMap = QueryStringUtils.parse(req.getQueryString());
+			Map<String, Object> requestParamsMap = QueryStringUtils.parse(queryString);
 //			logger.debug("Parametri della request: {}", requestParamsMap);
 			json = gson.toJson(requestParamsMap);
 			
@@ -87,30 +100,15 @@ public class HttpRequestBeanBuilder {
 		return retval;
 	}
 
-	private Gson getGson( HttpServletRequest req ) {
+	private Gson getGson(String gsonDateFormat) {		
 		Gson gson = new GsonBuilder()
 						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
 						.registerTypeAdapter(Float.class, new FloatTypeAdapter())
-						.setDateFormat( this.getGsonDateFormat(req) )
+						.setDateFormat(gsonDateFormat)
 						.create();
 		return gson;
 	}
 
-	private String getGsonDateFormat(HttpServletRequest req) {		
-		String gsonDateFormat = this.gsonDateFormat;
-		if (gsonDateFormat == null) {
-			gsonDateFormat = req.getParameter(GSON_DATE_FORMAT);
-			if (gsonDateFormat == null ) {
-				gsonDateFormat = (String) req.getAttribute(GSON_DATE_FORMAT);
-				
-				if (gsonDateFormat == null || this.gsonDateFormat.isEmpty()) {
-					gsonDateFormat = GSON_DATE_FORMAT;
-				}
-			}
-		}
-		return gsonDateFormat;
-	}
-	
 	/**
 	 * Type adapter per consentire a {@link Gson} di effettuare il parse di cifre decimali con separatore virgola ","
 	 * @author Daniele
