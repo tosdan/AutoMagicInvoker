@@ -20,7 +20,6 @@
 <p><a href="../api/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
 
 <p><button type="button" id="ajaxPost">Ajax POST</button></p>
-<p><button type="button" id="ajaxPost2">Ajax POST 2</button></p>
 <p><button type="button" id="ajaxGet">Ajax GET</button></p>
 <p><button type="button" id="ajaxJsonP">Ajax JSONP</button></p>
 <p><button type="button" id="ajaxError">Ajax ERROR</button></p>

@@ -5,11 +5,6 @@ $(function() {
 		ajax('json', '../api/demo/helloWorld.post', data, 'post', 'application/json');
 	});
 	
-	$('#ajaxPost2').on('click', function(evt) {
-		var data = getFormParams();
-		ajax('json', '../api/demo/helloWorld.post2', data, 'post', 'application/json');
-	});
-	
 	function getFormParams() {
 		return JSON.stringify({ 
 			"greet": 'Ciao',
