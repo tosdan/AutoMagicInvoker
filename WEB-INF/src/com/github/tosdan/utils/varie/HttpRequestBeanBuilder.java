@@ -22,47 +22,67 @@ public class HttpRequestBeanBuilder {
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
 	public final static String GSON_DATE_FORMAT = "HttpReuqestUtils.gsonDateFormat";
-	private String gsonDateFormat;
 
-	public HttpRequestBeanBuilder() {
-		this.gsonDateFormat = GSON_DATE_FORMAT;
-	}
-
-	public HttpRequestBeanBuilder setGsonDateFormat( String gsonDateFormat ) {
-		this.gsonDateFormat = gsonDateFormat;
-		return this;
-	}
+	public HttpRequestBeanBuilder() {}
 
 	/**
-	 * 
-	 * Processa il contenuto di una {@link HttpServletRequest} e, con i parametri contenuti, genera un oggetto.
+	 * Processa i parametri della request (dal body o dalla querystring) e genera e popola un oggetto con tali parametri.
 	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
-	 * @param req
-	 * @param clazz
+	 * @param clazz Classe dell'oggetto da generare
+	 * @param req Oggetto rappresentante la chiamata http
+	 * @param requestBody Corpo della chiamata http, se presente. Può essere null (di norma non è presente per GET, DELETE e HEAD). 
 	 * @return
 	 */
+
 	public <T> T buildBeanFromRequest(Class<T> clazz, HttpServletRequest req, String requestBody) {
-		return this.buildBeanFromRequest(clazz, req.getContentType(), requestBody, req.getQueryString(), req.getMethod());
+		return this.buildBeanFromRequest(clazz, req, requestBody, null);
 	}
 	
 	/**
-	 * Processa i parametri della request (dal body o dalla querystring) e genera un oggetto.
+	 * Processa i parametri della request (dal body o dalla querystring) e genera e popola un oggetto con tali parametri.
 	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
-	 * @param clazz
-	 * @param contentType
-	 * @param requestBody
-	 * @param queryString
-	 * @param reqMethod
-	 * @param gsonDateFormat
+	 * @param clazz Classe dell'oggetto da generare
+	 * @param req Oggetto rappresentante la chiamata http
+	 * @param requestBody Corpo della chiamata http, se presente. Può essere null (di norma non è presente per GET, DELETE e HEAD).
+	 * @param gsonDateFormat Formato data che Gson utilizzerà per fare il parse dei parametri destinati a diventare un oggetto {@link java.util.Date}
+	 * @return
+	 */
+	public <T> T buildBeanFromRequest(Class<T> clazz, HttpServletRequest req, String requestBody, String gsonDateFormat) {
+		return this.buildBeanFromRequest(clazz, req.getContentType(), requestBody, req.getQueryString(), req.getMethod(), gsonDateFormat);
+	}
+	
+	/**
+	 * Processa i parametri della request (dal body o dalla querystring) e genera e popola un oggetto con tali parametri.
+	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
+	 * @param clazz Classe dell'oggetto da generare
+	 * @param contentType Content type della chiamata http
+	 * @param requestBody Corpo della chiamata http, se presente. Può essere null (di norma non è presente per GET, DELETE e HEAD).
+	 * @param queryString Stringa dei parametri della chiamata http
+	 * @param reqMethod Metodo della chiamata http
 	 * @return
 	 */
 	public <T> T buildBeanFromRequest(Class<T> clazz, String contentType, String requestBody, String queryString, String reqMethod) {
+		return this.buildBeanFromRequest(clazz, contentType, requestBody, queryString, reqMethod, null);
+	}
+	
+	/**
+	 * Processa i parametri della request (dal body o dalla querystring) e genera e popola un oggetto con tali parametri.
+	 * Supporta contentType <em>application/json</em> e <em>application/x-www-form-urlencoded</em>
+	 * @param clazz Classe dell'oggetto da generare
+	 * @param contentType Content type della chiamata http
+	 * @param requestBody Corpo della chiamata http, se presente. Può essere null (di norma non è presente per GET, DELETE e HEAD).
+	 * @param queryString Stringa dei parametri della chiamata http
+	 * @param reqMethod Metodo della chiamata http
+	 * @param gsonDateFormat Formato data che Gson utilizzerà per fare il parse dei parametri destinati a diventare un oggetto {@link java.util.Date}
+	 * @return
+	 */
+	public <T> T buildBeanFromRequest(Class<T> clazz, String contentType, String requestBody, String queryString, String reqMethod, String gsonDateFormat) {
 		
 		T retval = null;
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
-		Gson gson = getGson(this.gsonDateFormat);
+		Gson gson = getGson(gsonDateFormat);
 		
 		logger.debug("Corpo della request: [{}]", requestBody);
 		
@@ -101,11 +121,13 @@ public class HttpRequestBeanBuilder {
 	}
 
 	private Gson getGson(String gsonDateFormat) {		
-		Gson gson = new GsonBuilder()
-						.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
-						.registerTypeAdapter(Float.class, new FloatTypeAdapter())
-						.setDateFormat(gsonDateFormat)
-						.create();
+		GsonBuilder gsonBuilder = new GsonBuilder()
+									.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
+									.registerTypeAdapter(Float.class, new FloatTypeAdapter());
+		if (gsonDateFormat != null) {
+			gsonBuilder.setDateFormat(gsonDateFormat);
+		}
+		Gson gson = gsonBuilder.create();
 		return gson;
 	}
 
