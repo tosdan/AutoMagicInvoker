@@ -15,9 +15,9 @@
 
 <!-- <p><a href="../action/demo/hello.get~json?cippa=lippa">Get</a></p> -->
 
-<p><a href="../action/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get HelloWorld</a></p>
-<p><a href="../action/demo/helloWorld.getDefault~Json?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get Default</a></p>
-<p><a href="../action/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
+<p><a href="../api/demo/helloWorld.get?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get HelloWorld</a></p>
+<p><a href="../api/demo/helloWorld.getDefault~Json?greet=Ciao&name=World&year=2015&hours=2.5" target="_bank">Get Default</a></p>
+<p><a href="../api/demo/helloWorld.forward?greet=Ciao&name=World&year=2015&hours=2.5">Forward</a></p>
 
 <p><button type="button" id="ajaxPost">Ajax POST</button></p>
 <p><button type="button" id="ajaxGet">Ajax GET</button></p>
@@ -25,12 +25,14 @@
 <p><button type="button" id="ajaxError">Ajax ERROR</button></p>
 
 <fieldset>
-	<form action="../action/demo/helloWorld.post" method="post">
+	<form action="../api/demo/helloWorld.post" method="post">
 		Greet: <input type="text" value="Ciao" name="greet"><br>
 		Name: <input type="text" value="Mondo" name="name"><br>
 		Year: <input type="text" value="2015" name="year"><br>
 		Hours: <input type="text" value="2.5" name="hours"><br>
 		Booleano: <input type="text" value="True" name="booleano"><br>
+		Checkbox: <input type="checkbox" value="true" name="checkbox" id="checkbox"><br>
+		Data: <input type="date" value="2001-12-31" name="data" id="data"><br>
 		<br>
 		
 		Multiplo: <input name="multiplo" type="text" value="ciao">
