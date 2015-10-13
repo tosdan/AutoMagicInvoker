@@ -8,6 +8,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +64,32 @@ public class AutoMagicMethodInvoker {
 			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e.getCause());
 		} catch ( InvocationTargetException e ) {
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e.getTargetException());
+		} catch ( AutoMagicInvokerException e ) {
+			throw new AutoMagicInvokerException(e.getMessage(), e);
+			
+		} catch ( com.google.gson.JsonSyntaxException e ) {
+			String jsonErr = "";
+			if (StringUtils.containsIgnoreCase(e.getMessage(), "but was BEGIN_OBJECT at line")) {
+				jsonErr = "Il json della request rappresenta un oggetto, ma si sta cercando di popolare un tipo di dato primitivo o una stringa.";
+			} else {
+				jsonErr = "Gson non è riuscito ad effettuare il parse: json malformato o non compatibile con l'oggetto che si vuole generare.";
+			}
+			
+			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore. " + jsonErr, e);
+
+		} catch ( com.google.gson.JsonParseException e ) {
+			String jsonErr = "";
+			if (StringUtils.containsIgnoreCase(e.getMessage(), "The date should be a string value")) {
+				jsonErr = "Il formato data ricevuto è diverso da quello impostato in Gson oppure il json ricevuto dalla request rappresenta un oggetto e non una data sotto forma di stringa.";
+			} else {
+				jsonErr = "Gson non è riuscito ad effettuare il parse: json malformato o non compatibile con l'oggetto che si vuole generare.";
+			}
+			
+			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore. " + jsonErr, e);
+
+		} catch ( Exception e ) {
+			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e);
 		}
-		
 		
 		return retval;
 	}
@@ -72,7 +97,7 @@ public class AutoMagicMethodInvoker {
 	private Object[] getArgs(HttpServletRequest req, Method method) {
 		Class<?>[] params = method.getParameterTypes();
 		Object[] args = new Object[params.length];
-		Class<?> p;
+		Class<?> p = null;
 		String requestBody = HttpReuqestUtils.parseRequestBody(req);
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
