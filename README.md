@@ -392,7 +392,7 @@ public class DemoAmAction {
 ~~~ 
 Con questa configurazione il metodo sonoUnaAzioneInvocabile() verrà invocato solo se la chiamata HTTP è di tipo POST. In caso di altri metodi HTTP (GET, PUT, HEAD o DELETE) verrà restituito un errore.
 
-### URL Alias
+### Controller Alias
 
 &Egrave; possibile assegnare un *alias* al *Controller*, in modo che il nome nell'URL della chiamata sia diverso da quello effettivo, utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction`
 
@@ -414,9 +414,9 @@ A questo punto l'URL della chiamata dovrà essere:
 <!-- L'alias va riportato così com'è stato scritto, quindi con l'iniziale maiuscola -->
 http://host.it/webapp/api/miaApp/controller/Dimostrazione.sonoUnaAzioneInvocabile
 ~~~
-Notare che l'iniziale minuscola è solo una convenzione e come tale, nel momento in cui viene definito un *alias*, ogni convenzione viene meno.
+Notare che l'iniziale minuscola è solo una convenzione di come viene determinato automaticamente il nome del *Controller*, gli *alias* vengono riportati proprio come sono stati scritti.
 
-Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovrà essere la parte dell'`url-pattern` più l'*alias* stesso.
+Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovrà essere composto con: la parte dell'`url-pattern` più l'*alias* stesso.
 ~~~java
 // notare il sotto package miaApp.controller
 package com.github.tosdan.autominvk.apps.miaApp.controller;
@@ -424,7 +424,7 @@ package com.github.tosdan.autominvk.apps.miaApp.controller;
 @IamInvokable
 public class DemoAmAction {
 	// impostazione alias con url assoluto
-	@IamInvokableAction(alias="/AbsoluteDemo")
+	@IamInvokableAction(alias="/AbsoluteUrlController")
 	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
 		...
 	}
@@ -433,14 +433,32 @@ public class DemoAmAction {
 A questo punto l'URL della chiamata dovrà essere:
 ~~~html
 <!-- invece di 
-http://host.it/webapp/api/miaApp/controller/AbsoluteDemo.sonoUnaAzioneInvocabile 
+http://host.it/webapp/api/miaApp/controller/demo.sonoUnaAzioneInvocabile 
 -->
-http://host.it/webapp/api/AbsoluteDemo.sonoUnaAzioneInvocabile
+http://host.it/webapp/api/AbsoluteUrlController.sonoUnaAzioneInvocabile
 ~~~
 
+### Forward
 
+Per effettuare il forward da un *Controller* ad una servlet è sufficiente restituire un oggetto di tipo *RequestDispatcher*. Il framework ricevendo un oggetto *RequestDispatcher* si occuperà di effettuare il forward.
+~~~java
+package com.github.tosdan.autominvk.apps;
 
-
+@IamInvokable
+public class DemoAmAction {
+	private ServletContext ctx;
+	private HttpServletRequest req;	
+	@IamInvokableAction
+	public Object sonoUnaAzioneInvocabile() {
+		...
+		req.setAttribute("FileDaScaricare", "file.pdf");
+		RequestDispatcher dispatcher = ctx.getRequestDispatcher("/downloadServlet");
+		return dispatcher;
+	}
+}
+~~~ 
+Nell'esempio un'ipotetica servlet di download è mappata all'URL *http://host.it/webapp/downloadServlet* e cercherà il file da scaricare nell'*attribute* "FileDaScaricare" della request.
+A questo punto il compito di gestire la *response* è lasciato alla servlet verso cui viene effettuato il forward.
 
 
 
