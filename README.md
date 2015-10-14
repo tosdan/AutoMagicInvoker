@@ -32,7 +32,7 @@ L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà 
 
 __NB.__ Per questione di performance conviene scegliere un package ben specifico. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
 
-## Utilizzo
+## Panoramica
 
 ### Controller
 
@@ -85,12 +85,15 @@ il framework avrebbe restituito un errore perchè l'azione [demoAmAction.sonoUnaA
 A partire dal package principale, specificato col parametro `CLASS_PATH` è possibile creare una gerarchia di sotto package per ordinare i vari *Controller*.
 L'URL delle chiamate HTTP dovrà essere composto di conseguenza, aggiungendo all'URL di base (url webapp + url-pattern), i sotto package necessari per raggiungere la classe *Controller* desiderata.
 
-Quindi se la classe *Controller* fosse situata nel sotto package demoApp 
+Quindi se la classe *Controller* fosse situata nel sotto package __demoApp__ 
 ~~~
 com.github.tosdan.autominvk.apps.demoApp
 ~~~
-la chiamata HTTP dovrebbe essere inotrata all'url 
+la chiamata HTTP dovrebbe essere inoltrata all'url 
 ~~~
-http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
+http://host.it/webapp/__demoApp__/demo.sonoUnaAzioneInvocabile
 ~~~
+
+
+## 
 
