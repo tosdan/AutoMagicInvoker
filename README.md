@@ -22,20 +22,20 @@ Nel `web.xml` aggiungere la seguente servlet:
 	</servlet>
 	<servlet-mapping>
         <servlet-name>AutoMagicInvoker</servlet-name>
-        <url-pattern>/action/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
 ~~~
 
 L'`url-pattern` proposto per la servlet è puramente di esempio, non c'è alcun vincolo da rispettare. 
 
-L'*init-param* `CLASS_PATH` indica ad *autominvk* dove cercare le classi `AmAction`.
-Conviene specificare un package ben specifico, semplicemente per questioni di performance, più classi sono contenute nel package specificato e nei suoi sottopackage più tempo richiede la scansione (normalmente nell'ordine dei ms). Nulla di vieta di impostare un package più generico.
+L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà i Controller dell'applicazione.
+__NB.__ Conviene scegliere un package ben specifico, semplicemente per questioni di performance. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
 
 ## Panoramica
 
 ### Controller
 
-Solo le classi con *Annotation* `IamInvokable` vengono censite. Queste classi costituiscono i *Controller* dell'applicazione.
+Le classi con *Annotation* `IamInvokable` costituiscono i *Controller* dell'applicazione.
 ~~~java
 @IamInvokable
 public class DemoAmAction {
