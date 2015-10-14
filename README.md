@@ -60,17 +60,21 @@ public class DemoAmAction {
 
 #### Eseguire un'azione di un Controller
 
-Ipotizziamo di avere una webapp in esecuzione all'URL ~~~
+Ipotizziamo di avere una webapp in esecuzione all'URL 
+~~~
 http://host.it/webapp
-~~~ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package ~~~
+~~~ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package 
+~~~
 com.github.tosdan.autominvk.apps
 ~~~
  
-Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosdan.autominvk.apps.DemoAmAction__ basterà effettuare una chiamata HTTP all'URL ~~~
+Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosdan.autominvk.apps.DemoAmAction__ basterà effettuare una chiamata HTTP all'URL 
+~~~
 http://host.it/webapp/demo.sonoUnaAzioneInvocabile
 ~~~
 
-Nella chiamata HTTP il nome della classe dovrà essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non è obbligatorio che il nome delle classi *Controller* termini con *AmAction*, il nome della classe scritto in questo modo è solo una convenzione del framework per rendere semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata ~~~
+Nella chiamata HTTP il nome della classe dovrà essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non è obbligatorio che il nome delle classi *Controller* termini con *AmAction*, il nome della classe scritto in questo modo è solo una convenzione del framework per rendere semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
+~~~
 http://host.it/webapp/demo.sonoUnaAzioneInvocabileAmAction
 ~~~ 
 il framework avrebbe restituito un errore perchè l'azione [demo.sonoUnaAzioneInvocabileAmAction] non è presente nell'indice delle azioni disponibili. 
