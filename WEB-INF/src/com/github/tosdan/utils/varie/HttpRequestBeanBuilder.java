@@ -21,7 +21,7 @@ public class HttpRequestBeanBuilder {
 	public static final String DEFAULT_GSON_DATE_FORMAT = "dd/MM/yyyy";
 	private static final String APPLICATION_JSON = "application/json";
 	private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-	public final static String GSON_DATE_FORMAT = "HttpReuqestUtils.gsonDateFormat";
+	public final static String GSON_DATE_FORMAT = HttpRequestBeanBuilder.class.getSimpleName()+".gsonDateFormat";
 
 	public HttpRequestBeanBuilder() {}
 
