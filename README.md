@@ -427,7 +427,7 @@ public class DemoAmAction {
 }
 ~~~ 
 A questo punto la chiamata dovrà essere:
-~~~
+~~~html
 <!-- invece di http://host.it/webapp/api/miaApp/controller/AbsoluteDemo.sonoUnaAzioneInvocabile -->
 http://host.it/webapp/api/AbsoluteDemo.sonoUnaAzioneInvocabile
 ~~~
