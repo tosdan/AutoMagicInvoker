@@ -394,7 +394,7 @@ Con questa configurazione il metodo sonoUnaAzioneInvocabile() verrà invocato sol
 
 ### Controller Alias
 
-&Egrave; possibile assegnare un *alias* al *Controller*, in modo che il nome nell'URL della chiamata sia diverso da quello effettivo, utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction`
+Utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction` è possibile assegnare un *alias* al *Controller* in modo che il nome nell'URL della chiamata sia diverso da quello effettivo.
 
 ~~~java
 // notare il sotto package miaApp.controller
