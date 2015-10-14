@@ -99,9 +99,9 @@ http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 
 ### Parametri della chiamata HTTP
 
-Per leggere i parametri della chiamata HTTP ci sono due possibilità.
+Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilità.
 
- * Leggere i parametri direttamente dall'oggetto HttpServletRequest
+ * Leggere i parametri direttamente dall'oggetto *HttpServletRequest*
  * Costruire un oggetto che verrà popolato automatiticamente
 
 #### Oggetto HttpServletRequest
@@ -124,11 +124,41 @@ public class DemoAmAction {
 }
 ~~~
 
+Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente assegnerà a questo campo l'oggetto rappresentante la request HTTP corrente. A questo punto basterà richiamarlo nel codice del metodo per accedere ai parametri. 
 
+#### Oggetto "parametro" popolato automaticamente
 
+~~~java
+package com.github.tosdan.autominvk.apps;
 
+@IamInvokable
+public class DemoAmAction {
 
+	public static class MyDemoParamsObject {
+		private String param1;
+		private boolean param2;
+		public String getParam1() {
+			return this.param1;
+		}
+		public void setParam1(String value) {
+			this.param1 = value;
+		}
+		public boolean isParam2() {
+			return this.param2;
+		}
+		public void setParam2(boolean value) {
+			this.param2 = value;
+		}
+	}
 
+	@IamInvokableAction
+	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		String parametro1 = params.getParam1();
+		boolean parametro2 = params.isParam2();
+		...
+	}
+}
+~~~
 
 
 
