@@ -102,7 +102,7 @@ http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilità.
 
  * Leggere i parametri direttamente dall'oggetto *HttpServletRequest*
- * Costruire un oggetto che verrà popolato automatiticamente (approccio raccomandato)
+ * Costruire un oggetto "parametro" che verrà popolato automatiticamente (approccio raccomandato)
 
 #### Oggetto HttpServletRequest
 
@@ -225,7 +225,104 @@ public class DemoAmAction {
 
 ### Response
 
-Per inoltrare una risposta alla chiamata HTTP è sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto.
+Per inoltrare una risposta alla chiamata HTTP è sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto o anche un tipo primitivo.
+
+~~~java
+package com.github.tosdan.autominvk.apps;
+
+@IamInvokable
+public class DemoAmAction {
+
+	@IamInvokableAction
+	public Object sonoUnaAzioneInvocabile() {
+		...
+		return "ok";
+	}
+}
+~~~
+
+Di default viene inviata una response con *ContentType* __text/html__ e l'oggetto restituito viene convertito in stringa con il metodo toString(), mentre nel caso di un primitivo viene restituito così com'è nel contenuto della response.
+
+Pur essendo un approccio valido non offre molto margine per inviare una response particolarmente elaborata.
+
+#### Response Render
+
+Un approccio migliore è quello di restituire un oggetto invece di un primitivo e di impostare una strategia di renderizzazione per la response.
+
+~~~java
+package com.github.tosdan.autominvk.apps;
+
+// import del render Json
+import com.github.tosdan.autominvk.rendering.render.Json;
+
+@IamInvokable
+public class DemoAmAction {
+
+	// Configurazione dell'elemento render impostando il valore Json.class
+	@IamInvokableAction(render=Json.class)
+	public Object sonoUnaAzioneInvocabile() {
+		...
+		// un ipotetico oggetto da restituire in risposta
+		Map returnValue = new HashMap();
+		
+		// popolamento dei dati per la risposta
+		returnValue.put("message", "ok");
+		
+		List valori = new ArrayList();
+		valori.add("abc");
+		valori.add("XYZ");
+		valori.add("007");
+		returnValue.put("valori", valori);
+		
+		return returnValue;
+	}
+}
+~~~
+
+Per configurare una strategia di renderizzazione basta aggiungere l'*elemento* `render` nell'*Annotation* `IamInvokableAction` e fornire come valore una classe che implementi l'interfaccia `AutoMagicRender`.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
