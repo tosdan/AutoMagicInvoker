@@ -491,8 +491,21 @@ http://host.it/webapp/api/myController
 invocherà il metodo get().
 Invece una chiamata HTTP di tipo POST invocherà il metodo post().
 
+### Impostare il render nell'URL della chiamata (experimental)
 
+&Egrave; possibile specificare l'*AutoMagicRender* da utilizzare per il rendering della *response* inserendo come ultimo componente dell'URL chiamato (ma prima della querystring) il nome della classe che implementa *AutoMagicRender* preceduto da carattere tilde `~`
+~~~html
+<!-- il render deve essere l'ultimo componente della parte di URL che identifica l'azione da eseguire -->
+http://host.it/webapp/api/myController~Json?param1=value1&param2...
 
+http://host.it/webapp/api/myController.azioneXyz~Json?param1=value1&param2...
+~~~
+Il render così specificato ha la priorità sul render impostato nell'*Annotation* del metodo.
 
+Dal momento che è possibile specificare il nome semplice della classe del render (Json) e non il nome completo della classe (com.github.tosdan.autominvk.rendering.render.Json) l'unico modo per aggiungere e sfruttare un render personalizzato è quello di posizionarlo nel package `com.github.tosdan.autominvk.rendering.render`.
 
-
+Se definiamo un nostro render come *com.github.tosdan.autominvk.rendering.render.MyRender*, per poterlo utilizzare basterà effettuare una chiamata tipo:
+~~~html
+<!-- Senza specificare il nome del metodo -->
+http://host.it/webapp/api/myController.miaAzione~MyRender
+~~~
