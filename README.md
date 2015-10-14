@@ -39,6 +39,7 @@ __NB.__ Per questione di performance conviene scegliere un package ben specifico
 Le classi con *Annotation* `IamInvokable` costituiscono i *Controller* dell'applicazione.
 ~~~java
 package com.github.tosdan.autominvk.apps;
+
 @IamInvokable
 public class DemoAmAction {
 	...
@@ -48,6 +49,7 @@ public class DemoAmAction {
 Per definire un'azione eseguibile via chiamata HTTP, basta apporre l'*Annotation* `IamInvokableAction` ad un metodo della classe *Controller* creata in precedenza.
 ~~~java
 package com.github.tosdan.autominvk.apps;
+
 @IamInvokable
 public class DemoAmAction {	
 
@@ -95,5 +97,48 @@ http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
 
 
-## Approfondimento
+### Parametri della chiamata HTTP
+
+Per leggere i parametri della chiamata HTTP ci sono due possibilità.
+
+ * Leggere i parametri direttamente dall'oggetto HttpServletRequest
+ * Costruire un oggetto che verrà popolato automatiticamente
+
+#### Oggetto HttpServletRequest
+
+Per accedere all'oggetto __HttpServletRequest__ è sufficiente creare un campo nella classe controller che sia di tipo HttpServletRequest.
+
+~~~java
+package com.github.tosdan.autominvk.apps;
+
+@IamInvokable
+public class DemoAmAction {
+
+	private HttpServletRequest req;	
+
+	@IamInvokableAction
+	public Object sonoUnaAzioneInvocabile() {
+		String parametro1 = req.getParameter("parametro1");
+		...
+	}
+}
+~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
