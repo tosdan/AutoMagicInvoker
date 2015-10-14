@@ -457,16 +457,39 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-Nell'esempio un'ipotetica servlet di download è mappata all'URL *http://host.it/webapp/downloadServlet* e cercherà il file da scaricare nell'*attribute* "FileDaScaricare" della request.
 A questo punto il compito di gestire la *response* è lasciato alla servlet verso cui viene effettuato il forward.
 
+Nell'esempio sopra, un'ipotetica servlet di download è mappata all'URL *http://host.it/webapp/downloadServlet* e cercherà il file da scaricare nell'*attribute* "FileDaScaricare" della request.
 
 
+### Metodi di default nei Controller 
 
+Definendo in un *Controller* i metodi (in lowercase) `post` o `get` o un qualsiasi altro metodo HTTP valido, è possibile invocarli senza specificarne il nome dopo il nome del *Controller*, semplicemente effettuando una chiamata HTTP corripondente.
 
+~~~java
+package com.github.tosdan.autominvk.apps;
 
-
-
+@IamInvokable
+public class MyControllerAmAction {
+	
+	@IamInvokableAction
+	public Object post() {
+		...
+	}
+	
+	@IamInvokableAction
+	public Object get() {
+		...
+	}
+}
+~~~ 
+Una chiamata HTTP di tipo GET all'indirizzo:
+~~~html
+<!-- Senza specificare il nome del metodo -->
+http://host.it/webapp/api/myController
+~~~
+invocherà il metodo get().
+Mentre una chiamata HTTP di tipo POST invocherà il metodo post().
 
 
 
