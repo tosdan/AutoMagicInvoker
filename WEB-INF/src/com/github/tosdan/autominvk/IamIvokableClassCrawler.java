@@ -131,7 +131,11 @@ public class IamIvokableClassCrawler implements Serializable {
 	 */
 	private String getAnnotatedClassId(String classIdAlias, String classId) {
 		return classIdAlias != null && ! classIdAlias.isEmpty()
-				? classIdAlias.replace("/", "") // Lo slash può essere presente o meno. Se presente, va tolto (serve per determinare il path non il nome dell'azione).
+				? classIdAlias.startsWith("/") 
+						// Lo iniziale slash può essere presente o meno. Se presente, va tolto (serve  
+						// per determinare il path, assoluto o relativo, non il nome dell'azione).
+						? classIdAlias.substring(1) 
+						: classIdAlias
 				: classId;
 	}
 
