@@ -63,7 +63,8 @@ public class DemoAmAction {
 Ipotizziamo di avere una webapp in esecuzione all'URL 
 ~~~
 http://host.it/webapp
-~~~ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package 
+~~~ 
+e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package 
 ~~~
 com.github.tosdan.autominvk.apps
 ~~~
