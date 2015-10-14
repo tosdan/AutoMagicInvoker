@@ -69,7 +69,7 @@ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package
 com.github.tosdan.autominvk.apps
 ~~~
  
-Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosdan.autominvk.apps.DemoAmAction__ basterà effettuare una chiamata HTTP all'URL 
+Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe com.github.tosdan.autominvk.apps.__DemoAmAction__ basterà effettuare una chiamata HTTP all'URL 
 ~~~
 http://host.it/webapp/demo.sonoUnaAzioneInvocabile
 ~~~
@@ -91,9 +91,9 @@ com.github.tosdan.autominvk.apps.demoApp
 ~~~
 la chiamata HTTP dovrebbe essere inoltrata all'url 
 ~~~
-http://host.it/webapp/__demoApp__/demo.sonoUnaAzioneInvocabile
+http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
 
 
-## 
+## Approfondimento
 
