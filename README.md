@@ -295,8 +295,15 @@ La response inviata avrebbe la forma:
 }
 ~~~ 
 
+Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilità con internet explorer (che altrimenti cercherebbe di effettuare un download) 
 
-
+Un'altra particolarità del render Json è che nel caso in cui l'esecuzione del metodo invocato, per esempio sonoUnaAzioneInvocabile(), risulti in una eccezione, verrà restituito un oggetto json simile al seguente:
+~~~json
+{
+	"error": "Messaggio di errore ottenuto da exception.getMessage()",
+	"stacktrace": "Righe dello \n stacktrace ottenute \n dall'eccezione lanciata."
+}
+~~~ 
 
 
 
