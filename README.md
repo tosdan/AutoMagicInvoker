@@ -252,13 +252,13 @@ Un approccio migliore è quello di restituire un oggetto invece di un primitivo e
 ~~~java
 package com.github.tosdan.autominvk.apps;
 
-// import del render Json
+// import della classe per il render Json. La classe Json implementa AutoMagicRender.
 import com.github.tosdan.autominvk.rendering.render.Json;
 
 @IamInvokable
 public class DemoAmAction {
 
-	// Configurazione dell'elemento render impostando il valore Json.class
+	// Configurazione dell'elemento render impostando il valore Json.class.	
 	@IamInvokableAction(render=Json.class)
 	public Object sonoUnaAzioneInvocabile() {
 		...
@@ -267,6 +267,7 @@ public class DemoAmAction {
 		
 		// popolamento dei dati per la risposta
 		returnValue.put("message", "ok");
+		returnValue.put("risposta", 42);
 		
 		List valori = new ArrayList();
 		valori.add("abc");
@@ -281,7 +282,18 @@ public class DemoAmAction {
 
 Per configurare una strategia di renderizzazione basta aggiungere l'*elemento* `render` nell'*Annotation* `IamInvokableAction` e fornire come valore una classe che implementi l'interfaccia `AutoMagicRender`.
 
-
+La response inviata avrebbe la forma:
+~~~json
+{
+	"message": "ok",
+	"risposta": 42,
+	"valori": [
+		"abc",
+		"XYZ",
+		"007"
+	]
+}
+~~~ 
 
 
 
