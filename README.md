@@ -407,8 +407,8 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-A questo punto la chiamata dovrà essere:
-~~~
+A questo punto l'URL della chiamata dovrà essere:
+~~~html
 <!-- L'alias va riportato così com'è stato scritto, quindi con l'iniziale maiuscola -->
 http://host.it/webapp/api/Dimostrazione.sonoUnaAzioneInvocabile
 ~~~
@@ -426,9 +426,11 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-A questo punto la chiamata dovrà essere:
+A questo punto l'URL della chiamata dovrà essere:
 ~~~html
-<!-- invece di http://host.it/webapp/api/miaApp/controller/AbsoluteDemo.sonoUnaAzioneInvocabile -->
+<!-- invece di 
+http://host.it/webapp/api/miaApp/controller/AbsoluteDemo.sonoUnaAzioneInvocabile 
+-->
 http://host.it/webapp/api/AbsoluteDemo.sonoUnaAzioneInvocabile
 ~~~
 
