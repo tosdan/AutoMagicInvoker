@@ -70,15 +70,19 @@ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package
 ~~~
 com.github.tosdan.autominvk.apps
 ~~~
+e url-pattern
+~~~
+/api/*
+~~~
  
 Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe com.github.tosdan.autominvk.apps.__DemoAmAction__ basterà effettuare una chiamata HTTP all'URL 
 ~~~
-http://host.it/webapp/demo.sonoUnaAzioneInvocabile
+http://host.it/webapp/api/demo.sonoUnaAzioneInvocabile
 ~~~
 
 Nella chiamata HTTP il nome della classe dovrà essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non è obbligatorio che il nome delle classi *Controller* termini con il suffisso *AmAction*. Il nome della classe scritto in questo modo è solo una convenzione del framework per rendere più semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
 ~~~
-http://host.it/webapp/demoAmAction.sonoUnaAzioneInvocabile
+http://host.it/webapp/api/demoAmAction.sonoUnaAzioneInvocabile
 ~~~ 
 il framework avrebbe restituito un errore perchè l'azione [demoAmAction.sonoUnaAzioneInvocabile] non è presente nell'indice delle azioni disponibili. 
 
@@ -93,7 +97,7 @@ com.github.tosdan.autominvk.apps.demoApp
 ~~~
 la chiamata HTTP dovrebbe essere inoltrata all'url 
 ~~~
-http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
+http://host.it/webapp/api/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
 
 
@@ -347,13 +351,12 @@ package com.github.tosdan.autominvk.apps;
 public class DemoAmAction {
 
 	public static class MyDemoParamsObject {
-		private Range range;
 		private Date millenniumBugDate;
-		public String getParam1() {
-			return this.param1;
+		public String getMillenniumBugDate() {
+			return this.millenniumBugDate;
 		}
-		public void setParam1(String value) {
-			this.param1 = value;
+		public void setMillenniumBugDate(Date value) {
+			this.millenniumBugDate = value;
 		}		
 		...
 	}
@@ -373,19 +376,61 @@ Parametri della chiamata:
 }
 ~~~ 
 
+### Metodi HTTP
 
+Impostando l'*elemento* `reqMethod` nell'*Annotation* `IamInvokableAction` è possibile limitare l'accessibilità del metodo da invoare in base al metodo HTTP utilizzato:
+~~~java
+package com.github.tosdan.autominvk.apps;
 
+@IamInvokable
+public class DemoAmAction {
+	@IamInvokableAction(reqMethod="POST")
+	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		...
+	}
+}
+~~~ 
+Con questa configurazione il metodo sonoUnaAzioneInvocabile() verrà invocato solo se la chiamata HTTP è di tipo POST. In caso di altri metodi HTTP (GET, PUT, HEAD o DELETE) verrà restituito un errore.
 
+### URL Alias
 
+&Egrave; possibile assegnare un *alias* al *Controller* che contiene il metodo da invocare, in modo che sia diverso da quello effettivo, utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction`
 
+~~~java
+package com.github.tosdan.autominvk.apps;
 
+@IamInvokable
+public class DemoAmAction {
+	@IamInvokableAction(alias="Dimostrazione")
+	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		...
+	}
+}
+~~~ 
+A questo punto la chiamata dovrà essere:
+~~~
+<!-- L'alias va riportato così com'è stato scritto, quindi con l'iniziale maiuscola -->
+http://host.it/webapp/api/Dimostrazione.sonoUnaAzioneInvocabile
+~~~
+Notare che l'iniziale minuscola è solo una convenzione e come tale, nel momento in cui viene definito un *alias*, ogni convenzione viene meno.
 
+Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovrà essere la parte dell'`url-pattern` più l'*alias* stesso.
+~~~java
+package com.github.tosdan.autominvk.apps.miaApp.controller;
 
-
-
-
-
-
+@IamInvokable
+public class DemoAmAction {
+	@IamInvokableAction(alias="/AbsoluteDemo")
+	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		...
+	}
+}
+~~~ 
+A questo punto la chiamata dovrà essere:
+~~~
+<!-- invece di http://host.it/webapp/api/miaApp/controller/AbsoluteDemo.sonoUnaAzioneInvocabile -->
+http://host.it/webapp/api/AbsoluteDemo.sonoUnaAzioneInvocabile
+~~~
 
 
 
