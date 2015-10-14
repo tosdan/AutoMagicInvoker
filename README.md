@@ -500,7 +500,8 @@ http://host.it/webapp/api/myController~Json?param1=value1&param2...
 
 http://host.it/webapp/api/myController.azioneXyz~Json?param1=value1&param2...
 ~~~
-Il render così specificato ha la priorità sul render impostato nell'*Annotation* del metodo.
+Tenere presente che il render impostato nell'*Annotation* del metodo vince sempre su quello specificato con questa modalità, quindi può servire solo quando via *Annotation* non è stato specificato il render da utilizzare e da chiamata si può decidere dinamicamente quale scegliere.
+
 
 Dal momento che è possibile specificare il nome semplice della classe del render (Json) e non il nome completo della classe (com.github.tosdan.autominvk.rendering.render.Json) l'unico modo per aggiungere e sfruttare un render personalizzato è quello di posizionarlo nel package `com.github.tosdan.autominvk.rendering.render`.
 
