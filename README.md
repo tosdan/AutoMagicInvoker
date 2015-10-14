@@ -440,7 +440,7 @@ http://host.it/webapp/api/AbsoluteUrlController.sonoUnaAzioneInvocabile
 
 ### Forward
 
-Per effettuare il forward da un *Controller* ad una servlet è sufficiente restituire un oggetto di tipo *RequestDispatcher*. Il framework ricevendo un oggetto *RequestDispatcher* si occuperà di effettuare il forward.
+Per effettuare il forward da un *Controller* ad una servlet è sufficiente restituire un oggetto di tipo *RequestDispatcher*, sarà poi il framework che si occuperà di effettuare il forward.
 ~~~java
 package com.github.tosdan.autominvk.apps;
 
