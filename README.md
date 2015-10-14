@@ -128,7 +128,7 @@ public class DemoAmAction {
 
 Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente assegnerà a questo campo l'oggetto rappresentante la request HTTP corrente. A questo punto basterà richiamarlo nel codice del metodo per accedere ai parametri. 
 
-#### Oggetto "parametro" popolato automaticamente
+#### Oggetto "parametro" popolato automaticamente parte 1
 
 Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi individua la classe di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
 
@@ -145,7 +145,8 @@ public class DemoAmAction {
 		private String param1;
 		private boolean param2;
 		// Range è un semplice oggetto con campi min e max
-		private Range range; 
+		private Range range;
+		private Date millenniumBugDate;
 		public String getParam1() {
 			return this.param1;
 		}
@@ -164,6 +165,7 @@ public class DemoAmAction {
 		public void setRange(Range value) {
 			this.arnge= value;
 		}
+		...
 	}
 
 	@IamInvokableAction
@@ -175,6 +177,8 @@ public class DemoAmAction {
 		Range range = params.getRange();
 		int min = range.getMin();
 		int max = range.getMax();
+		
+		Date apocalisse = params.getMillenniumBugDate();
 		...
 	}
 }
@@ -188,15 +192,17 @@ Vengono popolati solo quei campi il cui nome corrisponde ad un parametro present
 	"range": {
 		"min": 0,
 		"max": 10
-	}
+	},
+	"millenniumBugDate": "31/12/1999"
 }
 ~~~ 
 
 In pratica il json della chiamata HTTP viene deserializzato in un oggetto Java.
+
 __NB.__ 
 In caso di chiamata di tipo POST e PUT i parametri vengono cercati nel corpo della chiamata.
 Mentre nel caso di una chiamata di tipo GET o DELETE, i parametri vengono cercati nella querystring.
-Mai i parametri vengono cercati in entrambi, body e querystring.
+I parametri non vengono mai vengono cercati in entrambi, body e querystring.
 
 ### Parametri del contesto della webapp e della sessione
 
@@ -309,7 +315,7 @@ Quindi, gestendo opportunamente il sistema di eccezioni, si può sfruttare il *me
 
 #### Custom ContentType
 
-Per impostare un *ContentType* differente da quello di default del `AutoMagicRender` utilizzato basta specificare l'*elemento* `mime` nell'*Annotation* `IamInvokableAction`.
+Per impostare un *ContentType* differente da quello di default del `AutoMagicRender` utilizzato, basta specificare l'*elemento* `mime` nell'*Annotation* `IamInvokableAction`.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -322,18 +328,50 @@ public class DemoAmAction {
 	public Object sonoUnaAzioneInvocabile() {
 		...
 		Map returnValue = new HashMap();
-		
+		...
 		return returnValue;
 	}
 }
 ~~~
 
+#### Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date
 
+Per consentire al sistema che deserializza i parametri della chiamata HTTP in un oggetto Java di interpretare correttamente le date, il formato da usare è quello italiano __GG/MM/AAAA__. Nell'esempio della parte 1 di questa sezione infatti era stata passata la data *31/12/1999*. 
 
+&Egrave; possibile comunque impostare un proprio formato e sovrascrivere quello di default aggiungendo l'*elemento* `gsonDateFormat` nell'*Annotation* `IamInvokableAction` .
+Per definire il proprio formato fare riferimento ai pattern di [SimpleDateFormat] (http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html) 
+~~~java
+package com.github.tosdan.autominvk.apps;
 
+@IamInvokable
+public class DemoAmAction {
 
+	public static class MyDemoParamsObject {
+		private Range range;
+		private Date millenniumBugDate;
+		public String getParam1() {
+			return this.param1;
+		}
+		public void setParam1(String value) {
+			this.param1 = value;
+		}		
+		...
+	}
 
-
+	// l'elemento gsonDateFormat consente di impostare il proprio formato per la deserializzazione delle date
+	@IamInvokableAction(render=Json.class, gsonDateFormat="yyyy-MM-dd")
+	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		Date apocalisse = params.getMillenniumBugDate();
+		...
+	}
+}
+~~~
+Parametri della chiamata:
+~~~json
+{
+	"millenniumBugDate": "1999-12-31"
+}
+~~~ 
 
 
 
