@@ -60,7 +60,7 @@ public class DemoAmAction {
 
 #### Eseguire un'azione di un Controller
 
-Ipotizziamo di avere una webapp in esecuzione all'URL ~~~http://host.it/webapp~~~ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package ~~~com.github.tosdan.autominvk.apps~~~
+Ipotizziamo di avere una webapp in esecuzione all'URL ```http://host.it/webapp``` e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package ~~~com.github.tosdan.autominvk.apps~~~
  
 Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosdan.autominvk.apps.DemoAmAction__ basterà effettuare una chiamata HTTP all'URL ~~~http://host.it/webapp/demo.sonoUnaAzioneInvocabile~~~
 
