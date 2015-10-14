@@ -394,9 +394,10 @@ Con questa configurazione il metodo sonoUnaAzioneInvocabile() verrà invocato sol
 
 ### URL Alias
 
-&Egrave; possibile assegnare un *alias* al *Controller* che contiene il metodo da invocare, in modo che sia diverso da quello effettivo, utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction`
+&Egrave; possibile assegnare un *alias* al *Controller*, in modo che il nome nell'URL della chiamata sia diverso da quello effettivo, utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction`
 
 ~~~java
+// notare il sotto package miaApp.controller
 package com.github.tosdan.autominvk.apps.miaApp.controller;
 
 @IamInvokable
@@ -417,6 +418,7 @@ Notare che l'iniziale minuscola è solo una convenzione e come tale, nel momento 
 
 Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovrà essere la parte dell'`url-pattern` più l'*alias* stesso.
 ~~~java
+// notare il sotto package miaApp.controller
 package com.github.tosdan.autominvk.apps.miaApp.controller;
 
 @IamInvokable
