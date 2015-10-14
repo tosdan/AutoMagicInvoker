@@ -193,8 +193,12 @@ Vengono popolati solo quei campi il cui nome corrisponde ad un parametro present
 ~~~ 
 
 In pratica il json della chiamata HTTP viene deserializzato in un oggetto Java.
+__NB.__ 
+In caso di chiamata di tipo POST e PUT i parametri vengono cercati nel corpo della chiamata.
+Mentre nel caso di una chiamata di tipo GET o DELETE, i parametri vengono cercati nella querystring.
+Mai i parametri vengono cercati in entrambi, body e querystring.
 
-### Parametri del contesto della webapp e sessione
+### Parametri del contesto della webapp e della sessione
 
 Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* è possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
 
@@ -210,14 +214,18 @@ public class DemoAmAction {
 	@IamInvokableAction
 	public Object sonoUnaAzioneInvocabile() {
 		// recupero del parametro1 dalla sessione
-		String sessionParam1 = session.getAttribute("parametro1");
+		String sessionParam1 = (String) session.getAttribute("parametro1");
 		
 		// recuper del parametroA dal contesto della webapp
-		String contextParamA = context.getAttribute("parametroA");
+		String contextParamA = context.getInitParameter("parametroA");
 		...
 	}
 }
 ~~~
+
+### Response
+
+Per inoltrare una risposta alla chiamata HTTP è sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto.
 
 
 
