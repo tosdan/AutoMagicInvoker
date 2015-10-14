@@ -28,8 +28,9 @@ Nel `web.xml` aggiungere la seguente servlet:
 
 L'`url-pattern` proposto per la servlet è puramente di esempio, non c'è alcun vincolo da rispettare. 
 
-L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà i Controller dell'applicazione.
-__NB.__ Conviene scegliere un package ben specifico, semplicemente per questioni di performance. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
+L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà i *Controller* dell'applicazione, questo parametro è obbligatorio.
+
+__NB.__ Per questione di performance conviene scegliere un package ben specifico. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
 
 ## Panoramica
 
@@ -37,36 +38,32 @@ __NB.__ Conviene scegliere un package ben specifico, semplicemente per questioni
 
 Le classi con *Annotation* `IamInvokable` costituiscono i *Controller* dell'applicazione.
 ~~~java
+package com.github.tosdan.autominvk.apps;
 @IamInvokable
 public class DemoAmAction {
 	...
 }
 ~~~
 
-All'interno di queste classi *Controller* solo i metodi con *Annotation* `IamInvokableAction` costituiscono una azione richiamabile tramite chiamata HTTP.
+Per definire un'azione eseguibile via chiamata HTTP, basta apporre l'*Annotation* `IamInvokableAction` ad un metodo della classe *Controller* creata in precedenza.
 ~~~java
+package com.github.tosdan.autominvk.apps;
 @IamInvokable
 public class DemoAmAction {	
 
 	@IamInvokableAction
-	public Object get() {
+	public Object sonoUnaAzioneInvocabile() {
 		...
 	}
 }
 ~~~
 
-Per eseguire l'azione associata al metodo *__get__* della classe *__DemoAmAction__*, ipotizzando che l'url di base della webapp sia 
-~~~
-http://host.it/webapp
-~~~
-e che la classe sia nel package indicato dal init-param CLASS_PATH 
-~~~
-com.github.tosdan.autominvk.apps
-~~~
-(e non in un sottopackage), basta effettuare una chiamata HTTP all'url
-~~~
-http://host.it/webapp/demo.get
-~~~
+#### Eseguire un'azione di un Controller
+
+Ipotizziamo di avere una webapp in esecuzione all'URL ~~~http://host.it/webapp~~~ e di aver configurato nel web.xml il prametro `CLASS_PATH` con il package ~~~com.github.tosdan.autominvk.apps~~~
+ 
+Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosdan.autominvk.apps.DemoAmAction__ basterà effettuare una chiamata HTTP all'URL ~~~http://host.it/webapp/demo.sonoUnaAzioneInvocabile~~~
+
 
 Nella chiamata il nome della classe va scritto in __camelCase__, infatti la lettera maiuscola iniziale è stata scritta in minuscolo. Il suffisso *__AmAction__* è "riservato", infatti, come si può vedere dall'esempio dei chiamata, viene automaticamente rimosso, in modo che sia possibile identificare le classi richiamabili a colpo d'occhio, ma l'url della chiamata possa essere più "pulito". 
 
