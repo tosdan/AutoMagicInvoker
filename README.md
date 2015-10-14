@@ -32,7 +32,7 @@ L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà 
 
 __NB.__ Per questione di performance conviene scegliere un package ben specifico. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
 
-## Panoramica
+## Utilizzo
 
 ### Controller
 
@@ -74,24 +74,23 @@ Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe __com.github.tosd
 http://host.it/webapp/demo.sonoUnaAzioneInvocabile
 ~~~
 
-Nella chiamata HTTP il nome della classe dovrà essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non è obbligatorio che il nome delle classi *Controller* termini con *AmAction*, il nome della classe scritto in questo modo è solo una convenzione del framework per rendere semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
+Nella chiamata HTTP il nome della classe dovrà essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non è obbligatorio che il nome delle classi *Controller* termini con il suffisso *AmAction*. Il nome della classe scritto in questo modo è solo una convenzione del framework per rendere più semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
 ~~~
-http://host.it/webapp/demo.sonoUnaAzioneInvocabileAmAction
+http://host.it/webapp/demoAmAction.sonoUnaAzioneInvocabile
 ~~~ 
-il framework avrebbe restituito un errore perchè l'azione [demo.sonoUnaAzioneInvocabileAmAction] non è presente nell'indice delle azioni disponibili. 
+il framework avrebbe restituito un errore perchè l'azione [demoAmAction.sonoUnaAzioneInvocabile] non è presente nell'indice delle azioni disponibili. 
 
 #### Sub-package
 
-A partire dal package principale (CLASS_PATH) è possibile creare una gerarchia di sotto package. Nell'url da chiamare ogni sotto package si traduce in un sotto path da interporre prima del nome della classe.
-Nel caso la classe fosse posizionata in un sottopackage per esempio 
+A partire dal package principale, specificato col parametro `CLASS_PATH` è possibile creare una gerarchia di sotto package per ordinare i vari *Controller*.
+L'URL delle chiamate HTTP dovrà essere composto di conseguenza, aggiungendo all'URL di base (url webapp + url-pattern), i sotto package necessari per raggiungere la classe *Controller* desiderata.
+
+Quindi se la classe *Controller* fosse situata nel sotto package demoApp 
 ~~~
 com.github.tosdan.autominvk.apps.demoApp
 ~~~
- l'url da chiamare diventerebbe 
+la chiamata HTTP dovrebbe essere inotrata all'url 
 ~~~
-http://host.it/webapp/demoApp/demo.get
+http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
-
-
-## Usage
 
