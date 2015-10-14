@@ -113,11 +113,13 @@ package com.github.tosdan.autominvk.apps;
 
 @IamInvokable
 public class DemoAmAction {
-
+	
+	// Oggetto request popolato dal framework
 	private HttpServletRequest req;	
 
 	@IamInvokableAction
 	public Object sonoUnaAzioneInvocabile() {
+		// recupero del parametro1 dall'oggetto request
 		String parametro1 = req.getParameter("parametro1");
 		...
 	}
@@ -128,15 +130,22 @@ Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente a
 
 #### Oggetto "parametro" popolato automaticamente
 
+Nell'esempio che segue viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi individua la classe di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
+
 ~~~java
 package com.github.tosdan.autominvk.apps;
 
 @IamInvokable
 public class DemoAmAction {
 
+	// Classe dell'oggetto "parametro" 
 	public static class MyDemoParamsObject {
+		// I nomi di questi campi corrispondono ai nomi dei parametri 
+		// contenuti nella chiamata HTTP.
 		private String param1;
 		private boolean param2;
+		// Range è un semplice oggetto con campi min e max
+		private Range range; 
 		public String getParam1() {
 			return this.param1;
 		}
@@ -149,18 +158,39 @@ public class DemoAmAction {
 		public void setParam2(boolean value) {
 			this.param2 = value;
 		}
+		public boolean getRange() {
+			return this.range;
+		}
+		public void setRange(Range value) {
+			this.arnge= value;
+		}
 	}
 
 	@IamInvokableAction
 	public Object sonoUnaAzioneInvocabile(MyDemoParamsObject params) {
+		// recupero dei parametri dall'oggetto MyDemoParamsObject
 		String parametro1 = params.getParam1();
 		boolean parametro2 = params.isParam2();
+		
+		Range range = params.getRange();
+		int min = range.getMin();
+		int max = range.getMax();
 		...
 	}
 }
 ~~~
 
-
+Vengono popolati solo quei campi il cui nome corrisponde ad un parametro presente nella chiamata HTTP. Un esempio di parametri validi contenuti nella chiamata HTTP potrebbero essere i seguenti:
+~~~json
+{
+	"param1": "valoreA",
+	"param2": "valoreB",
+	"range": {
+		"min": 0,
+		"max": 10
+	}
+}
+~~~ 
 
 
 
