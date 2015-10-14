@@ -102,7 +102,7 @@ http://host.it/webapp/demoApp/demo.sonoUnaAzioneInvocabile
 Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilità.
 
  * Leggere i parametri direttamente dall'oggetto *HttpServletRequest*
- * Costruire un oggetto che verrà popolato automatiticamente
+ * Costruire un oggetto che verrà popolato automatiticamente (approccio raccomandato)
 
 #### Oggetto HttpServletRequest
 
@@ -130,7 +130,7 @@ Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente a
 
 #### Oggetto "parametro" popolato automaticamente
 
-Nell'esempio che segue viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi individua la classe di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
+Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi individua la classe di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -192,7 +192,32 @@ Vengono popolati solo quei campi il cui nome corrisponde ad un parametro present
 }
 ~~~ 
 
+In pratica il json della chiamata HTTP viene deserializzato in un oggetto Java.
 
+### Parametri del contesto della webapp e sessione
+
+Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* è possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
+
+~~~java
+package com.github.tosdan.autominvk.apps;
+
+@IamInvokable
+public class DemoAmAction {
+	
+	private ServletContext context; // popolato dal framework	
+	private HttpSession session;	// popolato dal framework
+
+	@IamInvokableAction
+	public Object sonoUnaAzioneInvocabile() {
+		// recupero del parametro1 dalla sessione
+		String sessionParam1 = session.getAttribute("parametro1");
+		
+		// recuper del parametroA dal contesto della webapp
+		String contextParamA = context.getAttribute("parametroA");
+		...
+	}
+}
+~~~
 
 
 
