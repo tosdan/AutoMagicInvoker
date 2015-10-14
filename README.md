@@ -247,7 +247,7 @@ Pur essendo un approccio valido non offre molto margine per inviare una response
 
 #### Response Render
 
-Un approccio migliore è quello di restituire un oggetto invece di un primitivo e di impostare una strategia di renderizzazione per la response.
+Un approccio migliore è quello di restituire un oggetto invece di un primitivo e di impostare una *strategia di renderizzazione* per la response.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -280,7 +280,7 @@ public class DemoAmAction {
 }
 ~~~
 
-Per configurare una strategia di renderizzazione basta aggiungere l'*elemento* `render` nell'*Annotation* `IamInvokableAction` e fornire come valore una classe che implementi l'interfaccia `AutoMagicRender`.
+Per configurare una *strategia di renderizzazione* basta aggiungere l'*elemento* `render` nell'*Annotation* `IamInvokableAction` e fornire come valore una classe che implementi l'interfaccia `AutoMagicRender`.
 
 La response inviata avrebbe la forma:
 ~~~json
@@ -295,7 +295,7 @@ La response inviata avrebbe la forma:
 }
 ~~~ 
 
-Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilità con internet explorer (che altrimenti cercherebbe di effettuare un download) 
+Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilità con Internet Explorer (altrimenti la versione 8 ad esempio cercherebbe di effettuare un download) 
 
 Un'altra particolarità del render Json è che nel caso in cui l'esecuzione del metodo invocato, per esempio sonoUnaAzioneInvocabile(), risulti in una eccezione, verrà restituito un oggetto json simile al seguente:
 ~~~json
@@ -305,13 +305,28 @@ Un'altra particolarità del render Json è che nel caso in cui l'esecuzione del me
 }
 ~~~ 
 
+Quindi, gestendo opportunamente il sistema di eccezioni, si può sfruttare il *messagge* dell'eccezione per fornire all'utente un messaggio che descriva il problema avvenuto.
 
+#### Custom ContentType
 
+Per impostare un *ContentType* differente da quello di default del `AutoMagicRender` utilizzato basta specificare l'*elemento* `mime` nell'*Annotation* `IamInvokableAction`.
 
+~~~java
+package com.github.tosdan.autominvk.apps;
+import com.github.tosdan.autominvk.rendering.render.Json;
 
+@IamInvokable
+public class DemoAmAction {
 
-
-
+	@IamInvokableAction(render=Json.class, mime="application/json")
+	public Object sonoUnaAzioneInvocabile() {
+		...
+		Map returnValue = new HashMap();
+		
+		return returnValue;
+	}
+}
+~~~
 
 
 
