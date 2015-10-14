@@ -489,7 +489,7 @@ Una chiamata HTTP di tipo GET all'indirizzo:
 http://host.it/webapp/api/myController
 ~~~
 invocherà il metodo get().
-Mentre una chiamata HTTP di tipo POST invocherà il metodo post().
+Invece una chiamata HTTP di tipo POST invocherà il metodo post().
 
 
 
