@@ -60,10 +60,6 @@ public class AutoMagicMethodInvoker {
 			
 			retval = method.invoke(instance, args);
 		
-		} catch ( IllegalAccessException e ) {
-			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e.getCause());
-		} catch ( InvocationTargetException e ) {
-			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e.getTargetException());
 		} catch ( AutoMagicInvokerException e ) {
 			throw new AutoMagicInvokerException(e.getMessage(), e);
 			
@@ -87,6 +83,10 @@ public class AutoMagicMethodInvoker {
 			
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore. " + jsonErr, e);
 
+		} catch ( IllegalAccessException e ) {
+			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e.getCause());
+		} catch ( InvocationTargetException e ) {
+			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e.getTargetException());
 		} catch ( Exception e ) {
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e);
 		}
