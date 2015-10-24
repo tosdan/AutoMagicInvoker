@@ -68,6 +68,7 @@ public class IamIvokableClassCrawler implements Serializable {
 		String withoutInvokerRootPath = packageName.replace(invokerRootPath, "");
 //		logger.trace("Package name meno rootPath = [{}]", withoutRootPath);
 		String relativePackage = withoutInvokerRootPath.replaceFirst("\\.", "");
+		relativePackage = relativePackage.replace(".", "/");
 		logger.trace("Root package = [{}]", invokerRootPath);
 		String filler = String.format("%" + (invokerRootPath.length() - 3)+ "s", " ");
 		logger.trace("Package relativo = {}[{}]", filler, relativePackage);
