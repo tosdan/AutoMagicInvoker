@@ -134,7 +134,7 @@ Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente a
 
 #### Oggetto "parametro" popolato automaticamente parte 1
 
-Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi individua la classe di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
+Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi recupera il tipo (la classe) di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -206,7 +206,7 @@ In pratica il json della chiamata HTTP viene deserializzato in un oggetto Java.
 __NB.__ 
 In caso di chiamata di tipo POST e PUT i parametri vengono cercati nel corpo della chiamata.
 Mentre nel caso di una chiamata di tipo GET o DELETE, i parametri vengono cercati nella querystring.
-I parametri non vengono mai vengono cercati in entrambi, body e querystring.
+I parametri non vengono mai cercati in entrambi, body e querystring.
 
 ### Parametri del contesto della webapp e della sessione
 
@@ -251,9 +251,9 @@ public class DemoAmAction {
 }
 ~~~
 
-Di default viene inviata una response con *ContentType* __text/html__ e l'oggetto restituito viene convertito in stringa con il metodo toString(), mentre nel caso di un primitivo viene restituito così com'è nel contenuto della response.
+Di default viene inviata una response con *ContentType* __text/html__ e l'oggetto restituito viene convertito in stringa con il metodo toString(). Un tipo primitivo viene copiato nella corpo della response senza nessuna elaborazione.
 
-Pur essendo un approccio valido non offre molto margine per inviare una response particolarmente elaborata.
+Pur essendo un approccio legittimo non offre molto margine per inviare una response particolarmente elaborata.
 
 #### Response Render
 
@@ -305,7 +305,7 @@ La response inviata avrebbe la forma:
 }
 ~~~ 
 
-Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilità con Internet Explorer (altrimenti la versione 8 ad esempio cercherebbe di effettuare un download) 
+Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilità con Internet Explorer (altrimenti la versione 8, ad esempio, cercherebbe di effettuare un download) 
 
 Un'altra particolarità del render Json è che nel caso in cui l'esecuzione del metodo invocato, per esempio sonoUnaAzioneInvocabile(), risulti in una eccezione, verrà restituito un oggetto json simile al seguente:
 ~~~json
