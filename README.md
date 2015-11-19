@@ -1,3 +1,23 @@
+- [AutoMagicInvoker](#automagicinvoker)
+	- [Installazione](#installazione)
+	- [Panoramica](#panoramica)
+		- [Controller](#controller)
+			- [Eseguire un'azione di un Controller](#eseguire-un-azione-di-un-controller)
+			- [Sub-package](#sub-package)
+		- [Parametri della chiamata HTTP](#parametri-della-chiamata-http)
+			- [Oggetto HttpServletRequest](#oggetto-httpservletrequest)
+			- [Oggetto "parametro" popolato automaticamente parte 1](#oggetto-parametro-popolato-automaticamente-parte-1)
+		- [Parametri del contesto della webapp e della sessione](#parametri-del-contesto-della-webapp-e-della-sessione)
+		- [Response](#response)
+			- [Response Render](#response-render)
+			- [Custom ContentType](#custom-contenttype)
+			- [Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date](#oggetto-parametro-popolato-automaticamente-parte-2---deserializzazione-di-date)
+		- [Metodi HTTP](#metodi-http)
+		- [Controller Alias](#controller-alias)
+		- [Forward](#forward)
+		- [Metodi di default nei Controller](#metodi-di-default-nei-controller)
+		- [Impostare il render nell'URL della chiamata (experimental)](#impostare-il-render-nell-url-della-chiamata-experimental)
+		
 #AutoMagicInvoker
 Micro mvc framework
 
