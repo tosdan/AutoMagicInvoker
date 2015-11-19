@@ -1,7 +1,7 @@
-# AutoMagicInvoker
+#AutoMagicInvoker
 Micro mvc framework
 
-## Installazione
+##Installazione
 
 Scaricare lo zip dell'ultima release e copiare i jar nel proprio progetto (nella cartella lib sono contenuti jar con le dipendenze). 
 
@@ -32,9 +32,9 @@ L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercherà 
 
 __NB.__ Per questione di performance conviene scegliere un package ben specifico. Più classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage più tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla però vieta di impostare un package più generico.
 
-## Panoramica
+##Panoramica
 
-### Controller
+###Controller
 
 Le classi con *Annotation* `IamInvokable` costituiscono i *Controller* dell'applicazione.
 ~~~java
@@ -60,7 +60,7 @@ public class DemoAmAction {
 }
 ~~~
 
-#### Eseguire un'azione di un Controller
+####Eseguire un'azione di un Controller
 
 Ipotizziamo di avere una webapp in esecuzione all'URL 
 ~~~
@@ -86,7 +86,7 @@ http://host.it/webapp/api/demoAmAction.sonoUnaAzioneInvocabile
 ~~~ 
 il framework avrebbe restituito un errore perchè l'azione [demoAmAction.sonoUnaAzioneInvocabile] non è presente nell'indice delle azioni disponibili. 
 
-#### Sub-package
+####Sub-package
 
 A partire dal package principale, specificato col parametro `CLASS_PATH` è possibile creare una gerarchia di sotto package per ordinare i vari *Controller*.
 L'URL delle chiamate HTTP dovrà essere composto di conseguenza, aggiungendo all'URL di base (url webapp + url-pattern), i sotto package necessari per raggiungere la classe *Controller* desiderata.
@@ -101,14 +101,14 @@ http://host.it/webapp/api/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
 
 
-### Parametri della chiamata HTTP
+###Parametri della chiamata HTTP
 
 Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilità.
 
  * Leggere i parametri direttamente dall'oggetto *HttpServletRequest*
  * Costruire un oggetto "parametro" che verrà popolato automatiticamente (approccio raccomandato)
 
-#### Oggetto HttpServletRequest
+####Oggetto HttpServletRequest
 
 Per accedere all'oggetto __HttpServletRequest__ è sufficiente creare un campo nella classe controller che sia di tipo HttpServletRequest.
 
@@ -132,7 +132,7 @@ public class DemoAmAction {
 
 Il campo __req__ è di tipo *HttpServletRequest* e il framework automaticamente assegnerà a questo campo l'oggetto rappresentante la request HTTP corrente. A questo punto basterà richiamarlo nel codice del metodo per accedere ai parametri. 
 
-#### Oggetto "parametro" popolato automaticamente parte 1
+####Oggetto "parametro" popolato automaticamente parte 1
 
 Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe può benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi recupera il tipo (la classe) di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
 
@@ -208,7 +208,7 @@ In caso di chiamata di tipo POST e PUT i parametri vengono cercati nel corpo del
 Mentre nel caso di una chiamata di tipo GET o DELETE, i parametri vengono cercati nella querystring.
 I parametri non vengono mai cercati in entrambi, body e querystring.
 
-### Parametri del contesto della webapp e della sessione
+###Parametri del contesto della webapp e della sessione
 
 Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* è possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
 
@@ -233,7 +233,7 @@ public class DemoAmAction {
 }
 ~~~
 
-### Response
+###Response
 
 Per inoltrare una risposta alla chiamata HTTP è sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto o anche un tipo primitivo.
 
@@ -255,7 +255,7 @@ Di default viene inviata una response con *ContentType* __text/html__ e l'oggett
 
 Pur essendo un approccio legittimo non offre molto margine per inviare una response particolarmente elaborata.
 
-#### Response Render
+####Response Render
 
 Un approccio migliore è quello di restituire un oggetto invece di un primitivo e di impostare una *strategia di renderizzazione* per la response.
 
@@ -317,7 +317,7 @@ Un'altra particolarità del render Json è che nel caso in cui l'esecuzione del me
 
 Quindi, gestendo opportunamente il sistema di eccezioni, si può sfruttare il *messagge* dell'eccezione per fornire all'utente un messaggio che descriva il problema avvenuto.
 
-#### Custom ContentType
+####Custom ContentType
 
 Per impostare un *ContentType* differente da quello di default del `AutoMagicRender` utilizzato, basta specificare l'*elemento* `mime` nell'*Annotation* `IamInvokableAction`.
 
@@ -338,7 +338,7 @@ public class DemoAmAction {
 }
 ~~~
 
-#### Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date
+####Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date
 
 Per consentire al sistema che deserializza i parametri della chiamata HTTP in un oggetto Java di interpretare correttamente le date, il formato da usare è quello italiano __GG/MM/AAAA__. Nell'esempio della parte 1 di questa sezione infatti era stata passata la data *31/12/1999*. 
 
@@ -376,7 +376,7 @@ Parametri della chiamata:
 }
 ~~~ 
 
-### Metodi HTTP
+###Metodi HTTP
 
 Impostando l'*elemento* `reqMethod` nell'*Annotation* `IamInvokableAction` è possibile limitare l'accessibilità del metodo da invoare in base al metodo HTTP utilizzato:
 ~~~java
@@ -392,7 +392,7 @@ public class DemoAmAction {
 ~~~ 
 Con questa configurazione il metodo sonoUnaAzioneInvocabile() verrà invocato solo se la chiamata HTTP è di tipo POST. In caso di altri metodi HTTP (GET, PUT, HEAD o DELETE) verrà restituito un errore.
 
-### Controller Alias
+###Controller Alias
 
 Utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction` è possibile assegnare un *alias* al *Controller* in modo che il nome nell'URL della chiamata sia diverso da quello effettivo.
 
@@ -438,7 +438,7 @@ http://host.it/webapp/api/miaApp/controller/demo.sonoUnaAzioneInvocabile
 http://host.it/webapp/api/AbsoluteUrlController.sonoUnaAzioneInvocabile
 ~~~
 
-### Forward
+###Forward
 
 Per effettuare il forward da un *Controller* ad una servlet è sufficiente restituire un oggetto di tipo *RequestDispatcher*, sarà poi il framework che si occuperà di effettuare il forward.
 ~~~java
@@ -462,7 +462,7 @@ A questo punto il compito di gestire la *response* è lasciato alla servlet verso
 Nell'esempio sopra, un'ipotetica servlet di download è mappata all'URL *http://host.it/webapp/downloadServlet* e cercherà il file da scaricare nell'*attribute* "FileDaScaricare" della request.
 
 
-### Metodi di default nei Controller 
+###Metodi di default nei Controller 
 
 Definendo in un *Controller* i metodi (in lowercase) `post` o `get` o un qualsiasi altro metodo HTTP valido, è possibile invocarli senza specificarne il nome dopo il nome del *Controller*, semplicemente effettuando una chiamata HTTP corripondente.
 
@@ -491,7 +491,7 @@ http://host.it/webapp/api/myController
 invocherà il metodo get().
 Invece una chiamata HTTP di tipo POST invocherà il metodo post().
 
-### Impostare il render nell'URL della chiamata (experimental)
+###Impostare il render nell'URL della chiamata (experimental)
 
 &Egrave; possibile specificare l'*AutoMagicRender* da utilizzare per il rendering della *response* inserendo come ultimo componente dell'URL chiamato (ma prima della querystring) il nome della classe che implementa *AutoMagicRender* preceduto da carattere tilde `~`
 ~~~html
