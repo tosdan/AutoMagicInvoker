@@ -18,6 +18,7 @@ import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.AutoMagicResponseObject;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.HttpError;
+import com.github.tosdan.autominvk.rendering.render.Json;
 import com.google.common.base.Throwables;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
@@ -94,6 +95,10 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			} else if (renderClass != null) {
 				render = getRenderInstance(renderClass);
 				
+				
+			} else if ("XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"))) {
+				// render di default per le richieste Ajax
+				render = new Json();
 				
 			} else {
 				render = new Default();
