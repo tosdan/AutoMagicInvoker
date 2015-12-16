@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,17 +33,18 @@ public class AutoMagicMethodInvoker {
 	 * 
 	 * @param amAction
 	 * @param req
+	 * @param resp 
 	 * @param ctx
 	 * @return
 	 */
-	public Object invoke(AutoMagicAction amAction, HttpServletRequest req, ServletContext ctx) {
+	public Object invoke(AutoMagicAction amAction, HttpServletRequest req, HttpServletResponse resp, ServletContext ctx) {
 		Object retval = null;
 		String 	methodId = amAction.getMethodId(),
 				actionId = amAction.getActionId(),
 				httpMethod = amAction.getHttpMethod();
 		
 		Object instance = getInstance(actionId);
-		injectParams(instance, req, ctx);
+		injectParams(instance, req, resp, ctx);
 		
 		Method method = getMethod(methodId, httpMethod, instance.getClass());
 		
@@ -190,9 +192,10 @@ public class AutoMagicMethodInvoker {
 	 * 
 	 * @param instance
 	 * @param req
+	 * @param resp 
 	 * @param ctx
 	 */
-	private void injectParams(Object instance, HttpServletRequest req, ServletContext ctx) {
+	private void injectParams(Object instance, HttpServletRequest req, HttpServletResponse resp, ServletContext ctx) {
 		if (req != null && ctx != null) {
 			Class< ? extends Object> clazz = instance.getClass();
 			Field[] fields = clazz.getDeclaredFields();
@@ -205,6 +208,14 @@ public class AutoMagicMethodInvoker {
 				if (type.isAssignableFrom(HttpServletRequest.class)) {
 					try {
 						FieldUtils.writeField(f, instance, req, true);
+					} catch (IllegalAccessException e) {
+						throw new AutoMagicInvokerException(errMsg, e);
+					}
+				}
+				
+				if (type.isAssignableFrom(HttpServletResponse.class)) {
+					try {
+						FieldUtils.writeField(f, instance, resp, true);
 					} catch (IllegalAccessException e) {
 						throw new AutoMagicInvokerException(errMsg, e);
 					}
@@ -262,6 +273,6 @@ public class AutoMagicMethodInvoker {
 	 * @return
 	 */
 	public Object invoke(AutoMagicAction amAction) {
-		return invoke(amAction, null, null);
+		return invoke(amAction, null, null, null);
 	}
 }

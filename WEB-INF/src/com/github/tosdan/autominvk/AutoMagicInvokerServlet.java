@@ -51,7 +51,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			
 			logger.trace("{}", action);
 			
-			retval = invoker.invoke(action, req, ctx);
+			retval = invoker.invoke(action, req, resp, ctx);
 
 			sendResponse(retval, action, req, resp);
 			
