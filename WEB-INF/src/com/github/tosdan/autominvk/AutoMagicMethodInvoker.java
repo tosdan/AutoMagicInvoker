@@ -43,16 +43,16 @@ public class AutoMagicMethodInvoker {
 				actionId = amAction.getActionId(),
 				httpMethod = amAction.getHttpMethod();
 		
-		Object instance = getInstance(actionId);
-		injectParams(instance, req, resp, ctx);
-		
-		Method method = getMethod(methodId, httpMethod, instance.getClass());
-		
-		forceRenderByAnnotation(amAction, method);
-		forceMimeTypeByAnnotation(amAction, method);
-		
 		try {
 
+			Object instance = getInstance(actionId);
+			injectParams(instance, req, resp, ctx);
+			
+			Method method = getMethod(methodId, httpMethod, instance.getClass());
+			
+			forceRenderByAnnotation(amAction, method);
+			forceMimeTypeByAnnotation(amAction, method);
+		
 			Object[] args = null;
 			
 			if (method.getParameterTypes().length > 0) {
@@ -61,11 +61,12 @@ public class AutoMagicMethodInvoker {
 			}
 			
 			retval = method.invoke(instance, args);
-		
-		} catch ( AutoMagicInvokerException e ) {
-			throw new AutoMagicInvokerException(e.getMessage(), e);
+					
+		} catch (AutoMagicInvokerException e) {
+			// catch e rethrow perchè deve essere inoltrata tale e quale altrimenti verrebbe intercettata dal catch di Exception più sotto
+			throw e;
 			
-		} catch ( com.google.gson.JsonSyntaxException e ) {
+		} catch (com.google.gson.JsonSyntaxException e) {
 			String jsonErr = "";
 			if (StringUtils.containsIgnoreCase(e.getMessage(), "but was BEGIN_OBJECT at line")) {
 				jsonErr = "Il json della request rappresenta un oggetto, ma si sta cercando di popolare un tipo di dato primitivo o una stringa.";
@@ -75,7 +76,7 @@ public class AutoMagicMethodInvoker {
 			
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore. " + jsonErr, e);
 
-		} catch ( com.google.gson.JsonParseException e ) {
+		} catch (com.google.gson.JsonParseException e) {
 			String jsonErr = "";
 			if (StringUtils.containsIgnoreCase(e.getMessage(), "The date should be a string value")) {
 				jsonErr = "Il formato data ricevuto è diverso da quello impostato in Gson oppure il json ricevuto dalla request rappresenta un oggetto e non una data sotto forma di stringa.";
@@ -85,11 +86,12 @@ public class AutoMagicMethodInvoker {
 			
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore. " + jsonErr, e);
 
-		} catch ( IllegalAccessException e ) {
+		} catch (IllegalAccessException e) {
 			throw new AutoMagicInvokerException("Impossibile accedere al metodo [" + methodId + "] dell'azione [" + actionId + "].", e.getCause());
-		} catch ( InvocationTargetException e ) {
+		} catch (InvocationTargetException e) {
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e.getTargetException());
-		} catch ( Exception e ) {
+		} catch (Exception e) {
+			// per tutte le altre casisitiche non dipendenti dai componenti del framework
 			throw new AutoMagicInvokerException("Errore: il metodo invocato [" + methodId + "] dell'azione [" + actionId + "] ha generato un errore.", e);
 		}
 		
@@ -242,11 +244,11 @@ public class AutoMagicMethodInvoker {
 
 	public Object getInstance(String actionId) {
 		logger.debug("Recupero istanza per [{}]", actionId);
-		String clazz = crawler.resolve(actionId);
-		
+		String clazz = null;
 		Object instance = null;
 		
 		try {
+			clazz = crawler.resolve(actionId);
 			
 			logger.debug("Creazione istanza di [{}]...", clazz);
 			instance = Class.forName(clazz).newInstance();
@@ -259,7 +261,6 @@ public class AutoMagicMethodInvoker {
 		} catch (ClassNotFoundException e) {
 			throw new AutoMagicInvokerException("Errore classe ["+clazz+"] non trovata.", e.getCause());
 		}
-		
 		
 		logger.trace("Istanza per [{}] creata.", actionId);
 		return instance;

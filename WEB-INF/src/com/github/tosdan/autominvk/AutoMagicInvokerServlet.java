@@ -55,7 +55,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 
 			sendResponse(retval, action, req, resp);
 			
-		} catch (Throwable e) {
+		} catch (Exception e) {
 			logger.error(e.getMessage(), e);
 			sendResponse(e, action, req, resp);
 		}
@@ -76,6 +76,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		Class<? extends AutoMagicRender> renderClass = action.getRender();
 		Object response = null;
 		String charset = "UTF-8";
+		boolean xmlHttpRequest = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"));
 		
 		AutoMagicRender render = null;
 		AutoMagicResponseObject amRespObj = null;
@@ -90,24 +91,32 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		} else {
 			logger.debug("Rendering phase...");
 			if (dataToRender instanceof AutoMagicHttpError) {
+				logger.debug("dataToRender instanceof AutoMagicHttpError");
 				render = new HttpError();
 
 				
-			} else if (DefaultNull.class.equals(renderClass) 
-						&& "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"))) {
+			} else if (DefaultNull.class.equals(renderClass) && xmlHttpRequest) {
+				// -> quando non è stato specificato un render
+				logger.debug("renderClass instanceof DefaultNull");
 				logger.debug("Detected XMLHttpRequest: forcing Json render...");
 				// render di default per le richieste Ajax
 				render = new Json();
 				
 				
 			} else if (renderClass != null) {
+				// -> quando è stato scelto un render specifico
+				logger.debug("renderClass != NULL");
 				render = getRenderInstance(renderClass);
 				
 			
 			} else {
-				// Superfluo: non dovrebbe mai esserci un null in renderClass
-				render = new Default();
-				
+				logger.debug("renderClass IS NULL");
+				// -> per esempio non è stata trovata corrispondenza per il nome di controller/action richiesto/a
+				if (xmlHttpRequest) {
+					render = new Json();
+				} else {
+					render = new Default();
+				}				
 			}
 			
 			logger.debug("Render Instance: [{}]", render.getClass().getName());
