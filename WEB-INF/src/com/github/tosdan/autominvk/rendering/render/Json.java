@@ -24,7 +24,10 @@ public class Json implements AutoMagicRender {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Json.class);
 	
 	public Json() {
-		gson = new GsonBuilder().setPrettyPrinting().create();
+		gson = new GsonBuilder()
+				.setPrettyPrinting()
+				.addSerializationExclusionStrategy(new JsonAnnotationExclusionStrategy())
+				.create();
 	}
 	
 	@Override
