@@ -28,6 +28,16 @@ $(function() {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
 		ajax('json', '../api/demo/helloWorld.error', data, 'get');
 	});
+	
+	$('#ajaxException').on('click', function(evt) {
+		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
+		ajax('json', '../api/demo/helloWorld.exception', data, 'get');
+	});
+	
+	$('#ajaxInexistent').on('click', function(evt) {
+		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
+		ajax('json', '../api/demo/helloWorld.inexistent', data, 'get');
+	});
 
 	$('#ajaxGet').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };

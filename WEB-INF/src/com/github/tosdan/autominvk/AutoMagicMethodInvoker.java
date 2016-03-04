@@ -57,7 +57,7 @@ public class AutoMagicMethodInvoker {
 			
 			if (method.getParameterTypes().length > 0) {
 				args = getArgs(req, method);
-				logger.debug("Injecting arguments= [{}]", args);
+				logger.trace("Injecting arguments= [{}]", args);
 			}
 			
 			retval = method.invoke(instance, args);

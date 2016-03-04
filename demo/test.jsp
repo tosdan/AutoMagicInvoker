@@ -23,6 +23,8 @@
 <p><button type="button" id="ajaxGet">Ajax GET</button></p>
 <p><button type="button" id="ajaxJsonP">Ajax JSONP</button></p>
 <p><button type="button" id="ajaxError">Ajax ERROR</button></p>
+<p><button type="button" id="ajaxException">Ajax Exception</button></p>
+<p><button type="button" id="ajaxInexistent">Ajax Inexistent</button></p>
 
 <fieldset>
 	<form action="../api/demo/helloWorld.post" method="post">
