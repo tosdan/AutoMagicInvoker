@@ -114,13 +114,13 @@ public class AutoMagicAction {
 	 */
 	public static AutoMagicAction getInstance(HttpServletRequest req, ServletContext ctx) {
 		String ctxPath = ctx.getContextPath();
-//		logger.trace("Context Path = [{}]", ctxPath);
+		logger.trace("Context Path = [{}]", ctxPath);
 		String requestURI = getRequestURI(req);
 		logger.trace("RequestedURI = [{}]", requestURI);
-		String webAppRelativeRequestedURI = requestURI.replace(ctxPath, "");
+		String webAppRelativeRequestedURI = requestURI.replaceFirst(ctxPath, "");
 		logger.trace("Requested Servlet URI = [{}]", webAppRelativeRequestedURI);
 		String invokerServletPath = req.getServletPath();
-		logger.trace("Servlet Mapping = [{}]", invokerServletPath);
+		logger.trace("Servlet Mapping =         [{}]", invokerServletPath);
 		
 		return new AutoMagicAction(webAppRelativeRequestedURI, invokerServletPath, req.getMethod());
 	}
