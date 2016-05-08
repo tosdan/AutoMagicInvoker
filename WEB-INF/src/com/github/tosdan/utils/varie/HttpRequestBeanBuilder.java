@@ -93,14 +93,14 @@ public class HttpRequestBeanBuilder {
 		if ("GET".equalsIgnoreCase(reqMethod) || "DELETE".equalsIgnoreCase(reqMethod)) {
 			logger.debug("Parsing QueryString parameters...");
 
-			Map<String, Object> requestParamsMap = QueryStringUtils.parse(queryString);
+			Map<String, Object> requestParamsMap = QueryStringUtils.parse(queryString, gson);
 //			logger.debug("Parametri della request: {}", requestParamsMap);
 			json = gson.toJson(requestParamsMap);
 			
 		} else if (StringUtils.containsIgnoreCase(contentType, APPLICATION_X_WWW_FORM_URLENCODED)) {
 			logger.debug("Parsing Form POST parameters...");
 			
-			Map<String, Object> requestParamsMap = QueryStringUtils.parse(requestBody);
+			Map<String, Object> requestParamsMap = QueryStringUtils.parse(requestBody, gson);
 			logger.debug("Parametri della request: {}", requestParamsMap);
 			json = gson.toJson(requestParamsMap);
 			

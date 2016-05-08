@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Daniele
  *
  */
-public class HttpReuqestUtils {
+public class HttpRequestUtils {
 	
 	public final static String[] sources = 
 		{"X-Forwarded-For", "X-FORWARDED-FOR", "x-forwarded-for", "Proxy-Client-IP" , "X-Forwarded-Server", "X-Forwarded-Host", "X-Pounded-For", "Proxy-Client-IP" , "WL-Proxy-Client-IP", "HTTP_CLIENT_IP", "HTTP_X_FORWARDED_FOR"};
@@ -44,7 +44,7 @@ public class HttpReuqestUtils {
     		ip = request.getRemoteAddr();
     	}
     	
-    	return (new HttpReuqestUtils())
+    	return (new HttpRequestUtils())
     			.new ClientIP(ip, source);  
     }
 
