@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
-import com.github.tosdan.utils.varie.HttpRequestBeanBuilder;
-import com.github.tosdan.utils.varie.HttpRequestUtils;
 
 public class AutoMagicMethodInvoker {
 
@@ -102,7 +100,7 @@ public class AutoMagicMethodInvoker {
 		Class<?>[] params = method.getParameterTypes();
 		Object[] args = new Object[params.length];
 		Class<?> p = null;
-		String requestBody = HttpRequestUtils.parseRequestBody(req);
+		String requestBody = HttpRequestBeanBuilder.parseRequestBody(req);
 		for (int i = 0 ; i < params.length ; i++) {
 			p = params[i];
 			logger.debug("Getting instance of: [{}]", p);
