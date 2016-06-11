@@ -168,10 +168,16 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 */
 	private void respond(Object respVal, String mime, String charset, HttpServletResponse resp) 
 			throws IOException {
-		resp.setContentType(mime);
-		resp.setCharacterEncoding(charset);
-		resp.getWriter()
-			.print(respVal);
+		if (!resp.isCommitted()) {
+			resp.setContentType(mime);
+			resp.setCharacterEncoding(charset);
+			resp.getWriter()
+				.print(respVal);
+			
+		} else {
+			logger.warn("Sulla [response] è già stato fatto il commit! Perciò non è stato possibile invaire i seguenti dati al client:");
+			logger.warn(String.valueOf(respVal));
+		}
 	}
 	
 
