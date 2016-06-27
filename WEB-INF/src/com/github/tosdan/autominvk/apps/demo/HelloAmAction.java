@@ -14,7 +14,7 @@ import javax.servlet.http.HttpSession;
 
 import com.github.tosdan.autominvk.IamInvokable;
 import com.github.tosdan.autominvk.IamInvokableAction;
-import com.github.tosdan.autominvk.rendering.render.Json;
+import com.github.tosdan.autominvk.rendering.render.Json2;
 
 /**
  * @author tosdan
@@ -39,7 +39,7 @@ public class HelloAmAction {
 		public String getTest() { return test; }		
 	}
 
-	@IamInvokableAction(mime="application/json", render = Json.class)
+	@IamInvokableAction(mime="application/json", render = Json2.class)
 	public Object get() throws Exception {
 		String ciao = "oaic";
 		String test = "tset";
@@ -62,7 +62,7 @@ public class HelloAmAction {
 		return new Retval(ciao, test);
 	}
 	
-	@IamInvokableAction(mime="application/json", render = Json.class)
+	@IamInvokableAction(mime="application/json", render = Json2.class)
 	public Object echo() throws Exception {
 		Map<String, Object> retval = new HashMap<String, Object>();
 		

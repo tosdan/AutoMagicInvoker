@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
+import com.github.tosdan.autominvk.rendering.RenderOptions;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.google.common.base.Throwables;
 /**
@@ -30,6 +31,7 @@ public class AutoMagicAction {
 	private Class<? extends AutoMagicRender> render;
 	private String httpMethod;
 	private String mimeType;
+	private RenderOptions renderOptions;
 	
 	public AutoMagicAction(String webAppRelativeRequestedURI, String invokerRootPath, String httpMethod) {
 		this.webAppRelativeRequestedURI = webAppRelativeRequestedURI;
@@ -155,6 +157,9 @@ public class AutoMagicAction {
 	public String getInvokerRootPath() { return invokerRootPath; }
 	
 	public String getWebAppRelativeRequestedURI() { return webAppRelativeRequestedURI; }
+	
+	public void setRenderOptions( RenderOptions renderOptions ) { this.renderOptions = renderOptions; }
+	public RenderOptions getRenderOptions() { return renderOptions; }
 
 	@Override
 	public String toString() {

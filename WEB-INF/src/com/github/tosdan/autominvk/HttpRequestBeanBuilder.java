@@ -10,13 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.github.tosdan.autominvk.rendering.GsonFactory;
+import com.github.tosdan.autominvk.rendering.RenderOptions;
 import com.google.common.base.Throwables;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 
 public class HttpRequestBeanBuilder {
 	private final static Logger logger = LoggerFactory.getLogger(HttpRequestBeanBuilder.class);
@@ -49,8 +46,8 @@ public class HttpRequestBeanBuilder {
 	 * @param gsonDateFormat Formato data che Gson utilizzerà per fare il parse dei parametri destinati a diventare un oggetto {@link java.util.Date}
 	 * @return
 	 */
-	public <T> T buildBeanFromRequest(Class<T> clazz, HttpServletRequest req, String requestBody, String gsonDateFormat) {
-		return this.buildBeanFromRequest(clazz, req.getContentType(), requestBody, req.getQueryString(), req.getMethod(), gsonDateFormat);
+	public <T> T buildBeanFromRequest(Class<T> clazz, HttpServletRequest req, String requestBody, RenderOptions renderOptions) {
+		return this.buildBeanFromRequest(clazz, req.getContentType(), requestBody, req.getQueryString(), req.getMethod(), renderOptions);
 	}
 	
 	/**
@@ -78,13 +75,13 @@ public class HttpRequestBeanBuilder {
 	 * @param gsonDateFormat Formato data che Gson utilizzerà per fare il parse dei parametri destinati a diventare un oggetto {@link java.util.Date}
 	 * @return
 	 */
-	public <T> T buildBeanFromRequest(Class<T> clazz, String contentType, String requestBody, String queryString, String reqMethod, String gsonDateFormat) {
+	public <T> T buildBeanFromRequest(Class<T> clazz, String contentType, String requestBody, String queryString, String reqMethod, RenderOptions renderOptions) {
 		
 		T retval = null;
 		
 		logger.debug("Classe oggetto Bean richiesto: [{}]", clazz.getName());
 		
-		Gson gson = getGson(gsonDateFormat);
+		Gson gson = getGson(renderOptions);
 		
 		logger.debug("Corpo della request: [{}]", requestBody);
 		
@@ -122,59 +119,8 @@ public class HttpRequestBeanBuilder {
 		return retval;
 	}
 
-	private Gson getGson(String gsonDateFormat) {		
-		GsonBuilder gsonBuilder = new GsonBuilder()
-									.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
-									.registerTypeAdapter(Float.class, new FloatTypeAdapter());
-		if (gsonDateFormat != null) {
-			gsonBuilder.setDateFormat(gsonDateFormat);
-		}
-		Gson gson = gsonBuilder.create();
-		return gson;
-	}
-
-	/**
-	 * Type adapter per consentire a {@link Gson} di effettuare il parse di cifre decimali con separatore virgola ","
-	 * @author Daniele
-	 *
-	 */
-	public static class DoubleTypeAdapter extends TypeAdapter<Double> {
-		@Override public Double read(JsonReader reader) throws IOException {
-			Double retval = null;
-            if (reader.peek() == JsonToken.NULL) { reader.nextNull(); }
-            String stringValue = reader.nextString();
-            try { 
-            	Double value = Double.valueOf(stringValue.replace(",", "."));
-                retval = value;
-            } catch (NumberFormatException e) { }
-            return retval;
-        }
-		@Override public void write(JsonWriter writer, Double value) throws IOException {
-            if (value == null) { writer.nullValue(); }
-            else { writer.value(value); }
-        }
-	}
-	
-	/**
-	 * Type adapter per consentire a {@link Gson} di effettuare il parse di cifre decimali con separatore virgola ","
-	 * @author Daniele
-	 *
-	 */
-	public static class FloatTypeAdapter extends TypeAdapter<Float> {
-		@Override public Float read(JsonReader reader) throws IOException {
-			Float retval = null;
-			if (reader.peek() == JsonToken.NULL) { reader.nextNull(); }
-			String stringValue = reader.nextString();
-			try { 
-				Float value = Float.valueOf(stringValue.replace(",", "."));
-				retval = value;
-			} catch (NumberFormatException e) { }
-			return retval;
-		}
-		@Override public void write(JsonWriter writer, Float value) throws IOException {
-			if (value == null) { writer.nullValue(); }
-			else { writer.value(value); }
-		}
+	private Gson getGson(RenderOptions renderOptions) {		
+		return GsonFactory.getGson(renderOptions);
 	}
 	
 

@@ -42,6 +42,13 @@ public @interface IamInvokableAction {
 	 */
 	String gsonDateFormat() default "dd/MM/yyyy";
 	/**
+	 * Formato orario con cui verrà fatto il parse dei parametri che devono essere trasformati in oggetti {@link java.sql.Time}.
+	 * <br>Per i formati disponibili fare riferimento a {@link SimpleDateFormat}. 
+	 * <br>Il formato di default è <code>HH:mm</code>. Per annullare il default impostare con una stringa vuota.
+	 * @return
+	 */
+	String gsonTimeFormat() default "HH:mm";
+	/**
 	 * Classe, che implementa {@link AutoMagicRender}, da usare per effettuare il render dell'oggetto 
 	 * restituito dal metodo chiamato. 
 	 * @return

@@ -1,5 +1,6 @@
 package com.github.tosdan.autominvk.apps.demo;
 
+import java.sql.Time;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +15,11 @@ import com.github.tosdan.autominvk.IamInvokable;
 import com.github.tosdan.autominvk.IamInvokableAction;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.Json;
+import com.github.tosdan.autominvk.rendering.render.Json2;
 import com.github.tosdan.autominvk.rendering.render.JsonP;
+import com.github.tosdan.autominvk.rendering.typeAdapter.TimeTypeAdapter;
+import com.google.gson.annotations.JsonAdapter;
+import com.google.gson.typeadapters.UtcDateTypeAdapter;
 import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
 @IamInvokable
@@ -38,30 +43,45 @@ public class HelloWorldAmAction {
 		private Range range;
 		private String name;
 		private Date data;
+		@JsonAdapter(UtcDateTypeAdapter.class)
+		private Date data2;
+		@JsonAdapter(TimeTypeAdapter.class)
+		private Time time;
+		private Time time2;
 		private boolean checkbox;
 		public boolean isCheckbox() { return checkbox; } 
 		public void setCheckbox( boolean checkbox ) { this.checkbox = checkbox; }
 		public Date getData() { return data; }
 		public void setData( Date data ) { this.data = data; }
+		public Date getData2() { return data2; }
+		public void setData2( Date data2 ) { this.data2 = data2; }
 		public Range getRange() { return range; }
 		public void setRange( Range range ) { this.range = range; } 
 		public List<Range> getRanges() { return ranges; }
 		public void setRanges( List<Range> ranges ) { this.ranges = ranges; }
 		public String getName() { return name; }
 		public void setName( String name ) { this.name = name; }
+		public Time getTime() { return time; }
+		public void setTime( Time time ) { this.time = time; }
+		public Time getTime2() { return time2; }
+		public void setTime2( Time time2 ) { this.time2 = time2; }
 		@Override public String toString() { return "HelloObject [ranges=" + ranges + ", range=" + range + ", name=" + name + "]"; }
 		
 	}
 	
 	public static class HelloObjectExt extends HelloObject {
 		private String greet;
+		@JsonAdapter(UtcDateTypeAdapter.class)
+		private Date unaData;
 		private Boolean booleano;
 		private List<String> multiplo;
 		private String[] multiplo2;
 		private HelloObjectExt hello;
 		private Integer year;
 		private Double hours;
-		public HelloObjectExt() {}
+		public HelloObjectExt() { this.unaData = new Date(); }
+		public void setUnaData( Date unaData ) { this.unaData = unaData; }
+		public Date getUnaData() { return unaData; }
 		public String getGreet() { return greet; }
 		public void setGreet( String greet ) { this.greet = greet; }
 		public Integer getYear() { return year; } 
@@ -88,7 +108,7 @@ public class HelloWorldAmAction {
 		// TODO Auto-generated constructor stub
 	}
 	
-	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "post", gsonDateFormat="yyyy-MM-dd")
+	@IamInvokableAction(mime = "application/json", render = Json2.class, reqMethod = "post", gsonDateFormat="yyyy-MM-dd", gsonTimeFormat="HH:mm:ss")
 	public Object post(HelloObjectExt helloExt, HelloObject hello) {
 		Map<String, Object> retval = new HashMap<String, Object>();
 		retval.put("hello", hello);	
@@ -96,6 +116,7 @@ public class HelloWorldAmAction {
 		System.out.println("HelloWorldAmAction.post()");
 		System.out.println("Hello Ext: " + helloExt);
 		System.out.println("Hello: " + hello);
+		System.out.println("Hello DATA2: " + hello.getData2());
 		return retval;
 	}
 
@@ -115,7 +136,7 @@ public class HelloWorldAmAction {
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = Json.class , reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = Json2.class , reqMethod = "get")
 	public Object getJson(HelloObjectExt hello) {
 		System.out.println("HelloWorldAmAction.getJson()");
 		System.out.println(hello);
@@ -131,14 +152,14 @@ public class HelloWorldAmAction {
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = Json2.class, reqMethod = "get")
 	public Object exception() {
 		System.out.println("HelloWorldAmAction.exception()");
 		throw new IllegalAnnotationException("Eccezione");
 	}
 	
 	
-	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "get")
+	@IamInvokableAction(mime = "application/json", render = Json2.class, reqMethod = "get")
 	public Object error() {
 		System.out.println("HelloWorldAmAction.error()");
 		return new AutoMagicHttpError(400, "Errore demo.");

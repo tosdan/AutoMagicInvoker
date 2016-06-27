@@ -19,7 +19,7 @@ import com.github.tosdan.autominvk.rendering.AutoMagicResponseObject;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
 import com.github.tosdan.autominvk.rendering.render.HttpError;
-import com.github.tosdan.autominvk.rendering.render.Json;
+import com.github.tosdan.autominvk.rendering.render.Json2;
 import com.google.common.base.Throwables;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
@@ -100,7 +100,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				logger.debug("renderClass instanceof DefaultNull");
 				logger.debug("Detected XMLHttpRequest: forcing Json render...");
 				// render di default per le richieste Ajax
-				render = new Json();
+				render = new Json2();
 				
 				
 			} else if (renderClass != null) {
@@ -113,7 +113,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				logger.debug("renderClass IS NULL");
 				// -> per esempio non è stata trovata corrispondenza per il nome di controller/action richiesto/a
 				if (xmlHttpRequest) {
-					render = new Json();
+					render = new Json2();
 				} else {
 					render = new Default();
 				}				

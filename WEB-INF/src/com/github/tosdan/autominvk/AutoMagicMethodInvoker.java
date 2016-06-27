@@ -15,16 +15,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
+import com.github.tosdan.autominvk.rendering.RenderOptions;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
 
 public class AutoMagicMethodInvoker {
 
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicMethodInvoker.class);
 	private IamIvokableClassCrawler crawler;
-	private String gsonDateFormat;
+	private RenderOptions renderOptions;
 
 	public AutoMagicMethodInvoker(IamIvokableClassCrawler crawler) {
 		this.crawler = crawler;
+		this.renderOptions = new RenderOptions();
+		this.renderOptions.setPrettyPrinting(false);
 	}
 	
 	/**
@@ -48,6 +51,7 @@ public class AutoMagicMethodInvoker {
 			
 			Method method = getMethod(methodId, httpMethod, instance.getClass());
 			
+			setActionRenderOptionsFromAnnotation(amAction, method);
 			forceRenderByAnnotation(amAction, method);
 			forceMimeTypeByAnnotation(amAction, method);
 		
@@ -96,6 +100,18 @@ public class AutoMagicMethodInvoker {
 		return retval;
 	}
 
+	private void setActionRenderOptionsFromAnnotation(AutoMagicAction amAction, Method method) {
+		IamInvokableAction ann = method.getAnnotation(IamInvokableAction.class);
+		String gsonDateFormat = ann.gsonDateFormat();
+		String gsonTimeFormat = ann.gsonTimeFormat();
+		
+		RenderOptions options = new RenderOptions();
+		options.setGsonDateFormat(gsonDateFormat);
+		options.setGsonTimeFormat(gsonTimeFormat);
+		
+		amAction.setRenderOptions(options);
+	}
+
 	private Object[] getArgs(HttpServletRequest req, Method method) {
 		Class<?>[] params = method.getParameterTypes();
 		Object[] args = new Object[params.length];
@@ -105,7 +121,7 @@ public class AutoMagicMethodInvoker {
 			p = params[i];
 			logger.debug("Getting instance of: [{}]", p);
 			HttpRequestBeanBuilder beanBuilder = new HttpRequestBeanBuilder();
-			args[i] = beanBuilder.buildBeanFromRequest(p, req, requestBody, this.gsonDateFormat);
+			args[i] = beanBuilder.buildBeanFromRequest(p, req, requestBody, this.renderOptions);
 		}
 		return args;
 	}
@@ -160,7 +176,9 @@ public class AutoMagicMethodInvoker {
 				if (hasAnnotation) {
 					
 					String annReqMethod = ann.reqMethod();
-					this.gsonDateFormat = ann.gsonDateFormat().isEmpty() ? null : ann.gsonDateFormat();
+					
+					this.renderOptions.setGsonDateFormat(ann.gsonDateFormat().isEmpty() ? null : ann.gsonDateFormat());
+					this.renderOptions.setGsonTimeFormat(ann.gsonTimeFormat().isEmpty() ? null : ann.gsonTimeFormat());
 					boolean isHttpMethodCorrect = annReqMethod.isEmpty() || httpMethod.equalsIgnoreCase(annReqMethod);
 					
 					if (isHttpMethodCorrect) {
