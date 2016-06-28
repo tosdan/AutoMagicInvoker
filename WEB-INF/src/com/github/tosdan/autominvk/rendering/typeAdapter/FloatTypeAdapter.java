@@ -3,6 +3,7 @@ package com.github.tosdan.autominvk.rendering.typeAdapter;
 import java.io.IOException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
@@ -17,11 +18,13 @@ public class FloatTypeAdapter extends TypeAdapter<Float> {
 	@Override public Float read(JsonReader reader) throws IOException {
 		Float retval = null;
 		if (reader.peek() == JsonToken.NULL) { reader.nextNull(); }
-		String stringValue = reader.nextString();
+		String json = reader.nextString();
 		try { 
-			Float value = Float.valueOf(stringValue.replace(",", "."));
+			Float value = Float.valueOf(json.replace(",", "."));
 			retval = value;
-		} catch (NumberFormatException e) { }
+		} catch (NumberFormatException e) {
+			throw new JsonSyntaxException(json, e);
+		}
 		return retval;
 	}
 	@Override public void write(JsonWriter writer, Float value) throws IOException {

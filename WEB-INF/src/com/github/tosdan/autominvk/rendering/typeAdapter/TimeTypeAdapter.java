@@ -28,16 +28,17 @@ public class TimeTypeAdapter extends TypeAdapter<Time> {
 	}
 
 	@Override public Time read( JsonReader reader ) throws IOException {
+		if (this.FORMAT == null) {
+			initFormat(null);
+		}
+		String json = reader.nextString();
 		try {
-			if (this.FORMAT == null) {
-				initFormat(null);
-			}
 			synchronized (FORMAT) {
-				Date date = FORMAT.parse(reader.nextString());
+				Date date = FORMAT.parse(json);
 				return new java.sql.Time(date.getTime());
 			}
 		} catch (ParseException e) {
-			throw new JsonSyntaxException(e);
+			throw new JsonSyntaxException(json, e);
 		}
 	}
 

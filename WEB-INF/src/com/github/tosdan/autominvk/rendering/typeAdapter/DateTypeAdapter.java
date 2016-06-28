@@ -39,13 +39,13 @@ public class DateTypeAdapter extends TypeAdapter<Date> {
             return null;
         }
 
-        String dateAsString = reader.nextString();
+        String json = reader.nextString();
         try {
 			synchronized (FORMAT) {
-				return FORMAT.parse(dateAsString);
+				return FORMAT.parse(json);
 			}
         } catch (ParseException e) {
-			throw new JsonSyntaxException(e);
+			throw new JsonSyntaxException(json, e);
         }
     }
     
