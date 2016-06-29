@@ -1,6 +1,7 @@
 package com.github.tosdan.autominvk.apps.demo;
 
 import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -43,8 +44,12 @@ public class HelloWorldAmAction {
 		private Range range;
 		private String name;
 		private Date data;
+		private Timestamp timestamp;
+		private java.sql.Date dataSql;
 		@JsonAdapter(UtcDateTypeAdapter.class)
 		private Date data2;
+		@JsonAdapter(UtcDateTypeAdapter.class)
+		private Date data3;
 		@JsonAdapter(TimeTypeAdapter.class)
 		private Time time;
 		private Time time2;
@@ -55,6 +60,8 @@ public class HelloWorldAmAction {
 		public void setData( Date data ) { this.data = data; }
 		public Date getData2() { return data2; }
 		public void setData2( Date data2 ) { this.data2 = data2; }
+		public Date getData3() { return data3; }
+		public void setData3( Date data3 ) { this.data3 = data3; }
 		public Range getRange() { return range; }
 		public void setRange( Range range ) { this.range = range; } 
 		public List<Range> getRanges() { return ranges; }
@@ -65,6 +72,10 @@ public class HelloWorldAmAction {
 		public void setTime( Time time ) { this.time = time; }
 		public Time getTime2() { return time2; }
 		public void setTime2( Time time2 ) { this.time2 = time2; }
+		public java.sql.Date getDataSql() { return dataSql; }
+		public void setDataSql( java.sql.Date dataSql ) { this.dataSql = dataSql; }
+		public Timestamp getTimestamp() { return timestamp; }
+		public void setTimestamp( Timestamp timestamp ) { this.timestamp = timestamp; }
 		@Override public String toString() { return "HelloObject [ranges=" + ranges + ", range=" + range + ", name=" + name + "]"; }
 		
 	}
@@ -111,12 +122,16 @@ public class HelloWorldAmAction {
 	@IamInvokableAction(mime = "application/json", render = Json2.class, reqMethod = "post", gsonDateFormat="yyyy-MM-dd", gsonTimeFormat="HH:mm:ss")
 	public Object post(HelloObjectExt helloExt, HelloObject hello) {
 		Map<String, Object> retval = new HashMap<String, Object>();
+		hello.setDataSql(new java.sql.Date(new Date().getTime()));
+		hello.setTimestamp(new Timestamp(new Date().getTime()));
 		retval.put("hello", hello);	
 		retval.put("helloExt", helloExt);	
 		System.out.println("HelloWorldAmAction.post()");
 		System.out.println("Hello Ext: " + helloExt);
 		System.out.println("Hello: " + hello);
-		System.out.println("Hello DATA2: " + hello.getData2());
+		System.out.println("Hello DATA  : " + hello.getData());
+		System.out.println("Hello DATA-2: " + hello.getData2());
+		System.out.println("Hello DATA-3: " + hello.getData3());
 		return retval;
 	}
 

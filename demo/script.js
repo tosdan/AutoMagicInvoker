@@ -1,4 +1,12 @@
 $(function() {
+	var date = {
+		"2": null,
+		"3": null
+	};
+	
+	function getDate(n) {
+		return data[n] ||  "2016-06-28T01:23:11.442Z+02:00";
+	}
 	
 	function getFormParams() {
 		return JSON.stringify({ 
@@ -8,10 +16,11 @@ $(function() {
 			"hours": "1,5",
 			"time": "23:54:22",
 			"time2": "20:33:10",
-			"data2": "2016-06-28T01:23:11.442Z",
+			"data2": getDate(2),
 			"booleano": "true",
 			"checkbox": getCampoCheckbox(),
-			"data": getCampoData(),
+			"data": getCampoData(true),
+			"data3": getDate(3),
 			"range": { "min": 2, "max": 10 },
 			"ranges": [{ "min": 2, "max": 10 }, 
 			           { min: 10, max: 18 }, 
@@ -19,7 +28,13 @@ $(function() {
 		});
 	}
 	
-	function getCampoData() { return $("#data").val(); }
+	function getCampoData(trueDate) {
+		var value = $("#data").val();
+		var date = new Date(value);
+		date.setHours(24);
+		return trueDate ? date : value; 
+	}
+	function getCampoData3() { return new Date($("#data3").val()); }
 	function getCampoCheckbox() { return $("#checkbox").prop('checked'); }
 
 	$('#ajaxPost').on('click', function(evt) {
@@ -67,6 +82,10 @@ $(function() {
 		
 		req.then(function(data) {
 			console.log(data);
+			console.log(new Date(data.helloExt.unaData));
+			console.log(new Date(data.hello.data2), new Date(data.hello.data3));
+			data["2"] = new Date(data.hello.data2);
+			data["3"] = new Date(data.hello.data3);
 		});
 	}
 	
