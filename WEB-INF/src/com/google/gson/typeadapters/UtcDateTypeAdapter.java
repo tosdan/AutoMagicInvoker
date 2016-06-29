@@ -63,7 +63,7 @@ public final class UtcDateTypeAdapter extends TypeAdapter<Date> {
 
   // Date parsing code from Jackson databind ISO8601Utils.java
   // https://github.com/FasterXML/jackson-databind/blob/master/src/main/java/com/fasterxml/jackson/databind/util/ISO8601Utils.java
-  private static final String GMT_ID = "GMT";
+  private static final String UTC_ID = "UTC";
 
   /**
    * Format date into yyyy-MM-ddThh:mm:ss[.sss][Z|[+-]hh:mm]
@@ -194,10 +194,10 @@ public final class UtcDateTypeAdapter extends TypeAdapter<Date> {
       char timezoneIndicator = date.charAt(offset);
       if (timezoneIndicator == '+' || timezoneIndicator == '-') {
         String timezoneOffset = date.substring(offset);
-        timezoneId = GMT_ID + timezoneOffset;
+        timezoneId = UTC_ID + timezoneOffset;
         offset += timezoneOffset.length();
       } else if (timezoneIndicator == 'Z') {
-        timezoneId = GMT_ID;
+        timezoneId = UTC_ID;
         offset += 1;
       } else {
         throw new IndexOutOfBoundsException("Invalid time zone indicator " + timezoneIndicator);
@@ -229,7 +229,7 @@ public final class UtcDateTypeAdapter extends TypeAdapter<Date> {
     } catch (IllegalArgumentException e) {
       fail = e;
     }
-    String input = (date == null) ? null : ('"' + date + "'");
+    String input = (date == null) ? null : ('"' + date + '"');
     throw new ParseException("Failed to parse date [" + input + "]: " + fail.getMessage(), pos.getIndex());
   }
 
@@ -265,14 +265,14 @@ public final class UtcDateTypeAdapter extends TypeAdapter<Date> {
     if (i < endIndex) {
       digit = Character.digit(value.charAt(i++), 10);
       if (digit < 0) {
-        throw new NumberFormatException("Invalid number: " + value);
+        throw new NumberFormatException("Invalid number: " + value.substring(beginIndex, endIndex));
       }
       result = -digit;
     }
     while (i < endIndex) {
       digit = Character.digit(value.charAt(i++), 10);
       if (digit < 0) {
-        throw new NumberFormatException("Invalid number: " + value);
+        throw new NumberFormatException("Invalid number: " + value.substring(beginIndex, endIndex));
       }
       result *= 10;
       result -= digit;
