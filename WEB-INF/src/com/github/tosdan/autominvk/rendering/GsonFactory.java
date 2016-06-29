@@ -1,6 +1,6 @@
 package com.github.tosdan.autominvk.rendering;
 
-import java.sql.Time;
+import java.util.Date;
 
 import com.github.tosdan.autominvk.rendering.render.JsonAnnotationExclusionStrategy;
 import com.github.tosdan.autominvk.rendering.typeAdapter.DoubleTypeAdapter;
@@ -8,16 +8,24 @@ import com.github.tosdan.autominvk.rendering.typeAdapter.FloatTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.TimeTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.typeadapters.UtcDateTypeAdapter;
 
 public class GsonFactory {
 	public static Gson getGson(RenderOptions renderOptions) {
 		GsonBuilder builder = new GsonBuilder()
-								.registerTypeAdapter(Time.class, new TimeTypeAdapter(renderOptions.getGsonTimeFormat()))
+								.registerTypeAdapter(java.sql.Time.class, new TimeTypeAdapter(renderOptions.getGsonTimeFormat()))
+								.registerTypeAdapter(java.sql.Date.class, new UtcDateTypeAdapter())
+								.registerTypeAdapter(java.sql.Timestamp.class, new UtcDateTypeAdapter())
 								.registerTypeAdapter(Double.class, new DoubleTypeAdapter())
 								.registerTypeAdapter(Float.class, new FloatTypeAdapter());
 		
-		if (renderOptions.getGsonDateFormat() != null) {
-			builder.setDateFormat(renderOptions.getGsonDateFormat());
+		
+		String gsonDateFormat = renderOptions.getGsonDateFormat();
+		if (gsonDateFormat != null) {
+			builder.setDateFormat(gsonDateFormat);
+		}		
+		if (gsonDateFormat == null || gsonDateFormat.isEmpty()) {
+			builder.registerTypeAdapter(Date.class, new UtcDateTypeAdapter());
 		}
 		
 		if (renderOptions.isPrettyPrinting()) {
