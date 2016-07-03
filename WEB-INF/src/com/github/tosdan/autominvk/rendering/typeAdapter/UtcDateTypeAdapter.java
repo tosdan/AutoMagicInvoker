@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.google.gson.typeadapters;
+package com.github.tosdan.autominvk.rendering.typeAdapter;
 
 import java.io.IOException;
 import java.text.ParseException;

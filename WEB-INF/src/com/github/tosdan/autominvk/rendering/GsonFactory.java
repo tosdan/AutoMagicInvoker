@@ -6,9 +6,9 @@ import com.github.tosdan.autominvk.rendering.render.JsonAnnotationExclusionStrat
 import com.github.tosdan.autominvk.rendering.typeAdapter.DoubleTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.FloatTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.TimeTypeAdapter;
+import com.github.tosdan.autominvk.rendering.typeAdapter.UtcDateTypeAdapter;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.typeadapters.UtcDateTypeAdapter;
 
 public class GsonFactory {
 	public static Gson getGson(RenderOptions renderOptions) {
