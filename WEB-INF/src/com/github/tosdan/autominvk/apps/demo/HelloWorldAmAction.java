@@ -20,6 +20,7 @@ import com.github.tosdan.autominvk.rendering.render.Json2;
 import com.github.tosdan.autominvk.rendering.render.JsonP;
 import com.github.tosdan.autominvk.rendering.typeAdapter.TimeTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.UtcDateTypeAdapter;
+import com.github.tosdan.autominvk.rendering.typeAdapter.DateDdMmYyyySlashedTypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
 import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
@@ -45,6 +46,7 @@ public class HelloWorldAmAction {
 		private String name;
 		private Date data;
 		private Timestamp timestamp;
+		@JsonAdapter(DateDdMmYyyySlashedTypeAdapter.class)
 		private java.sql.Date dataSql;
 		@JsonAdapter(UtcDateTypeAdapter.class)
 		private Date data2;

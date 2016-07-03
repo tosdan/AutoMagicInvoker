@@ -5,9 +5,9 @@ package com.github.tosdan.autominvk.rendering.typeAdapter;
  * @author Daniele
  *
  */
-public class ddMmYyyySlashedDateTypeAdapter extends DateAbstractTypeAdapter {
+public class DateDdMmYyyySlashedTypeAdapter extends DateAbstractTypeAdapter {
 	private static final String DD_MM_YYYY = "dd/MM/yyyy";
-	public ddMmYyyySlashedDateTypeAdapter() {
+	public DateDdMmYyyySlashedTypeAdapter() {
 		super(DD_MM_YYYY);
 	}
 }
