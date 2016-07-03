@@ -47,6 +47,10 @@ public class TimeTypeAdapter extends TypeAdapter<Time> {
 			initFormat(null);
 		}
 		if (value == null) { writer.nullValue(); }
-		else { writer.value(FORMAT.format(value)); }
+		else {
+			synchronized (FORMAT) {
+				writer.value(FORMAT.format(value));	
+			} 
+		}
 	}
 }
