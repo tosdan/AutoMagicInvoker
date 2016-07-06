@@ -12,6 +12,8 @@ import com.google.gson.GsonBuilder;
 
 public class GsonFactory {
 	public static Gson getGson(RenderOptions renderOptions) {
+		if (renderOptions == null) { renderOptions = new RenderOptions(); }
+		
 		GsonBuilder builder = new GsonBuilder()
 								.registerTypeAdapter(java.sql.Time.class, new TimeTypeAdapter(renderOptions.getGsonTimeFormat()))
 								.registerTypeAdapter(java.sql.Date.class, new UtcDateTypeAdapter())
