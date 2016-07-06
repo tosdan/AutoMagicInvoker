@@ -73,7 +73,10 @@ public class Json2 implements AutoMagicRender {
 	 */
 	protected Map<String, Object> getExcptionMap(Exception e) {
 		Map<String, Object> errMap = new HashMap<String, Object>();
+		errMap.put("successful", false);
+		errMap.put("msg", e.getMessage());
 		errMap.put("exception", e.getMessage());
+		errMap.put("error", e.getMessage());
 		errMap.put("stacktrace", ExceptionUtils.getStackTrace(e));
 		return errMap;
 	}
