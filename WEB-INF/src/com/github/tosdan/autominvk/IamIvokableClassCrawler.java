@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,12 @@ public class IamIvokableClassCrawler implements Serializable {
 	public IamIvokableClassCrawler(String invokerRootPath) {
 		this.invokerRootPath = invokerRootPath;
 		this.actionDatabase = new HashMap<String, String>();
+		register(ActionNotFoundExceptionAmAction.class, invokerRootPath); // Action di default usata ogni volta che viene richiesta una action inesistente (creare una classe omonima per nel CLASS_PATH specificato nel web.xml per sovrascrivere questa di default)
 		refreshClasses();
+	}
+	
+	public String getInvokerRootPath() {
+		return invokerRootPath;
 	}
 	
 	/**
@@ -67,7 +73,8 @@ public class IamIvokableClassCrawler implements Serializable {
 		logger.trace("Package name = [{}]", packageName);
 		String withoutInvokerRootPath = packageName.replaceFirst(invokerRootPath, "");
 //		logger.trace("Package name meno rootPath = [{}]", withoutRootPath);
-		String relativePackage = withoutInvokerRootPath.replaceFirst("\\.", "");
+		String relativePackage = StringUtils.removeStart(withoutInvokerRootPath, ".");
+//		String relativePackage = withoutInvokerRootPath.replaceFirst("\\.", ""); // l'idea era di rimuovere il punto residuo dopo la replace. Quindi StringUtils.removeStart() dovrebbe essere più appropriato
 		relativePackage = relativePackage.replace(".", "/");
 		logger.trace("Root package = [{}]", invokerRootPath);
 		String filler = String.format("%" + (invokerRootPath.length() - 3)+ "s", " ");
@@ -116,7 +123,7 @@ public class IamIvokableClassCrawler implements Serializable {
 	 * @return
 	 */
 	private String getActionPath(String classIdAlias, String path) {
-		return classIdAlias.startsWith("/") // Percorso assoluto (ma comunque relativo rispetto al path della servelet principale)
+		return classIdAlias.startsWith("/") // Percorso assoluto (ma comunque relativo rispetto al path della servlet principale)
 				? "" 
 				: path.isEmpty() 
 						? "" 
@@ -134,7 +141,7 @@ public class IamIvokableClassCrawler implements Serializable {
 		return classIdAlias != null && ! classIdAlias.isEmpty()
 				? classIdAlias.startsWith("/") 
 						// Lo iniziale slash può essere presente o meno. Se presente, va tolto (serve  
-						// per determinare il path, assoluto o relativo, non il nome dell'azione).
+						// per determinare il path (in getActionPath()), assoluto o relativo, non il nome dell'azione).
 						? classIdAlias.substring(1) 
 						: classIdAlias
 				: classId;
@@ -145,7 +152,7 @@ public class IamIvokableClassCrawler implements Serializable {
 	 * @param actionId azione per la quale è necessario recuperare la classe corrispondente
 	 * @return il nome completo della classe corrispondente all'actionId passato
 	 */
-	public String resolve(String actionId) {
+	public String resolve(String actionId) throws AutoMagicInvokerActionNotFoundException {
 		logger.trace("Resolving [{}]", actionId);
 		if (actionId == null) {
 			throw new AutoMagicInvokerException("actionId NULL.");
@@ -157,7 +164,7 @@ public class IamIvokableClassCrawler implements Serializable {
 		if (classFullName == null) {
 			String msg = String.format("Nessuna classe registrata con actionId[%s]", actionId);
 			logger.error(msg);
-			throw new AutoMagicInvokerException(msg);
+			throw new AutoMagicInvokerActionNotFoundException(msg);
 		}
 		
 		return classFullName;

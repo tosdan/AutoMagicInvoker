@@ -62,6 +62,11 @@ $(function() {
 		ajax('json', '../api/demo/helloWorld.getJson~Json', data, 'get');
 	});
 	
+	$('#ajaxGetInvalid').on('click', function(evt) {
+		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
+		ajax('json', '../api/demo/invalid', data, 'get');
+	});
+	
 	$('#ajaxJsonP').on('click', function(evt) {
 		var data = { greet: 'Ciao', name: 'Mondo', "min": 2, "max": 10, year: 2010, hours: "1,5", booleano: true };
 		ajax('jsonp', '../api/demo/helloWorld.getJsonP~JsonP', data, 'get');

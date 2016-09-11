@@ -30,6 +30,32 @@ public class AutoMagicMethodInvoker {
 		this.renderOptions.setPrettyPrinting(false);
 	}
 	
+	public String getClassPath() {
+		return this.crawler.getInvokerRootPath();
+	}
+	
+	private Object invokeMethod(Object instance, String methodId, AutoMagicAction amAction, HttpServletRequest req, HttpServletResponse resp, ServletContext ctx) 
+			throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		String 	httpMethod = amAction.getHttpMethod();
+		
+		injectParams(instance, req, resp, ctx);
+		
+		Method method = getMethod(methodId, httpMethod, instance.getClass());
+		
+		setActionRenderOptionsFromAnnotation(amAction, method);
+		forceRenderByAnnotation(amAction, method);
+		forceMimeTypeByAnnotation(amAction, method);
+	
+		Object[] args = null;
+		
+		if (method.getParameterTypes().length > 0) {
+			args = getArgs(req, method);
+			logger.trace("Injecting arguments= [{}]", args);
+		}
+
+		return method.invoke(instance, args);
+	}
+	
 	/**
 	 * 
 	 * @param amAction
@@ -41,29 +67,21 @@ public class AutoMagicMethodInvoker {
 	public Object invoke(AutoMagicAction amAction, HttpServletRequest req, HttpServletResponse resp, ServletContext ctx) {
 		Object retval = null;
 		String 	methodId = amAction.getMethodId(),
-				actionId = amAction.getActionId(),
-				httpMethod = amAction.getHttpMethod();
+				actionId = amAction.getActionId();
 		
 		try {
 
-			Object instance = getInstance(actionId);
-			injectParams(instance, req, resp, ctx);
-			
-			Method method = getMethod(methodId, httpMethod, instance.getClass());
-			
-			setActionRenderOptionsFromAnnotation(amAction, method);
-			forceRenderByAnnotation(amAction, method);
-			forceMimeTypeByAnnotation(amAction, method);
-		
-			Object[] args = null;
-			
-			if (method.getParameterTypes().length > 0) {
-				args = getArgs(req, method);
-				logger.trace("Injecting arguments= [{}]", args);
+			try {
+				Object instance = getInstance(actionId);
+				retval = invokeMethod(instance, methodId, amAction, req, resp, ctx);
+				
+			} catch (AutoMagicInvokerActionNotFoundException e) {
+				logger.error(e.getMessage(), e);
+				Object instance = getInstance(ActionNotFoundExceptionAmAction.getActionId());
+				injectExceptionAndAction(instance, e, amAction);
+				retval = invokeMethod(instance, "get", amAction, req, resp, ctx);
 			}
-			
-			retval = method.invoke(instance, args);
-					
+		
 		} catch (AutoMagicInvokerException e) {
 			// catch e rethrow perchè deve essere inoltrata tale e quale altrimenti verrebbe intercettata dal catch di Exception più sotto
 			throw e;
@@ -195,7 +213,8 @@ public class AutoMagicMethodInvoker {
 					
 				}
 			} else {
-				errMsg = "Metodo ["+methodId+"] NON trovato.";
+				throw new AutoMagicInvokerMethodNotFoundException("Metodo ["+methodId+"] NON trovato.");
+//				errMsg = "Metodo ["+methodId+"] NON trovato.";
 			}
 		}
 
@@ -204,6 +223,41 @@ public class AutoMagicMethodInvoker {
 		}
 		
 		return retval;
+	}
+	
+	/**
+	 * 
+	 * @param instance
+	 * @param e
+	 * @param action
+	 */
+	private void injectExceptionAndAction(Object instance, AutoMagicInvokerActionNotFoundException e, AutoMagicAction action) {
+		if (e != null && action != null) {
+			Class< ? extends Object> clazz = instance.getClass();
+			Field[] fields = clazz.getDeclaredFields();
+			Class< ? > type;
+			for(Field f : fields) {
+				type = f.getType();
+				
+				String errMsg = "Errore di accesso al campo ["+f.getName()+"]. ";
+				
+				if (type.isAssignableFrom(AutoMagicInvokerActionNotFoundException.class)) {
+					try {
+						FieldUtils.writeField(f, instance, e, true);
+					} catch (IllegalAccessException e1) {
+						throw new AutoMagicInvokerException(errMsg, e1);
+					}
+				}
+				
+				if (type.isAssignableFrom(AutoMagicAction.class)) {
+					try {
+						FieldUtils.writeField(f, instance, action, true);
+					} catch (IllegalAccessException e1) {
+						throw new AutoMagicInvokerException(errMsg, e1);
+					}
+				}
+			}
+		}
 	}
 	
 	/**
@@ -258,7 +312,7 @@ public class AutoMagicMethodInvoker {
 		}
 	}
 
-	public Object getInstance(String actionId) {
+	public Object getInstance(String actionId) throws AutoMagicInvokerActionNotFoundException {
 		logger.debug("Recupero istanza per [{}]", actionId);
 		String clazz = null;
 		Object instance = null;

@@ -30,6 +30,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 5058109197912737051L;
+	private String classpath;
 	
 	/**
 	 * 
@@ -76,7 +77,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 		Class<? extends AutoMagicRender> renderClass = action.getRender();
 		Object response = null;
 		String charset = "UTF-8";
-		boolean xmlHttpRequest = "XMLHttpRequest".equalsIgnoreCase(req.getHeader("X-Requested-With"));
+		HttpRequestHeadersUtil headersUtil = new HttpRequestHeadersUtil(req);
+		boolean xRequestedWith = headersUtil.containsXRequestedWith();
+		boolean acceptJson = headersUtil.isAcceptApplicationJson();
 		
 		AutoMagicRender render = null;
 		AutoMagicResponseObject amRespObj = null;
@@ -95,10 +98,10 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				render = new HttpError();
 
 				
-			} else if (DefaultNull.class.equals(renderClass) && xmlHttpRequest) {
+			} else if (DefaultNull.class.equals(renderClass) && (xRequestedWith || acceptJson)) {
 				// -> quando non è stato specificato un render
 				logger.debug("renderClass instanceof DefaultNull");
-				logger.debug("Detected XMLHttpRequest: forcing Json render...");
+				logger.debug("Detected X-Requested-With={}, Accept:application/json={} => forcing Json render...", xRequestedWith, acceptJson);
 				// render di default per le richieste Ajax
 				render = new Json2();
 				
@@ -112,7 +115,9 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			} else {
 				logger.debug("renderClass IS NULL");
 				// -> per esempio non è stata trovata corrispondenza per il nome di controller/action richiesto/a
-				if (xmlHttpRequest) {
+				if (xRequestedWith || acceptJson) {
+					logger.debug("Detected [X-Requested-With = {}], [Accept:application/json = {}] => forcing Json render...",
+							xRequestedWith, acceptJson);
 					render = new Json2();
 				} else {
 					render = new Default();
@@ -185,7 +190,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		ctx = config.getServletContext();
-		String classpath = config.getInitParameter("CLASS_PATH");
+		classpath = config.getInitParameter("CLASS_PATH");
 		logger.debug("ClassPath in cui verranno cercate le classi che implementano IamInvokable = [{}]", classpath);
 		// Raccoglie tutte le classi da CLASS_PATH che siano annotate con IamInvokable
 		IamIvokableClassCrawler crawler = new IamIvokableClassCrawler(classpath);
@@ -197,6 +202,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 	public void destroy() {	
 		this.invoker = null;
 		this.ctx = null;
+		this.classpath = null;
 		super.destroy();
 	}
 
