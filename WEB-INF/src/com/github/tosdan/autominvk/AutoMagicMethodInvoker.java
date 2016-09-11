@@ -3,6 +3,8 @@ package com.github.tosdan.autominvk;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -164,6 +166,34 @@ public class AutoMagicMethodInvoker {
 			amAction.setMimeType(mime);
 		}
 	}
+	
+	private List<Method> findMethodsById(String methodId, Method[] methods) {
+		List<Method> retval = new ArrayList<Method>();
+		IamInvokableAction ann;
+		for (Method m : methods) {
+			ann = m.getAnnotation(IamInvokableAction.class);
+			boolean hasAnnotation = (ann != null);
+			
+			String methodAlias = hasAnnotation && !ann.alias().isEmpty() 
+					? ann.alias() 
+					: m.getName();
+			
+			if (methodAlias.equals(methodId)) {
+				retval.add(m);
+			}
+		}
+		return retval;
+	}	
+	
+	private List<Method> escludiSenzaAnnotazione(List<Method> listaMetodi) {
+		List<Method> retval = new ArrayList<Method>();
+		for (Method m : listaMetodi) {
+			if (m.getAnnotation(IamInvokableAction.class) != null) {
+				retval.add(m);
+			}
+		}
+		return retval;
+	}	
 
 	/**
 	 * 
@@ -179,47 +209,45 @@ public class AutoMagicMethodInvoker {
 		
 		Method[] methods = clazz.getDeclaredMethods();
 		
-		for(Method m : methods) {
-			ann = m.getAnnotation(IamInvokableAction.class);
-			boolean hasAnnotation = (ann != null);
-			
-			String methodAlias = hasAnnotation && !ann.alias().isEmpty() 
-					? ann.alias() 
-					: m.getName();
-			
-			boolean mwthodFound = methodAlias.equals(methodId);
-			
-			if (mwthodFound) {
-
-				if (hasAnnotation) {
-					
-					String annReqMethod = ann.reqMethod();
-					
-					this.renderOptions.setGsonDateFormat(ann.gsonDateFormat().isEmpty() ? null : ann.gsonDateFormat());
-					this.renderOptions.setGsonTimeFormat(ann.gsonTimeFormat().isEmpty() ? null : ann.gsonTimeFormat());
-					boolean isHttpMethodCorrect = annReqMethod.isEmpty() || httpMethod.equalsIgnoreCase(annReqMethod);
-					
-					if (isHttpMethodCorrect) {
-						retval = m;
-						errMsg = null;
-						break;						
-					} else {
-						errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annReqMethod+"]" +
-								", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
-					}
-					
-				} else {
-					errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + "].";
-					
-				}
-			} else {
-				throw new AutoMagicInvokerMethodNotFoundException("Metodo ["+methodId+"] NON trovato.");
-//				errMsg = "Metodo ["+methodId+"] NON trovato.";
-			}
+		List<Method> listaMetodi = findMethodsById(methodId, methods);
+		
+		if (listaMetodi.isEmpty()) {
+			errMsg = "Metodo ["+methodId+"] NON trovato.";
+			throw new AutoMagicInvokerMethodNotFoundException(errMsg);
 		}
-
-		if (errMsg != null) {
+		
+		listaMetodi = escludiSenzaAnnotazione(listaMetodi);
+		
+		if (listaMetodi.isEmpty()) {
+			errMsg = "Non e' stato trovato un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + "].";
 			throw new AutoMagicInvokerException(errMsg);
+			
+			
+		} else if (listaMetodi.size() > 1) {
+			errMsg = "E' stato trovato più di un metodo ["+methodId+"] con annotation [" + IamInvokableAction.class.getName() + ". Il massimo supportato dal framework e' di 1 metodo ].";
+			throw new AutoMagicInvokerException(errMsg);
+			
+			
+		} else {
+			Method m = listaMetodi.get(0);
+			ann = m.getAnnotation(IamInvokableAction.class);
+			
+			String annReqMethod = ann.reqMethod();
+			
+			this.renderOptions.setGsonDateFormat(ann.gsonDateFormat().isEmpty() ? null : ann.gsonDateFormat());
+			this.renderOptions.setGsonTimeFormat(ann.gsonTimeFormat().isEmpty() ? null : ann.gsonTimeFormat());
+			boolean isHttpMethodCorrect = annReqMethod.isEmpty() || httpMethod.equalsIgnoreCase(annReqMethod);
+			
+			if (isHttpMethodCorrect) {
+				retval = m;
+				errMsg = null;
+				
+			} else {
+				errMsg = "Metodo ["+methodId+"] trovato. Il metodo e' configurato per chiamate HTTP ["+annReqMethod+"]" +
+						", ma è stato invocato da una chiamata HTTP ["+httpMethod+"].";
+				throw new AutoMagicInvokerException(errMsg);
+			}
+			
 		}
 		
 		return retval;
