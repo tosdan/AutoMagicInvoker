@@ -530,3 +530,30 @@ Se definiamo un nostro render come *com.github.tosdan.autominvk.rendering.render
 <!-- Senza specificare il nome del metodo -->
 http://host.it/webapp/api/myController.miaAzione~MyRender
 ~~~
+
+####Novità della versione 0.7.0
+Di default gli errori causati da una richiesta di un api inesistente o di un metodo inesistente vengono gestiti dalla classe di ActionNotFoundExceptionAmAction rappresentata sotto:
+```java
+@IamInvokable
+public class ActionNotFoundExceptionAmAction {
+	
+	private AutoMagicAction action;
+	private AutoMagicInvokerActionNotFoundException e;
+
+	@IamInvokableAction(render = DefaultNull.class)
+	public Object get() {
+		return e;
+	}
+
+}
+```
+Può essere sovrascritta creando una classe omonima nel package radice dove vengono cercate tutte le cusom Action create.
+
+In questo modo è possibile fornire messaggi di errore custom ogni volta che l'utente invia una richiesta per un servizio inesistente.
+
+I campi `AutoMagicAction action` e `AutoMagicInvokerActionNotFoundException e` sono popolati tramite injection. Il nome del campo può essere modificato, ma il tipo deve per forza rimanere quello specificato.
+
+`e` è l'eccezione generata perchè non è stato possibile tradurre l'URI richiesto in una classe Action da eseguire. Contiene il messaggio generico di azione non trovata.
+
+`action` contiene le informazioni relative all'URI richiesto dall'utente
+ 
