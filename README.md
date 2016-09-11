@@ -547,7 +547,7 @@ public class ActionNotFoundExceptionAmAction {
 
 }
 ```
-Può essere sovrascritta creando una classe omonima nel package radice dove vengono cercate tutte le cusom Action create.
+Può essere sovrascritta creando una classe omonima nel package radice dove vengono posizionate tutte le cusom Action create.
 
 In questo modo è possibile fornire messaggi di errore custom ogni volta che l'utente invia una richiesta per un servizio inesistente.
 
