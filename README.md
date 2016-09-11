@@ -531,7 +531,7 @@ Se definiamo un nostro render come *com.github.tosdan.autominvk.rendering.render
 http://host.it/webapp/api/myController.miaAzione~MyRender
 ~~~
 
-####Novità della versione 0.7.0
+##Novità della versione 0.7.0
 Di default gli errori causati da una richiesta di un api inesistente o di un metodo inesistente vengono gestiti dalla classe di ActionNotFoundExceptionAmAction rappresentata sotto:
 ```java
 @IamInvokable
