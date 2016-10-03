@@ -29,6 +29,6 @@ public class FloatTypeAdapter extends TypeAdapter<Float> {
 	}
 	@Override public void write(JsonWriter writer, Float value) throws IOException {
 		if (value == null) { writer.nullValue(); }
-		else { writer.value(value.toString()); }
+		else { writer.value(value); }
 	}
 }

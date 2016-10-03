@@ -28,6 +28,6 @@ public class DoubleTypeAdapter extends TypeAdapter<Double> {
     }
 	@Override public void write(JsonWriter writer, Double value) throws IOException {
         if (value == null) { writer.nullValue(); }
-        else { writer.value(value.toString()); }
+        else { writer.value(value); }
     }
 }
