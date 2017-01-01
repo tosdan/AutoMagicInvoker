@@ -9,10 +9,6 @@
 	<classpathentry kind="src" path="WEB-INF/src"/>
 	<classpathentry kind="src" output="work" path="work"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j-1.2.17.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/reflections-0.9.9-RC1.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/guava-18.0.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/gson-2.7.jar"/>
-	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang3-3.4.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-logging-1.2-adapters.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-logging-1.2-api.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-logging-1.2.jar"/>
@@ -21,5 +17,9 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/log4j-core-2.3.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-api-1.7.22.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-log4j12-1.7.22.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang3-3.5.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/gson-2.8.0.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/guava-20.0.jar"/>
+	<classpathentry kind="lib" path="WEB-INF/lib/reflections-0.9.10.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
