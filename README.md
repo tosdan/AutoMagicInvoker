@@ -228,7 +228,7 @@ In caso di chiamata di tipo POST e PUT i parametri vengono cercati nel corpo del
 Mentre nel caso di una chiamata di tipo GET o DELETE, i parametri vengono cercati nella querystring.
 I parametri non vengono mai cercati in entrambi, body e querystring.
 
-###Parametri del contesto della webapp e della sessione
+### Parametri del contesto della webapp e della sessione
 
 Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* è possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
 
