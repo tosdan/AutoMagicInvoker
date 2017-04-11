@@ -2,13 +2,16 @@ package com.github.tosdan.autominvk;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.reflections.Reflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
+import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
+import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
 
 /**
  * 
@@ -50,10 +53,17 @@ public class IamIvokableClassCrawler implements Serializable {
 	 * @return
 	 */
 	public Map<String, String> refreshClasses() {
-		Reflections reflections = new Reflections(invokerRootPath);
+		ClassAnnotationMatchProcessor classAnnotationMatchProcessor = new ClassAnnotationMatchProcessor() {			
+			@Override public void processMatch(Class<?> arg0) {}
+		};
+		FastClasspathScanner scanner = new FastClasspathScanner(invokerRootPath);
+		scanner.matchClassesWithAnnotation(IamInvokable.class, classAnnotationMatchProcessor);
 		
 		logger.trace("Ricerca classi annotate con [{}] nel classpath [{}]", ANNOTATION_NAME, invokerRootPath);
-		Set<Class<?>> classes = reflections.getTypesAnnotatedWith(IamInvokable.class);
+		ScanResult result = scanner.scan();
+		
+		List<String> namesOfClassesWithAnnotationsAnyOf = result.getNamesOfClassesWithAnnotationsAnyOf(IamInvokable.class);
+		List<Class<?>> classes = result.classNamesToClassRefs(namesOfClassesWithAnnotationsAnyOf, true);
 		logger.trace("Classi trovate: {}", classes.toString());
 		
 		for (Class<?> clazz : classes) {
