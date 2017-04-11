@@ -21,5 +21,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/gson-2.8.0.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/guava-20.0.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/reflections-0.9.10.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Tomcat7Libraries"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>
 </classpath>
