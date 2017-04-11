@@ -18,10 +18,10 @@
 		- [Metodi di default nei Controller](#metodi-di-default-nei-controller)
 		- [Impostare il render nell'URL della chiamata (experimental)](#impostare-il-render-nell-url-della-chiamata-experimental)
 		
-#AutoMagicInvoker
+# AutoMagicInvoker
 Micro mvc framework
 
-##Installazione
+## Installazione
 
 Scaricare lo zip dell'ultima release e copiare i jar nel proprio progetto (nella cartella lib sono contenuti jar con le dipendenze). 
 
@@ -46,15 +46,15 @@ Nel `web.xml` aggiungere la seguente servlet:
     </servlet-mapping>
 ~~~
 
-L'`url-pattern` proposto per la servlet Ë puramente di esempio, non c'Ë alcun vincolo da rispettare. 
+L'`url-pattern` proposto per la servlet √® puramente di esempio, non c'√® alcun vincolo da rispettare. 
 
-L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercher‡ i *Controller* dell'applicazione, questo parametro Ë obbligatorio.
+L'*init-param* `CLASS_PATH` rappresenta il percorso in cui *autominvk* cercher√† i *Controller* dell'applicazione, questo parametro √® obbligatorio.
 
-__NB.__ Per questione di performance conviene scegliere un package ben specifico. Pi˘ classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage pi˘ tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla perÚ vieta di impostare un package pi˘ generico.
+__NB.__ Per questione di performance conviene scegliere un package ben specifico. Pi√π classi sono contenute nel package indicato e nei suoi, eventuali, sottopackage pi√π tempo richiede la scansione (normalmente nell'ordine di alcuni ms). Nulla per√≤ vieta di impostare un package pi√π generico.
 
-##Panoramica
+## Panoramica
 
-###Controller
+### Controller
 
 Le classi con *Annotation* `IamInvokable` costituiscono i *Controller* dell'applicazione.
 ~~~java
@@ -80,7 +80,7 @@ public class DemoAmAction {
 }
 ~~~
 
-####Eseguire un'azione di un Controller
+#### Eseguire un'azione di un Controller
 
 Ipotizziamo di avere una webapp in esecuzione all'URL 
 ~~~
@@ -95,21 +95,21 @@ e url-pattern
 /api/*
 ~~~
  
-Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe com.github.tosdan.autominvk.apps.__DemoAmAction__ baster‡ effettuare una chiamata HTTP all'URL 
+Per eseguire l'azione __sonoUnaAzioneInvocabile__ della classe com.github.tosdan.autominvk.apps.__DemoAmAction__ baster√† effettuare una chiamata HTTP all'URL 
 ~~~
 http://host.it/webapp/api/demo.sonoUnaAzioneInvocabile
 ~~~
 
-Nella chiamata HTTP il nome della classe dovr‡ essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non Ë obbligatorio che il nome delle classi *Controller* termini con il suffisso *AmAction*. Il nome della classe scritto in questo modo Ë solo una convenzione del framework per rendere pi˘ semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
+Nella chiamata HTTP il nome della classe dovr√† essere scritto in __camelCase__, come nell'esempio. Inoltre il suffisso *__AmAction__* non deve essere specificato. Non √® obbligatorio che il nome delle classi *Controller* termini con il suffisso *AmAction*. Il nome della classe scritto in questo modo √® solo una convenzione del framework per rendere pi√π semplice distinguerle dalle normali classi. Al momento della creazione dell'indice delle classi *Controller* il suffisso *AmAction* viene ignorato. Se avessimo provato ad eseguire la seguente chiamata 
 ~~~
 http://host.it/webapp/api/demoAmAction.sonoUnaAzioneInvocabile
 ~~~ 
-il framework avrebbe restituito un errore perchË l'azione [demoAmAction.sonoUnaAzioneInvocabile] non Ë presente nell'indice delle azioni disponibili. 
+il framework avrebbe restituito un errore perch√® l'azione [demoAmAction.sonoUnaAzioneInvocabile] non √® presente nell'indice delle azioni disponibili. 
 
-####Sub-package
+#### Sub-package
 
-A partire dal package principale, specificato col parametro `CLASS_PATH` Ë possibile creare una gerarchia di sotto package per ordinare i vari *Controller*.
-L'URL delle chiamate HTTP dovr‡ essere composto di conseguenza, aggiungendo all'URL di base (url webapp + url-pattern), i sotto package necessari per raggiungere la classe *Controller* desiderata.
+A partire dal package principale, specificato col parametro `CLASS_PATH` √® possibile creare una gerarchia di sotto package per ordinare i vari *Controller*.
+L'URL delle chiamate HTTP dovr√† essere composto di conseguenza, aggiungendo all'URL di base (url webapp + url-pattern), i sotto package necessari per raggiungere la classe *Controller* desiderata.
 
 Quindi se la classe *Controller* fosse situata nel sotto package __demoApp__ 
 ~~~
@@ -121,16 +121,16 @@ http://host.it/webapp/api/demoApp/demo.sonoUnaAzioneInvocabile
 ~~~
 
 
-###Parametri della chiamata HTTP
+### Parametri della chiamata HTTP
 
-Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilit‡.
+Per leggere, dal *Controller*, i parametri di una chiamata HTTP ci sono due possibilit√†.
 
  * Leggere i parametri direttamente dall'oggetto *HttpServletRequest*
- * Costruire un oggetto "parametro" che verr‡ popolato automatiticamente (approccio raccomandato)
+ * Costruire un oggetto "parametro" che verr√† popolato automatiticamente (approccio raccomandato)
 
-####Oggetto HttpServletRequest
+#### Oggetto HttpServletRequest
 
-Per accedere all'oggetto __HttpServletRequest__ Ë sufficiente creare un campo nella classe controller che sia di tipo HttpServletRequest.
+Per accedere all'oggetto __HttpServletRequest__ √® sufficiente creare un campo nella classe controller che sia di tipo HttpServletRequest.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -150,11 +150,11 @@ public class DemoAmAction {
 }
 ~~~
 
-Il campo __req__ Ë di tipo *HttpServletRequest* e il framework automaticamente assegner‡ a questo campo l'oggetto rappresentante la request HTTP corrente. A questo punto baster‡ richiamarlo nel codice del metodo per accedere ai parametri. 
+Il campo __req__ √® di tipo *HttpServletRequest* e il framework automaticamente assegner√† a questo campo l'oggetto rappresentante la request HTTP corrente. A questo punto baster√† richiamarlo nel codice del metodo per accedere ai parametri. 
 
-####Oggetto "parametro" popolato automaticamente parte 1
+#### Oggetto "parametro" popolato automaticamente parte 1
 
-Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe puÚ benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi recupera il tipo (la classe) di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
+Nell'esempio che segue, viene definita una classe *interna*, o classe *annidata*, che rappresenta i parametri che riceveremo nella chiamata HTTP (la classe pu√≤ benissimo essere definita anche in maniera tradizionale, sempre di una comune classe si tratta). Il framework individua che il metodo __sonoUnaAzioneInvocabile__ accetta un parametro, quindi recupera il tipo (la classe) di questo parametro, ne crea una istanza e ne popola i campi con i parametri contenuti nella chiamata HTTP. 
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -168,7 +168,7 @@ public class DemoAmAction {
 		// contenuti nella chiamata HTTP.
 		private String param1;
 		private boolean param2;
-		// Range Ë un semplice oggetto con campi min e max
+		// Range √® un semplice oggetto con campi min e max
 		private Range range;
 		private Date millenniumBugDate;
 		public String getParam1() {
@@ -230,7 +230,7 @@ I parametri non vengono mai cercati in entrambi, body e querystring.
 
 ###Parametri del contesto della webapp e della sessione
 
-Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* Ë possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
+Similmente a quanto visto per l'oggetto *HttpRequestBeanBuilder* √® possibile accedere anche al contesto dell'applicazione, ServletContext, e alla sessione corrente, HttpSession.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -253,9 +253,9 @@ public class DemoAmAction {
 }
 ~~~
 
-###Response
+### Response
 
-Per inoltrare una risposta alla chiamata HTTP Ë sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto o anche un tipo primitivo.
+Per inoltrare una risposta alla chiamata HTTP √® sufficiente che il metodo `IamInvokableAction` invocato restituisca un oggetto o anche un tipo primitivo.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -275,9 +275,9 @@ Di default viene inviata una response con *ContentType* __text/html__ e l'oggett
 
 Pur essendo un approccio legittimo non offre molto margine per inviare una response particolarmente elaborata.
 
-####Response Render
+#### Response Render
 
-Un approccio migliore Ë quello di restituire un oggetto invece di un primitivo e di impostare una *strategia di renderizzazione* per la response.
+Un approccio migliore √® quello di restituire un oggetto invece di un primitivo e di impostare una *strategia di renderizzazione* per la response.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -325,9 +325,9 @@ La response inviata avrebbe la forma:
 }
 ~~~ 
 
-Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilit‡ con Internet Explorer (altrimenti la versione 8, ad esempio, cercherebbe di effettuare un download) 
+Di default il render Json imposta il *ContentType* con __text/plain__ per retrocompatibilit√† con Internet Explorer (altrimenti la versione 8, ad esempio, cercherebbe di effettuare un download) 
 
-Un'altra particolarit‡ del render Json Ë che nel caso in cui l'esecuzione del metodo invocato, per esempio sonoUnaAzioneInvocabile(), risulti in una eccezione, verr‡ restituito un oggetto json simile al seguente:
+Un'altra particolarit√† del render Json √® che nel caso in cui l'esecuzione del metodo invocato, per esempio sonoUnaAzioneInvocabile(), risulti in una eccezione, verr√† restituito un oggetto json simile al seguente:
 ~~~json
 {
 	"error": "Messaggio di errore ottenuto da exception.getMessage()",
@@ -335,9 +335,9 @@ Un'altra particolarit‡ del render Json Ë che nel caso in cui l'esecuzione del me
 }
 ~~~ 
 
-Quindi, gestendo opportunamente il sistema di eccezioni, si puÚ sfruttare il *messagge* dell'eccezione per fornire all'utente un messaggio che descriva il problema avvenuto.
+Quindi, gestendo opportunamente il sistema di eccezioni, si pu√≤ sfruttare il *messagge* dell'eccezione per fornire all'utente un messaggio che descriva il problema avvenuto.
 
-####Custom ContentType
+#### Custom ContentType
 
 Per impostare un *ContentType* differente da quello di default del `AutoMagicRender` utilizzato, basta specificare l'*elemento* `mime` nell'*Annotation* `IamInvokableAction`.
 
@@ -358,9 +358,9 @@ public class DemoAmAction {
 }
 ~~~
 
-####Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date
+#### Oggetto "parametro" popolato automaticamente parte 2 - Deserializzazione di date
 
-Per consentire al sistema che deserializza i parametri della chiamata HTTP in un oggetto Java di interpretare correttamente le date, il formato da usare Ë quello italiano __GG/MM/AAAA__. Nell'esempio della parte 1 di questa sezione infatti era stata passata la data *31/12/1999*. 
+Per consentire al sistema che deserializza i parametri della chiamata HTTP in un oggetto Java di interpretare correttamente le date, il formato da usare √® quello italiano __GG/MM/AAAA__. Nell'esempio della parte 1 di questa sezione infatti era stata passata la data *31/12/1999*. 
 
 &Egrave; possibile comunque impostare un proprio formato e sovrascrivere quello di default aggiungendo l'*elemento* `gsonDateFormat` nell'*Annotation* `IamInvokableAction` .
 Per definire il proprio formato fare riferimento ai pattern di [SimpleDateFormat] (http://docs.oracle.com/javase/7/docs/api/java/text/SimpleDateFormat.html) 
@@ -396,9 +396,9 @@ Parametri della chiamata:
 }
 ~~~ 
 
-###Metodi HTTP
+### Metodi HTTP
 
-Impostando l'*elemento* `reqMethod` nell'*Annotation* `IamInvokableAction` Ë possibile limitare l'accessibilit‡ del metodo da invoare in base al metodo HTTP utilizzato:
+Impostando l'*elemento* `reqMethod` nell'*Annotation* `IamInvokableAction` √® possibile limitare l'accessibilit√† del metodo da invoare in base al metodo HTTP utilizzato:
 ~~~java
 package com.github.tosdan.autominvk.apps;
 
@@ -410,11 +410,11 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-Con questa configurazione il metodo sonoUnaAzioneInvocabile() verr‡ invocato solo se la chiamata HTTP Ë di tipo POST. In caso di altri metodi HTTP (GET, PUT, HEAD o DELETE) verr‡ restituito un errore.
+Con questa configurazione il metodo sonoUnaAzioneInvocabile() verr√† invocato solo se la chiamata HTTP √® di tipo POST. In caso di altri metodi HTTP (GET, PUT, HEAD o DELETE) verr√† restituito un errore.
 
-###Controller Alias
+### Controller Alias
 
-Utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction` Ë possibile assegnare un *alias* al *Controller* in modo che il nome nell'URL della chiamata sia diverso da quello effettivo.
+Utilizzando l'*elemento* `alias` nell'*Annotation* `IamInvokableAction` √® possibile assegnare un *alias* al *Controller* in modo che il nome nell'URL della chiamata sia diverso da quello effettivo.
 
 ~~~java
 // notare il sotto package miaApp.controller
@@ -429,14 +429,14 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-A questo punto l'URL della chiamata dovr‡ essere:
+A questo punto l'URL della chiamata dovr√† essere:
 ~~~html
-<!-- L'alias va riportato cosÏ com'Ë stato scritto, quindi con l'iniziale maiuscola -->
+<!-- L'alias va riportato cos√¨ com'√® stato scritto, quindi con l'iniziale maiuscola -->
 http://host.it/webapp/api/miaApp/controller/Dimostrazione.sonoUnaAzioneInvocabile
 ~~~
-Notare che l'iniziale minuscola Ë solo una convenzione di come viene determinato automaticamente il nome del *Controller*, gli *alias* vengono riportati proprio come sono stati scritti.
+Notare che l'iniziale minuscola √® solo una convenzione di come viene determinato automaticamente il nome del *Controller*, gli *alias* vengono riportati proprio come sono stati scritti.
 
-Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovr‡ essere composto con: la parte dell'`url-pattern` pi˘ l'*alias* stesso.
+Nel caso l'*alias* inizi con il carattere slash `/`, l'URL per richiamare il *Controller* dovr√† essere composto con: la parte dell'`url-pattern` pi√π l'*alias* stesso.
 ~~~java
 // notare il sotto package miaApp.controller
 package com.github.tosdan.autominvk.apps.miaApp.controller;
@@ -450,7 +450,7 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-A questo punto l'URL della chiamata dovr‡ essere:
+A questo punto l'URL della chiamata dovr√† essere:
 ~~~html
 <!-- invece di 
 http://host.it/webapp/api/miaApp/controller/demo.sonoUnaAzioneInvocabile 
@@ -458,9 +458,9 @@ http://host.it/webapp/api/miaApp/controller/demo.sonoUnaAzioneInvocabile
 http://host.it/webapp/api/AbsoluteUrlController.sonoUnaAzioneInvocabile
 ~~~
 
-###Forward
+### Forward
 
-Per effettuare il forward da un *Controller* ad una servlet Ë sufficiente restituire un oggetto di tipo *RequestDispatcher*, sar‡ poi il framework che si occuper‡ di effettuare il forward.
+Per effettuare il forward da un *Controller* ad una servlet √® sufficiente restituire un oggetto di tipo *RequestDispatcher*, sar√† poi il framework che si occuper√† di effettuare il forward.
 ~~~java
 package com.github.tosdan.autominvk.apps;
 
@@ -477,14 +477,14 @@ public class DemoAmAction {
 	}
 }
 ~~~ 
-A questo punto il compito di gestire la *response* Ë lasciato alla servlet verso cui viene effettuato il forward.
+A questo punto il compito di gestire la *response* √® lasciato alla servlet verso cui viene effettuato il forward.
 
-Nell'esempio sopra, un'ipotetica servlet di download Ë mappata all'URL *http://host.it/webapp/downloadServlet* e cercher‡ il file da scaricare nell'*attribute* "FileDaScaricare" della request.
+Nell'esempio sopra, un'ipotetica servlet di download √® mappata all'URL *http://host.it/webapp/downloadServlet* e cercher√† il file da scaricare nell'*attribute* "FileDaScaricare" della request.
 
 
-###Metodi di default nei Controller 
+### Metodi di default nei Controller 
 
-Definendo in un *Controller* i metodi (in lowercase) `post` o `get` o un qualsiasi altro metodo HTTP valido, Ë possibile invocarli senza specificarne il nome dopo il nome del *Controller*, semplicemente effettuando una chiamata HTTP corripondente.
+Definendo in un *Controller* i metodi (in lowercase) `post` o `get` o un qualsiasi altro metodo HTTP valido, √® possibile invocarli senza specificarne il nome dopo il nome del *Controller*, semplicemente effettuando una chiamata HTTP corripondente.
 
 ~~~java
 package com.github.tosdan.autominvk.apps;
@@ -508,10 +508,10 @@ Una chiamata HTTP di tipo GET all'indirizzo:
 <!-- Senza specificare il nome del metodo -->
 http://host.it/webapp/api/myController
 ~~~
-invocher‡ il metodo get().
-Invece una chiamata HTTP di tipo POST invocher‡ il metodo post().
+invocher√† il metodo get().
+Invece una chiamata HTTP di tipo POST invocher√† il metodo post().
 
-###Impostare il render nell'URL della chiamata (experimental)
+### Impostare il render nell'URL della chiamata (experimental)
 
 &Egrave; possibile specificare l'*AutoMagicRender* da utilizzare per il rendering della *response* inserendo come ultimo componente dell'URL chiamato (ma prima della querystring) il nome della classe che implementa *AutoMagicRender* preceduto da carattere tilde `~`
 ~~~html
@@ -520,18 +520,18 @@ http://host.it/webapp/api/myController~Json?param1=value1&param2...
 
 http://host.it/webapp/api/myController.azioneXyz~Json?param1=value1&param2...
 ~~~
-Tenere presente che il render impostato nell'*Annotation* del metodo vince sempre su quello specificato con questa modalit‡, quindi puÚ servire solo quando via *Annotation* non Ë stato specificato il render da utilizzare e da chiamata si puÚ decidere dinamicamente quale scegliere.
+Tenere presente che il render impostato nell'*Annotation* del metodo vince sempre su quello specificato con questa modalit√†, quindi pu√≤ servire solo quando via *Annotation* non √® stato specificato il render da utilizzare e da chiamata si pu√≤ decidere dinamicamente quale scegliere.
 
 
-Dal momento che Ë possibile specificare il nome semplice della classe del render (Json) e non il nome completo della classe (com.github.tosdan.autominvk.rendering.render.Json) l'unico modo per aggiungere e sfruttare un render personalizzato Ë quello di posizionarlo nel package `com.github.tosdan.autominvk.rendering.render`.
+Dal momento che √® possibile specificare il nome semplice della classe del render (Json) e non il nome completo della classe (com.github.tosdan.autominvk.rendering.render.Json) l'unico modo per aggiungere e sfruttare un render personalizzato √® quello di posizionarlo nel package `com.github.tosdan.autominvk.rendering.render`.
 
-Se definiamo un nostro render come *com.github.tosdan.autominvk.rendering.render.MyRender*, per poterlo utilizzare baster‡ effettuare una chiamata tipo:
+Se definiamo un nostro render come *com.github.tosdan.autominvk.rendering.render.MyRender*, per poterlo utilizzare baster√† effettuare una chiamata tipo:
 ~~~html
 <!-- Senza specificare il nome del metodo -->
 http://host.it/webapp/api/myController.miaAzione~MyRender
 ~~~
 
-##Novit‡ della versione 0.7.0
+## Novit√† della versione 0.7.0
 Di default gli errori causati da una richiesta di un api inesistente o di un metodo inesistente vengono gestiti dalla classe di ActionNotFoundExceptionAmAction rappresentata sotto:
 ```java
 @IamInvokable
@@ -547,13 +547,13 @@ public class ActionNotFoundExceptionAmAction {
 
 }
 ```
-PuÚ essere sovrascritta creando una classe omonima nel package radice dove vengono posizionate tutte le cusom Action create.
+Pu√≤ essere sovrascritta creando una classe omonima nel package radice dove vengono posizionate tutte le cusom Action create.
 
-In questo modo Ë possibile fornire messaggi di errore custom ogni volta che l'utente invia una richiesta per un servizio inesistente.
+In questo modo √® possibile fornire messaggi di errore custom ogni volta che l'utente invia una richiesta per un servizio inesistente.
 
-I campi `AutoMagicAction action` e `AutoMagicInvokerActionNotFoundException e` sono popolati tramite injection. Il nome del campo puÚ essere modificato, ma il tipo deve per forza rimanere quello specificato.
+I campi `AutoMagicAction action` e `AutoMagicInvokerActionNotFoundException e` sono popolati tramite injection. Il nome del campo pu√≤ essere modificato, ma il tipo deve per forza rimanere quello specificato.
 
-`e` Ë l'eccezione generata perchË non Ë stato possibile tradurre l'URI richiesto in una classe Action da eseguire. Contiene il messaggio generico di azione non trovata.
+`e` √® l'eccezione generata perch√® non √® stato possibile tradurre l'URI richiesto in una classe Action da eseguire. Contiene il messaggio generico di azione non trovata.
 
 `action` contiene le informazioni relative all'URI richiesto dall'utente
  
