@@ -20,7 +20,7 @@ import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.DefaultNull;
 import com.github.tosdan.autominvk.rendering.render.HttpError;
 import com.github.tosdan.autominvk.rendering.render.Json2;
-import com.google.common.base.Throwables;
+import com.google.common.base.ThrowablesRevive;
 
 public class AutoMagicInvokerServlet extends HttpServlet {
 	private static Logger logger = LoggerFactory.getLogger(AutoMagicInvokerServlet.class);
@@ -156,7 +156,7 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 			logger.error("Impossibile creare un'istanza della classe: [{}]", render.getName());
 		} catch ( IllegalAccessException e ) {
 			logger.error("Impossibile inizializzare l'istanza della classe: [{}]", render.getName());
-			Throwables.propagate(e);
+			ThrowablesRevive.propagate(e);
 		}
 		
 		return instance;

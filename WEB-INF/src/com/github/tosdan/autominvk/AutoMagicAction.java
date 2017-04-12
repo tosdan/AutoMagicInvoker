@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import com.github.tosdan.autominvk.rendering.AutoMagicRender;
 import com.github.tosdan.autominvk.rendering.RenderOptions;
 import com.github.tosdan.autominvk.rendering.render.Default;
-import com.google.common.base.Throwables;
+import com.google.common.base.ThrowablesRevive;
 /**
  * Rappresenta un'azione che è costituita da una classe, un metodo e un render.
  * @author Daniele
@@ -101,7 +101,7 @@ public class AutoMagicAction {
 			
 		} catch (ClassNotFoundException e) {
 			logger.error("Impossibile trovare la classe: [{}]", renderPath + renderClassSimpleName);
-			Throwables.propagate(e);
+			ThrowablesRevive.propagate(e);
 		}
 		
 		return clazz;

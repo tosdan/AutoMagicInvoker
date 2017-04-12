@@ -39,8 +39,8 @@ import java.util.List;
  * @author Ben Yu
  * @since 1.0
  */
-public final class Throwables {
-	private Throwables() {
+public final class ThrowablesRevive {
+	private ThrowablesRevive() {
 	}
 
 	/**

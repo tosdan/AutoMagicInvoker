@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.github.tosdan.autominvk.rendering.GsonFactory;
 import com.github.tosdan.autominvk.rendering.RenderOptions;
-import com.google.common.base.Throwables;
+import com.google.common.base.ThrowablesRevive;
 import com.google.gson.Gson;
 
 public class HttpRequestBeanBuilder {
@@ -141,7 +141,7 @@ public class HttpRequestBeanBuilder {
 			reqReader.close();
 			
 		} catch ( IOException e ) {
-			Throwables.propagate(e);
+			ThrowablesRevive.propagate(e);
 		}
 		return body.toString();
 	}
