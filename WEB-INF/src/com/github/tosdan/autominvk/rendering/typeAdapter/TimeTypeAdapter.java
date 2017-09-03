@@ -10,6 +10,7 @@ import java.util.Date;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 public class TimeTypeAdapter extends TypeAdapter<Time> {
@@ -31,14 +32,19 @@ public class TimeTypeAdapter extends TypeAdapter<Time> {
 		if (this.FORMAT == null) {
 			initFormat(null);
 		}
-		String json = reader.nextString();
-		try {
-			synchronized (FORMAT) {
-				Date date = FORMAT.parse(json);
-				return new java.sql.Time(date.getTime());
+		if (reader.peek() == JsonToken.NULL) { 
+			reader.nextNull();
+			return null;
+		} else {
+			String json = reader.nextString();
+			try {
+				synchronized (FORMAT) {
+					Date date = FORMAT.parse(json);
+					return new java.sql.Time(date.getTime());
+				}
+			} catch (ParseException e) {
+				throw new JsonSyntaxException(json, e);
 			}
-		} catch (ParseException e) {
-			throw new JsonSyntaxException(json, e);
 		}
 	}
 

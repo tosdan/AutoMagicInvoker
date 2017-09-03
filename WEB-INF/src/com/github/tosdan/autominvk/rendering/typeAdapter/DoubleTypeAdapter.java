@@ -16,14 +16,21 @@ import com.google.gson.stream.JsonWriter;
 public class DoubleTypeAdapter extends TypeAdapter<Double> {
 	@Override public Double read(JsonReader reader) throws IOException {
 		Double retval = null;
-        if (reader.peek() == JsonToken.NULL) { reader.nextNull(); }
-        String json = reader.nextString();
-        try { 
-        	Double value = Double.valueOf(json.replace(",", "."));
-            retval = value;
-        } catch (NumberFormatException e) {
-			throw new JsonSyntaxException(json, e);
-        }
+		
+		if (reader.peek() == JsonToken.NULL) { 
+			reader.nextNull();
+			
+		} else {
+			String json = reader.nextString();
+			try {
+				Double value = Double.valueOf(json.replace(",", "."));
+				retval = value;
+				
+			} catch (NumberFormatException e) {
+				throw new JsonSyntaxException(json, e);
+			}
+		}
+		
         return retval;
     }
 	@Override public void write(JsonWriter writer, Double value) throws IOException {

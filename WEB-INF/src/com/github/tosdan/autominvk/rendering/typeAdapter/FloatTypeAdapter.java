@@ -17,14 +17,21 @@ import com.google.gson.stream.JsonWriter;
 public class FloatTypeAdapter extends TypeAdapter<Float> {
 	@Override public Float read(JsonReader reader) throws IOException {
 		Float retval = null;
-		if (reader.peek() == JsonToken.NULL) { reader.nextNull(); }
-		String json = reader.nextString();
-		try { 
-			Float value = Float.valueOf(json.replace(",", "."));
-			retval = value;
-		} catch (NumberFormatException e) {
-			throw new JsonSyntaxException(json, e);
+		
+		if (reader.peek() == JsonToken.NULL) { 
+			reader.nextNull();
+			
+		} else {
+			String json = reader.nextString();
+			try {
+				Float value = Float.valueOf(json.replace(",", "."));
+				retval = value;
+				
+			} catch (NumberFormatException e) {
+				throw new JsonSyntaxException(json, e);
+			}
 		}
+		
 		return retval;
 	}
 	@Override public void write(JsonWriter writer, Float value) throws IOException {
