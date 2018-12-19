@@ -9,9 +9,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.lukehutch.fastclasspathscanner.FastClasspathScanner;
-import io.github.lukehutch.fastclasspathscanner.matchprocessor.ClassAnnotationMatchProcessor;
-import io.github.lukehutch.fastclasspathscanner.scanner.ScanResult;
+import io.github.classgraph.ClassGraph;
+import io.github.classgraph.ClassInfo;
+import io.github.classgraph.ScanResult;
 
 /**
  * 
@@ -53,22 +53,22 @@ public class IamIvokableClassCrawler implements Serializable {
 	 * @return
 	 */
 	public Map<String, String> refreshClasses() {
-		ClassAnnotationMatchProcessor classAnnotationMatchProcessor = new ClassAnnotationMatchProcessor() {			
-			@Override public void processMatch(Class<?> arg0) {}
-		};
-		FastClasspathScanner scanner = new FastClasspathScanner(invokerRootPath);
-		scanner.matchClassesWithAnnotation(IamInvokable.class, classAnnotationMatchProcessor);
+
+		ClassGraph scanner = new ClassGraph().enableAllInfo().whitelistPackages(invokerRootPath);
 		
 		logger.trace("Ricerca classi annotate con [{}] nel classpath [{}]", ANNOTATION_NAME, invokerRootPath);
 		ScanResult result = scanner.scan();
 		
-		List<String> namesOfClassesWithAnnotationsAnyOf = result.getNamesOfClassesWithAnnotationsAnyOf(IamInvokable.class);
-		List<Class<?>> classes = result.classNamesToClassRefs(namesOfClassesWithAnnotationsAnyOf, true);
-		logger.trace("Classi trovate: {}", classes.toString());
+		List<ClassInfo> routeClassInfoList  = result.getClassesWithAnnotation(IamInvokable.class.getName());
 		
-		for (Class<?> clazz : classes) {
+		logger.trace("Classi trovate: {}", routeClassInfoList.toString());
+		
+		for (ClassInfo classInfo : routeClassInfoList) {
+			Class< ? > clazz = classInfo.loadClass();
+			
 			register(clazz, invokerRootPath);
 		}
+		
 		return actionDatabase;
 	}
 
