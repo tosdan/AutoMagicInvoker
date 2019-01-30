@@ -33,7 +33,8 @@ public class Json2 implements AutoMagicRender {
 	@Override
 	public AutoMagicResponseObject getResponseObject( Object dataToRender, AutoMagicAction action, HttpServletRequest req, HttpServletResponse resp ) {
 
-		setGson(action.getRenderOptions());
+		RenderOptions renderOptions = action.getRenderOptions();
+		setGson(renderOptions);
 		
 		String mime = action.getMimeType();
 		mime = StringUtils.defaultIfBlank(mime, getRenderDefaultMime());
@@ -58,7 +59,7 @@ public class Json2 implements AutoMagicRender {
 	}
 
 	protected String getRenderDefaultMime() {
-		return Mime.TEXT_PLAIN;
+		return Mime.APPLICATION_JSON;
 	}
 
 	protected String getResponseData(Object dataToRender, HttpServletRequest req) {

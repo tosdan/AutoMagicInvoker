@@ -26,7 +26,7 @@ public class JsonP extends Json {
 
 	@Override
 	protected String getRenderDefaultMime() {
-		return Mime.TEXT_JAVASCRIPT;
+		return Mime.APPLICATION_JAVASCRIPT;
 	}
 	
 	protected String callback(String json, String callback) {
