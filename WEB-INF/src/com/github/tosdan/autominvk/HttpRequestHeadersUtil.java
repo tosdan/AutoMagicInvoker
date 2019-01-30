@@ -49,9 +49,8 @@ public class HttpRequestHeadersUtil {
 		return acceptHeaderValue.toLowerCase().indexOf(APPLICATION_JSON.toLowerCase()) > -1;
 	}
 
-	private static Map<String, String> getHeadersKeysLowerCaseMap( HttpServletRequest req ) {
+	public static Map<String, String> getHeadersKeysLowerCaseMap( HttpServletRequest req ) {
 		Map<String, String> headersKeysLowerCaseMap = new HashMap<String, String>(); 
-		@SuppressWarnings( "unchecked" )
 		Enumeration<String> headerNames = req.getHeaderNames();
 		while (headerNames.hasMoreElements()) {
 			String actualHeaderKey = headerNames.nextElement();
