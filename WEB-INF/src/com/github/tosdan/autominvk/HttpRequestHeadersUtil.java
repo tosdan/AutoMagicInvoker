@@ -30,6 +30,14 @@ public class HttpRequestHeadersUtil {
 		return isAcceptApplicationJson(this.req, this.headersKeysLowerCaseMap);
 	}
 	
+	public String getAcceptHeader() {
+		return getHeaderValue(ACCEPT);
+	}
+	
+	public String getHeaderValue(String header) {
+		return getHeaderValue(req, this.headersKeysLowerCaseMap, header);
+	}
+	
 	/* * * * * * * Metodi Statici * * * * * * * * */
 	
 	public static boolean containsXRequestedWith(HttpServletRequest req) {
@@ -39,14 +47,26 @@ public class HttpRequestHeadersUtil {
 	private static boolean containsXRequestedWith(Map<String, String> headersKeysLowerCaseMap) {
 		return headersKeysLowerCaseMap.containsKey(X_REQUESTED_WITH.toLowerCase());
 	}
+
+	public static String getAcceptHeader(HttpServletRequest req) {
+		return getHeaderValue(req, ACCEPT);
+	}
+	
+	public static String getHeaderValue(HttpServletRequest req, String header) {
+		return getHeaderValue(req, getHeadersKeysLowerCaseMap(req), header);
+	}
+	private static String getHeaderValue(HttpServletRequest req, Map<String, String> headersKeysLowerCaseMap, String header) {
+		String headerActualKey = headersKeysLowerCaseMap.get(header.toLowerCase());
+		String headerValue = req.getHeader(headerActualKey);
+		return headerValue;
+	}
 	
 	public static boolean isAcceptApplicationJson(HttpServletRequest req) {
 		return isAcceptApplicationJson(req, getHeadersKeysLowerCaseMap(req));
 	}
 	private static boolean isAcceptApplicationJson(HttpServletRequest req, Map<String, String> headersKeysLowerCaseMap) {
-		String acceptHeaderActualKey = headersKeysLowerCaseMap.get(ACCEPT.toLowerCase());
-		String acceptHeaderValue = req.getHeader(acceptHeaderActualKey);
-		return acceptHeaderValue.toLowerCase().indexOf(APPLICATION_JSON.toLowerCase()) > -1;
+		String headerValueLowecase = getAcceptHeader(req).toLowerCase();
+		return headerValueLowecase.indexOf(APPLICATION_JSON.toLowerCase()) > -1;
 	}
 
 	public static Map<String, String> getHeadersKeysLowerCaseMap( HttpServletRequest req ) {
