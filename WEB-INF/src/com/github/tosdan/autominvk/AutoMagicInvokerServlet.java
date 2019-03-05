@@ -180,8 +180,8 @@ public class AutoMagicInvokerServlet extends HttpServlet {
 				.print(respVal);
 			
 		} else {
-			logger.warn("Sulla [response] è già stato fatto il commit! Perciò non è stato possibile invaire i seguenti dati al client:");
-			logger.warn(String.valueOf(respVal));
+			logger.trace("Sulla [response] è già stato fatto il commit! Perciò non è stato possibile invaire i seguenti dati al client:");
+			logger.trace(String.valueOf(respVal));
 		}
 	}
 	
