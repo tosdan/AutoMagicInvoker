@@ -15,7 +15,6 @@ import com.github.tosdan.autominvk.IamInvokableAction;
 import com.github.tosdan.autominvk.rendering.render.Default;
 import com.github.tosdan.autominvk.rendering.render.Json;
 import com.github.tosdan.autominvk.rendering.render.JsonP;
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
 @IamInvokable
 public class DemoAmAction {
@@ -134,7 +133,7 @@ public class DemoAmAction {
 	@IamInvokableAction(mime = "application/json", render = Json.class, reqMethod = "get")
 	public Object exception() {
 		System.out.println("HelloWorldAmAction.exception()");
-		throw new IllegalAnnotationException("Eccezione");
+		throw new IllegalArgumentException("Eccezione");
 	}
 	
 	

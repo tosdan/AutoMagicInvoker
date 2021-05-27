@@ -17,7 +17,6 @@
 	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-api-1.7.22.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/slf4j-log4j12-1.7.22.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/commons-lang3-3.5.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.USER_LIBRARY/Tomcat7Libraries"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/classgraph-4.6.8.jar"/>
 	<classpathentry kind="lib" path="WEB-INF/lib/gson-2.8.5.jar"/>
 	<classpathentry kind="output" path="WEB-INF/classes"/>

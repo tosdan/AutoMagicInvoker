@@ -15,14 +15,12 @@ import com.github.tosdan.autominvk.AutoMagicHttpError;
 import com.github.tosdan.autominvk.IamInvokable;
 import com.github.tosdan.autominvk.IamInvokableAction;
 import com.github.tosdan.autominvk.rendering.render.Default;
-import com.github.tosdan.autominvk.rendering.render.Json;
 import com.github.tosdan.autominvk.rendering.render.Json2;
 import com.github.tosdan.autominvk.rendering.render.JsonP;
+import com.github.tosdan.autominvk.rendering.typeAdapter.DateDdMmYyyySlashedTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.TimeTypeAdapter;
 import com.github.tosdan.autominvk.rendering.typeAdapter.UtcDateTypeAdapter;
-import com.github.tosdan.autominvk.rendering.typeAdapter.DateDdMmYyyySlashedTypeAdapter;
 import com.google.gson.annotations.JsonAdapter;
-import com.sun.xml.internal.txw2.IllegalAnnotationException;
 
 @IamInvokable
 public class HelloWorldAmAction {
@@ -172,7 +170,7 @@ public class HelloWorldAmAction {
 	@IamInvokableAction(mime = "application/json", render = Json2.class, reqMethod = "get")
 	public Object exception() {
 		System.out.println("HelloWorldAmAction.exception()");
-		throw new IllegalAnnotationException("Eccezione");
+		throw new IllegalArgumentException("Eccezione");
 	}
 	
 	
